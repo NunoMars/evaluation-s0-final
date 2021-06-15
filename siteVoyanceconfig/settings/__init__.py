@@ -110,7 +110,7 @@ WSGI_APPLICATION = 'siteVoyanceconfig.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dernierProject',
+        'NAME': 'lastProject',
         'USER': 'Nuno',
         'PASSWORD': 'bcxau9p^^123.',
         'HOST': '127.0.0.1',
