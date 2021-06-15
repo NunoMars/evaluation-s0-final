@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans 'Mon compte' %}{% endblock %}
+
+{% block content %}
+
+    <div class="container h-100">
+        <div class="row h-100 align-items-center justify-content-center text-center">
+            <div class="col-lg-10">
+                <h1 class="text-uppercase text-white font-weight-bold">{% trans 'Bonjour ' %}{{user.first_name }}!</h1>
+                <hr class="divider my-4" />
+            </div>
+            <div class="row">
+                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+                    <hr class="divider my-4" />
+                    <h1 class="font-weight-bold">Em@il: {{user}}</h1>
+                    <hr class="divider my-4" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+                    <hr class="divider my-4" />
+                        <a class="font-weight-bold" href="{% url 'email_change' %}"><h1 class="mt-0">{% trans 'Changez votre em@il ici!' %}</h1></a>
+                    <hr class="divider my-4" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class='container'>
+        <div class="row">
+            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+                <h1 class="text-uppercase font-weight-bold">Produit recherché</h1>
+            </div>
+                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+                <h1 class="text-uppercase font-weight-bold">Produit remplacé par:</h1>
+            </div>
+        </div>
+        <div class="row">
+            {% for product in list_of_products %}                
+                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                    
+                    <a href="{% url 'product_detail' product.product %}"><img class="img-fluid" src="{{product.product_image_small}}"></a>
+                    <h3>{{product.product_name_fr}}</h3>                                
+                </div>
+                {% if forloop.counter|divisibleby:2 %}</div><div class="row clearfix">{% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

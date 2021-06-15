@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  {% load static %}
+  {% load i18n %}
+
+  {% block head %}
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="Tarot" content="">
+      <meta name="Nuno Marcelino" content="Tarot">
+      {% block title %}
+      <title>Home</title>
+      {% endblock %}
+      
+      <link rel="icon" href={% static 'img/tapis.ico' %}/>
+      <!-- Bootstrap core JavaScript -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+      <link href= {% static 'css/styles.pure.css' %} rel="stylesheet">
+      <link href= {% static 'css/style.css' %} rel="stylesheet">
+
+      <!-- Vendor CSS Files -->
+      <link href={% static 'vendor/bootstrap/css/bootstrap.min.css' %} rel="stylesheet">
+      <link href={% static "vendor/font-awesome/css/font-awesome.min.css" %} rel="stylesheet">
+      <link href={% static "vendor/owl.carousel/assets/owl.carousel.min.css" %} rel="stylesheet">
+      <link href={% static "vendor/animate.css/animate.min.css" %} rel="stylesheet">
+      <!--<link href={% static "vendor/venobox/venobox.css" %} rel="stylesheet">-->
+      <!-- Template Main CSS File -->
+      <link href={% static "css/style.css" %} rel="stylesheet">
+    </head>
+  {% endblock %}
+  {% block navbar %}
+  <!-- Navigation -->
+    <nav class="navbar-b navbar-expand-lg py-4" id="mainNav">      
+      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">{% trans "Monde du Tarot"%}</a>
+      <button class="navbar-brand navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarDefault" aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="navbar-collapse collapse justify-content-end" id="navbarDefault">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item px-lg-3">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'home' %}"><img height="70px" src="{% static 'img/Home-icon-1.png' %}" alt='home icon'/><div class='font-weight-bold'>{% trans "Home" %}</div></a>
+          </li>
+          <li class="nav-item px-lg-3">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'clairvoyance' %}"><img height="70px" src="{% static 'img/cards/Back.jpg' %}" alt='card icon'/><div class='font-weight-bold'>{% trans "Tarot" %}</div></a>
+          </li>
+          <li class="nav-item px-lg-3">
+            <a class="nav-link js-scroll-trigger" href="{% url 'card_deck' %}"><img height="70px" src="{% static 'img/deck.png' %}" alt='deck icon'/><div class='font-weight-bold'>{% trans "Meu Baralho de Tarot" %}</div></a>
+          </li>          
+          <li class="nav-item px-lg-3">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'ball8' %}"><img height="70px" src="{% static 'img/boule-magie-voyance.png' %}" alt='boule de voyance icon'/><div class='font-weight-bold'>{% trans "Oraculo" %}</div></a>
+          </li>
+          <li class="nav-item px-lg-3">
+            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">
+              {% if user.is_authenticated %}
+                  <img height="70px"  src="{% static 'img/connected-icon.png' %}" alt='connected icon'/>    
+              {% else %}
+                  <img height="70px"  src="{% static 'img/people-icon.png' %}" alt='people icon'/>
+              {% endif %}<div class='font-weight-bold'>{% trans "Cadastramento" %}</div></a>
+          </li>
+          <li class="nav-item px-lg-3">
+            <a class="nav-link js-scroll-trigger" href="{% url 'history' %}"><img height="70px" src="{% static 'img/deck.png' %}" alt='deck icon'/><div class='font-weight-bold'>{% trans "Meu Historico" %}</div></a>
+          </li>
+          <li class="nav-item px-lg-3">
+            <a class="nav-link js-scroll-trigger" href="{% url 'logout' %}"><img height="70px" src="{% static 'img/logout_icon.png' %}" alt='logout icon'/><div class='font-weight-bold'>{% trans "Deconexão" %}</div></a>
+          </li>
+          <li class="nav-item px-lg-3">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'contacts' %}"><img height="70px" src="{% static 'img/apple-touch-icon.png' %}" alt='contact icon'/><div class='font-weight-bold'>{% trans "Fale comigo" %}</div></a>
+          </li>
+        </ul>
+      </div>
+    </nav>      
+    {% endblock %}
+    {% block content %}
+    {% endblock %}
+    {% block footer %}
+    <footer class="footer text-faded text-center py-5">
+        <p class="m-0 py-lg-2">{% trans "Direitos d'autor" %} &copy; Nuno Marcelino 2020</p>
+        <!-- Bootstrap core JavaScript -->
+        <script  type ="text/javascript" src = "{% url 'javascript-catalog'%}" ></script>
+        <script src= {% static "js/script.js" %}></script>
+        <script src= {% static "js/main.js" %}></script>
+        <script src= {% static "vendor/jquery/jquery.min.js" %}></script>
+        <script src= {% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %} ></script>
+        
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.concat.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    </footer>
+  {% endblock %}
+</html>

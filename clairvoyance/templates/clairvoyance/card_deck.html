@@ -1,0 +1,28 @@
+{% extends 'base.html'%}
+{% load i18n %}
+{% load static %}
+
+{% block title %}<title>{% trans 'Mon tarot' %}</title>{% endblock %}
+
+{% block content %}
+    <!-- Card deck-->
+    <section class="container-fluid" id="card_deck">        
+        <div class="row">
+            {% for card in cards %}                
+                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                
+                    <a href="{% url 'card_detail' card.id %}"><img class="img-fluid" src="{{card.card_image}}"></a>
+                    {% if language == "pt" %}
+                        <h3>{{card.card_name_pt}}</h3> 
+                    {% elif language == "es" %}
+                        <h3>{{card.card_name_es}}</h3> 
+                    {% elif language == "en" %}
+                        <h3>{{card.card_name_en}}</h3>
+                    {% else %}
+                        <h3>{{card.card_name_fr}}</h3>
+                    {% endif %}             
+                </div>
+                {% if forloop.counter|divisibleby:6 %}</div><div class="row clearfix">{% endif %}
+            {% endfor %}           
+        </div>
+    </section>
+{% endblock%}

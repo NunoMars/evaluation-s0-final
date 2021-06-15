@@ -1,0 +1,36 @@
+{% extends 'base.html'%}
+{% load i18n %}
+{% load static %}
+
+
+
+{% block title %}<title>
+{% if language == "pt" %}
+    <h3>{{card.card_name_pt}}</h3> 
+{% elif language == "es" %}
+    <h3>{{card.card_name_es}}</h3> 
+{% elif language == "en" %}
+    <h3>{{card.card_name_en}}</h3>
+{% else %}
+    <h3>{{card.card_name_fr}}</h3>
+{% endif %}</title>{% endblock %}
+
+{% block content %}
+    <!-- Card detail-->
+    <section class="container-fluid" id="card_deck">        
+        <div class="row">
+            {% if language == "pt" %}
+                <h3>{{card.card_name_pt}}</h3> 
+            {% elif language == "es" %}
+                <h3>{{card.card_name_es}}</h3> 
+            {% elif language == "en" %}
+                <h3>{{card.card_name_en}}</h3>
+            {% else %}
+                <h3>{{card.card_name_fr}}</h3>
+            {% endif %}           
+            <div class="row p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                
+                <img class="img-fluid" src="{{card.card_image}}">                           
+            </div>        
+        </div>
+    </section>
+{% endblock%}

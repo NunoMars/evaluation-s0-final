@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load static i18n %}
+
+{% block content %}
+    <section>
+        <div class="section-heading mb-0 cta text-center rounded mb-4">
+            <h1>{% trans "Oráculo" %}</h1>
+            <h6 style="color:white">{% trans "Pergunte o que deseja saber e o Oraculo responde SIM ou Não" %}</h6>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class ="row" style = "background:transparent;
+                    text-shadow: 0 4px 4px rgba(208, 243, 8, 0.308);
+                    text-align: center;
+                    margin: 0 auto;
+                    left: 0;
+                    right: 0;
+                    color: white;
+                    width: 25%;
+                    font-size: 25px;">{% trans 'A sua pergunta' %} : {{user_question}}
+                </div>
+                <div class="col section-heading text-center rounded mb-4">
+                    
+                    <div class="container animated zoomInUp">                            
+                        <div style="z-index:1">
+                            <img
+                            src={% static 'img/boule-magie-voyance.png' %}
+                            alt="boule de magie"
+                            height="450px" 
+                            width="450px" >
+                        </div>
+                           
+                        <div class ="row animated zoomInUp" style = "background:rgba(253, 253, 253, 0.2);
+                            text-shadow: 1px 4px 4px rgb(0, 0, 0, 0.98);
+                            z-index: 10;
+                            border-radius: 27px 27px 27px 27px;
+                            position: absolute;
+                            text-align: center;
+                            margin: 0 auto;
+                            left: 0;
+                            right: 0;
+                            top: 30%;
+                            color: black;
+                            font-style: inherit;
+                            width: 25%;
+                            font-size: 20px;">{{ball8_message}}
+                        </div>                    
+                    </div>   
+                    <p class="mb-0">
+                        <form>
+                            {% csrf_token %}
+                            <input type="text" class="message-send" name ="question" placeholder="{% trans 'Ponha aqui sua pergunta...'%}" style="font-size: 20px;padding-left: 20px;width: 500px;border-radius: 20px 20px 20px 20px;">
+                            <button type="submit" name="bouton_submit" value="bouton_submit" style="font-size: 25px; border-radius: 15px 15px 15px 15px;">{% trans 'Enviar'%}</button>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

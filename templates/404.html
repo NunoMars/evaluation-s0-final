@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page error 404{% endblock title %}
+
+<!-- Masthead-->
+{% block header %}
+    <header class="masthead" id="search">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center justify-content-center text-center">
+                <div class="col-lg-10 align-self-end">
+                    <h1 class="text-uppercase text-white font-weight-bold">Ups une erreur est survenue! Recommencez a rechercher un produit s'il vous plâit!</h1>
+                    <hr class="divider my-4" />
+                    {% include 'products/search.html' %}
+                </div>
+                <hr class="divider my-4" />
+            </div>
+        </div>
+    </header>
+{% endblock header %}

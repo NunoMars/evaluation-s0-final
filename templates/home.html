@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+{% load i18n %}
+{% load static %}
+
+
+{% block title %}<title>Home Page</title>{% endblock %}
+{% block content %}
+  <div class="text-center text-uppercase text-expanded font-weight-bold rounded py-5">
+    <h1>{{first_title}}</h1>
+  </div>
+  <section class="page-section animated zoomInUp cta">  
+      <div class="row">      
+        <div class="col">                
+          <div class="cta-inner text-center rounded">        
+            <h2 class="section-heading">
+              {% trans "Tarot" %}
+            </h2>
+            <a href="{% url 'clairvoyance' %}">     
+              <img src={% static 'img/voyante_carre.jpg' %}       
+              alt="voyante"
+              height="170px" 
+              width="170px">
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="cta-inner text-center rounded">
+            <h2 class="section-heading">
+              <span class="section-heading-lower">{% trans "Atenção" %}</span>
+            </h2>
+            <p class="mb-0">{% trans "Este site nunca substituirá uma consulta presencial. Para encontrar as suas ultimas respostas do tarot e receber diariamente uma recomendação, basta crear uma conta!." %}</p>
+            <a href="{% url 'create_account' %}">     
+              <p class="section-heading">{% trans "Clique aqui para criar conta" %}</p>
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="cta-inner text-center rounded">
+            <h2 class="section-heading">{% trans "Oráculo" %}
+            </h2>               
+            <a href="{% url 'ball8' %}">
+              <img src={% static 'img/boule-magie-voyance.jpg' %}
+              alt="boule de magie"
+              height="170px" 
+              width="170px">
+            </a>                        
+          </div>
+        </div>
+      </div>
+  </section>
+{% endblock %}

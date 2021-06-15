@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}<title>Create Account</title>{% endblock %}
+{% load static%}
+<!-- Masthead-->
+{% block content %}
+    <section class="page-section animated zoomInUp cta py-2">
+        <div class="container-fluid w-100 h-100">
+            <div class="row h-100 w-100 justify-content-center align-items-center text-cente">
+                <div class="col align-items-center text-center ">  
+                    {% if next %}
+                        {% if user.is_authenticated %}
+                        <p>Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.</p>
+                        {% else %}
+                        <p>Please login to see this page.</p>
+                        {% endif %}
+                    {% endif %}
+
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                            <p>{{ form.username.label_tag }}
+                            {{ form.username }}</p>
+                            <p>{{ form.password.label_tag }}
+                            {{ form.password }}</p>
+                        <input type="submit" value="login">
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </form>
+                    {% if form.errors %}
+                        <p>Your username and password didn't match. Please try again.</p>
+                        <a class="nav-link js-scroll-trigger" href="{% url 'create_account' %}">Or you can create a new account Here!</a>              
+                    {% endif %}
+                </div>
+            </div>
+        </div>            
+    </section>
+{% endblock%}

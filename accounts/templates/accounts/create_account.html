@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}<title>{% trans 'Create Account' %}</title>{% endblock %}
+
+<!-- Masthead-->
+{% block content %}
+    <section class="page-section animated zoomInUp cta py-2">                     
+        <div class="container-fluid w-100 h-100">
+            <div class="row h-100 w-100 justify-content-center align-items-center text-cente">
+                <div class="col align-items-center text-center ">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p}}
+                        <input id="submit" type="submit" class="btn btn-primary btn-xl js-scroll-trigger" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
