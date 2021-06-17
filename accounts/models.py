@@ -61,6 +61,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         full_name = "%s %s" % (self.first_name, self.second_name)
         return full_name.strip()
 
+    def __str__(self):
+        return f"{self.first_name}, {self.second_name}, {self.email}"
+
 
 class History(models.Model):
     """ Class to define the History table."""
@@ -84,3 +87,4 @@ class DailySortedCards(models.Model):
 
     class Meta:
         db_table = "daily_cards"
+    

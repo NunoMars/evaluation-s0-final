@@ -1,5 +1,4 @@
 {% extends 'base.html'%}
-{% load i18n %}
 {% load static %}
 
 
@@ -10,41 +9,41 @@
   </div>
   <section class="page-section animated zoomInUp cta">  
       <div class="row">      
-        <div class="col">                
-          <div class="cta-inner text-center rounded">        
-            <h2 class="section-heading">
-              {% trans "Tarot" %}
-            </h2>
-            <a href="{% url 'clairvoyance' %}">     
-              <img src={% static 'img/voyante_carre.jpg' %}       
-              alt="voyante"
-              height="170px" 
-              width="170px">
-            </a>
-          </div>
+        <div class="col">
+          <a href="{% url 'clairvoyance' %}">                  
+            <div class="cta-inner text-center rounded">        
+              <h2 class="section-heading">Tarot</h2>
+                
+                <img src={% static 'img/voyante_carre.jpg' %}       
+                alt="voyante"
+                height="170px" 
+                width="170px">            
+            </div>
+          </a>
         </div>
         <div class="col">
-          <div class="cta-inner text-center rounded">
-            <h2 class="section-heading">
-              <span class="section-heading-lower">{% trans "Atenção" %}</span>
-            </h2>
-            <p class="mb-0">{% trans "Este site nunca substituirá uma consulta presencial. Para encontrar as suas ultimas respostas do tarot e receber diariamente uma recomendação, basta crear uma conta!." %}</p>
-            <a href="{% url 'create_account' %}">     
-              <p class="section-heading">{% trans "Clique aqui para criar conta" %}</p>
-            </a>
-          </div>
+          <a href="{% url 'create_account' %}">  
+            <div class="cta-inner text-center rounded">
+              <h2 class="section-heading">
+                <span class="section-heading-lower">Atention</span>
+              </h2>
+              <p class="mb-0">Ce site ne remplacera jamais une consultation avec un/e voyant/e, pour des réponses personalisés, consulter un professionnel!</p>
+                
+              <p class="section-heading">Cliquez ici pour créer votre espace personnel et recevoir votre tirage quotidien!</p>              
+            </div>
+          </a>
         </div>
         <div class="col">
-          <div class="cta-inner text-center rounded">
-            <h2 class="section-heading">{% trans "Oráculo" %}
-            </h2>               
-            <a href="{% url 'ball8' %}">
+        <a href="{% url 'ball8' %}">
+            <div class="cta-inner text-center rounded">
+              <h2 class="section-heading">Oracle</h2>
               <img src={% static 'img/boule-magie-voyance.jpg' %}
-              alt="boule de magie"
-              height="170px" 
-              width="170px">
-            </a>                        
-          </div>
+                alt="boule de magie"
+                height="170px" 
+                width="170px">
+                                    
+            </div>
+          </a> 
         </div>
       </div>
   </section>

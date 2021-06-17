@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import logout, login, authenticate
-from products.models import Products, Categorys
 from accounts.models import CustomUser, History
 
 

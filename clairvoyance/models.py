@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
@@ -17,6 +18,15 @@ class MajorArcana(models.Model):
     card_signification_warnings = models.TextField()
     card_signification_love = models.TextField()
     card_signification_work = models.TextField()
-    card_image = models.CharField(max_length=100)
+    card_image = models.ImageField(upload_to = 'MajorArcanaCards')
     card_polarity = models.CharField(
         max_length=10, choices=CHOICES, default="Positif")
+
+    def __str__(self):
+        return self.card_name
+
+    def image_tag(self):
+
+        return mark_safe('<img src="%s" width="150" height="150" />' % (self.card_image))
+
+    image_tag.short_description = 'Image'

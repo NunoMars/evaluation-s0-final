@@ -13,3 +13,6 @@ class Sentences(models.Model):
     sentence = models.TextField()
     sentence_polarity = models.CharField(
         max_length=10, choices=CHOICES, default="Positif")
+
+    def __str__(self):
+        return f"{self.sentence}, {self.sentence_polarity}"

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="fr">
   {% load static %}
-  {% load i18n %}
 
   {% block head %}
     <head>
@@ -34,7 +33,7 @@
   {% block navbar %}
   <!-- Navigation -->
     <nav class="navbar-b navbar-expand-lg py-4" id="mainNav">      
-      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">{% trans "Monde du Tarot"%}</a>
+      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">Monde du Tarot</a>
       <button class="navbar-brand navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarDefault" aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span></span>
         <span></span>
@@ -43,16 +42,16 @@
       <div class="navbar-collapse collapse justify-content-end" id="navbarDefault">
         <ul class="navbar-nav mx-auto">
           <li class="nav-item px-lg-3">
-            <a class="nav-link text-uppercase text-expanded" href="{% url 'home' %}"><img height="70px" src="{% static 'img/Home-icon-1.png' %}" alt='home icon'/><div class='font-weight-bold'>{% trans "Home" %}</div></a>
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'home' %}"><img height="70px" src="{% static 'img/Home-icon-1.png' %}" alt='home icon'/><div class='font-weight-bold'>Home</div></a>
           </li>
           <li class="nav-item px-lg-3">
-            <a class="nav-link text-uppercase text-expanded" href="{% url 'clairvoyance' %}"><img height="70px" src="{% static 'img/cards/Back.jpg' %}" alt='card icon'/><div class='font-weight-bold'>{% trans "Tarot" %}</div></a>
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'clairvoyance' %}"><img height="70px" src="{% static 'img/cards/Back.jpg' %}" alt='card icon'/><div class='font-weight-bold'>Tarot</div></a>
           </li>
           <li class="nav-item px-lg-3">
-            <a class="nav-link js-scroll-trigger" href="{% url 'card_deck' %}"><img height="70px" src="{% static 'img/deck.png' %}" alt='deck icon'/><div class='font-weight-bold'>{% trans "Meu Baralho de Tarot" %}</div></a>
+            <a class="nav-link js-scroll-trigger" href="{% url 'card_deck' %}"><img height="70px" src="{% static 'img/deck.png' %}" alt='deck icon'/><div class='font-weight-bold'>Mon paquet de Tarot</div></a>
           </li>          
           <li class="nav-item px-lg-3">
-            <a class="nav-link text-uppercase text-expanded" href="{% url 'ball8' %}"><img height="70px" src="{% static 'img/boule-magie-voyance.png' %}" alt='boule de voyance icon'/><div class='font-weight-bold'>{% trans "Oraculo" %}</div></a>
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'ball8' %}"><img height="70px" src="{% static 'img/boule-magie-voyance.png' %}" alt='boule de voyance icon'/><div class='font-weight-bold'>Oracle</div></a>
           </li>
           <li class="nav-item px-lg-3">
             <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">
@@ -60,16 +59,16 @@
                   <img height="70px"  src="{% static 'img/connected-icon.png' %}" alt='connected icon'/>    
               {% else %}
                   <img height="70px"  src="{% static 'img/people-icon.png' %}" alt='people icon'/>
-              {% endif %}<div class='font-weight-bold'>{% trans "Cadastramento" %}</div></a>
+              {% endif %}<div class='font-weight-bold'>Se connecter</div></a>
           </li>
           <li class="nav-item px-lg-3">
-            <a class="nav-link js-scroll-trigger" href="{% url 'history' %}"><img height="70px" src="{% static 'img/deck.png' %}" alt='deck icon'/><div class='font-weight-bold'>{% trans "Meu Historico" %}</div></a>
+            <a class="nav-link js-scroll-trigger" href="{% url 'history' %}"><img height="70px" src="{% static 'img/deck.png' %}" alt='deck icon'/><div class='font-weight-bold'>Mes tirages</div></a>
           </li>
           <li class="nav-item px-lg-3">
-            <a class="nav-link js-scroll-trigger" href="{% url 'logout' %}"><img height="70px" src="{% static 'img/logout_icon.png' %}" alt='logout icon'/><div class='font-weight-bold'>{% trans "Deconexão" %}</div></a>
+            <a class="nav-link js-scroll-trigger" href="{% url 'logout' %}"><img height="70px" src="{% static 'img/logout_icon.png' %}" alt='logout icon'/><div class='font-weight-bold'>Deconnexion</div></a>
           </li>
           <li class="nav-item px-lg-3">
-            <a class="nav-link text-uppercase text-expanded" href="{% url 'contacts' %}"><img height="70px" src="{% static 'img/apple-touch-icon.png' %}" alt='contact icon'/><div class='font-weight-bold'>{% trans "Fale comigo" %}</div></a>
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'contacts' %}"><img height="70px" src="{% static 'img/apple-touch-icon.png' %}" alt='contact icon'/><div class='font-weight-bold'>arlez avec moi!</div></a>
           </li>
         </ul>
       </div>
@@ -79,9 +78,9 @@
     {% endblock %}
     {% block footer %}
     <footer class="footer text-faded text-center py-5">
-        <p class="m-0 py-lg-2">{% trans "Direitos d'autor" %} &copy; Nuno Marcelino 2020</p>
+        <p class="m-0 py-lg-2"> &copy; Nuno Marcelino 2021</p>
         <!-- Bootstrap core JavaScript -->
-        <script  type ="text/javascript" src = "{% url 'javascript-catalog'%}" ></script>
+        
         <script src= {% static "js/script.js" %}></script>
         <script src= {% static "js/main.js" %}></script>
         <script src= {% static "vendor/jquery/jquery.min.js" %}></script>

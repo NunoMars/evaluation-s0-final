@@ -8,30 +8,20 @@ def one_card(name, rand_card):
     """
         Rends one cart response.
     """
-    card = MajorArcana.objects.get(pk=rand_card)
-
-    card_name = card.card_name
-    card_signification_warnings = card.card_signification_warnings
-    card_signification_gen = card.card_signification_gen
-    card_signification_love = card.card_signification_love
-    card_signification_work = card.card_signification_work
-
-   
-
     response = {"messages": "<div class='col cta-inner text-center rounded'>" +
             "<h2>" + name.capitalize() + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
-            "<a href='#'><img src='/static/img/cards/Back.jpg'" +
-            "onmouseover=" + '"this.src=' + "'/" + card.card_image + "'" + '"' +
+            "<a href='#'><img src='" + '/static/img/cards/Back.jpg' + "'" +
+            "onmouseover=" + '"this.src=' + "'" + rand_card.card_image.url + "'" + '"' +
             " alt='' height='15%' width='15%'/>" +
-            "<p><h3>" + card_name.capitalize() + "</h3></p>" +
+            "<p><h3>" + rand_card.card_name.capitalize() + "</h3></p>" +
             "<div class='mb-0'><h3>" + "Attention" + "</h3></div>" +
-            "<p class='mb-0'>" + card_signification_warnings + "</p>" +
+            "<p class='mb-0'>" + rand_card.card_signification_warnings + "</p>" +
             "<div class='mb-0'><h4>" + "En general" + "</h4></div>" +
-            "<p class='mb-0'>" + card_signification_gen + "</p>" +
+            "<p class='mb-0'>" + rand_card.card_signification_gen + "</p>" +
             "<div class='mb-0'><h4>" + "En amour" + "</h4></div>" +
-            "<p class='mb-0'>" + card_signification_love + "</p>" +
+            "<p class='mb-0'>" + rand_card.card_signification_love + "</p>" +
             "<div class='mb-0'><h4>" + "Dans le travail" + "</h4></div>" +
-            "<p class='mb-0'>" + card_signification_work + "</p>" +
+            "<p class='mb-0'>" + rand_card.card_signification_work + "</p>" +
             "</div>"
             }
 
@@ -62,7 +52,7 @@ def response_card(name, index_result_card, chosed_theme):
     response = {"messages": "<div class='col cta-inner text-center rounded'>" +
             "<h2>" + name.capitalize() + " c ce-ci est le votre message, ce que le Tarot a vous dire!" + "</h2>" +
             "<a href='#'><img src='/static/img/cards/Back.jpg'" +
-            "onmouseover=" + '"this.src=' + "'/" + card.card_image + "'" + '"' +
+            "onmouseover=" + '"this.src=' + "'/" + card.card_image.url + "'" + '"' +
             " alt='' height='15%' width='15%'/>" +
             "<p><h3>" + card_name.capitalize() + "</h3></p>" +
             "<div class='mb-0'><h3>" + "Réponse" + "</h3></div>" +
@@ -93,7 +83,7 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
         msg = ["<div class='col'>" +
                "<div class='cta-inner text-center rounded'>" +
                "<a href='#'><img class='card' src='/static/img/cards/Back.jpg'" +
-               "onmouseover=" + '"this.src=' + "'/" + card.card_image + "'" + '"' +
+               "onmouseover=" + '"this.src=' + "'/" + card.card_image.url + "'" + '"' +
                "onmouseout=" + "this.src='/static/img/cards/Back.jpg'" +
                " alt=''/>" +
                "<span><p>" + card_name.capitalize() + "</p>" +

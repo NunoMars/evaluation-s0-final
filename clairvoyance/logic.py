@@ -1,5 +1,5 @@
 from django.utils.translation import gettext as _
-from random import shuffle as suf, choice, randint as rand
+from random import shuffle as choice, randint as rand
 from .card_prints import one_card, clairvoyante_sort_cards
 from accounts.models import History
 from .models import MajorArcana
@@ -81,12 +81,10 @@ def clairvoyant(input_value):
         if len(inputs) == 1:
             return user_choices
 
-        if input_value == "one":
-            card_deck = [i+1 for i in range(38)]
-            suf(card_deck)
+        if input_value == "one":          
 
             global rand_card
-            rand_card = choice(card_deck)
+            rand_card = MajorArcana.objects.order_by('?')[0]
             
             value = one_card(user_name, rand_card)
             return {'messages' : value + record['message']}        

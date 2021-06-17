@@ -91,7 +91,8 @@ function firstClairvoyantMessage() {
     if ($('.message-input').val() != '') {
         return false;
     }
-    sentence = 'Bonjour je suis Mme T. Je suis là afin de vous éclairer a propos de votre futur! Mais faisons connaissance avant. Quel est votre prénom svp?'
+    sentence = "Bonjour, je suis Mme T, votre voyante virtuelle. Je vous propose d'éclairer votre avenir a l'aide du tarot! Mais avant tout, il nous faut faire connaissance. Quel est votre prénom svp?"
+
     var msg = "<div class='col'><div class='cta-inner text-center rounded'>" +
         "<p class='mb-0'>" +
         sentence +
