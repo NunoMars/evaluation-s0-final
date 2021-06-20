@@ -14,10 +14,11 @@ def clairvoyant(input_value):
     """
     card_deck = [i+1 for i in range(38)]
     global inputs
+    
     rand_card = MajorArcana.objects.order_by('?')[0]
     if input_value not in inputs:
         inputs.append(input_value)
-
+    
 
     user_name = inputs[0]
 
@@ -110,9 +111,15 @@ def clairvoyant(input_value):
 
         if input_value == "rec_no":
             del inputs[1:]
-            pass
+            print(user_name)
+            return {"message": {
+                "loop": "stop",
+                }}
 
         #result = clairvoyante_sort_cards(user_name, inputs[3], inputs[1])
         else:
-            pass
+            return{
+                "messages" : "ups bavure!"
+            }
+
 
