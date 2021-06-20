@@ -4,30 +4,6 @@ from datetime import datetime
 from .models import MajorArcana
 
 
-def one_card(name, rand_card):
-    """
-        Rends one cart response.
-    """
-    response = {"messages": "<div class='col cta-inner text-center rounded'>" +
-            "<h2>" + name.capitalize() + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
-            "<a href='#'><img src='" + '/static/img/cards/Back.jpg' + "'" +
-            "onmouseover=" + '"this.src=' + "'" + rand_card.card_image.url + "'" + '"' +
-            " alt='' height='15%' width='15%'/>" +
-            "<p><h3>" + rand_card.card_name.capitalize() + "</h3></p>" +
-            "<div class='mb-0'><h3>" + "Attention" + "</h3></div>" +
-            "<p class='mb-0'>" + rand_card.card_signification_warnings + "</p>" +
-            "<div class='mb-0'><h4>" + "En general" + "</h4></div>" +
-            "<p class='mb-0'>" + rand_card.card_signification_gen + "</p>" +
-            "<div class='mb-0'><h4>" + "En amour" + "</h4></div>" +
-            "<p class='mb-0'>" + rand_card.card_signification_love + "</p>" +
-            "<div class='mb-0'><h4>" + "Dans le travail" + "</h4></div>" +
-            "<p class='mb-0'>" + rand_card.card_signification_work + "</p>" +
-            "</div>"
-            }
-
-    return response['messages']
-
-
 def response_card(name, index_result_card, chosed_theme):
     """
     Draw the Tarot response, the last card.

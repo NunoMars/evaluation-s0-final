@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from random import shuffle as choice, randint as rand
-from .card_prints import one_card, clairvoyante_sort_cards
+from .card_prints import clairvoyante_sort_cards
 from accounts.models import History
 from .models import MajorArcana
 from django.contrib.auth.decorators import login_required
@@ -14,50 +14,13 @@ def clairvoyant(input_value):
     """
     card_deck = [i+1 for i in range(38)]
     global inputs
+    rand_card = MajorArcana.objects.order_by('?')[0]
     if input_value not in inputs:
         inputs.append(input_value)
 
 
     user_name = inputs[0]
 
-    user_choices = {"messages": "<div class='cta-inner text-center rounded'>" +
-    "<div class='row'>" +
-    "<div class='col'>" +
-    "<p><h6>" + "Merci beaucoup " + user_name.capitalize() + " !</h6></p>" +
-    "<p><h5>" + " Je mélange les lâmes du tarot..." + "</h5></p></div></div>" +
-    "<div class='row'>" +
-    "<div class='col'>" +
-    "<p><h5>" + "Choisissiez le domaine de la question!" + "</h5></p>" +
-    "<p><h6>" + "Cliquez sur le paquet de cartes svp!" + "</h6></p></div></div>" +
-    "<div class='row'>" +
-    "<div class='col'>" +
-    "<p><h6>" + "AMOUR" + "<h6></p>" +
-    "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageLove();'/></p></div>" +
-    "<div class='col'>" +
-    "<p><h6>" + "TRAVAIL" + "</h6></p>" +
-    "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageWork();'/></p></div>" +
-    "<div class='col'>" +
-    "<p><h6>" + " TIRAGE GENERAL" + "</h6></p>" +
-    "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageGen();'/></p></div>" +
-    "<div class='col'>" +
-    "<p><h6>" + "TIRAGE RAPIDE" + "</h6></p>" +
-    "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageOneCard();'/></p></div>" +
-    "</div></div>"
-    }
-
-   
-    record = {"message" :  "<div class='cta-inner text-center rounded'>" +
-    "<div class='row'>" +
-    "<div class='col'>" +
-    "<p><h3>" + "Voulez-vous enregistrer le tirage?" + "</h3></p></div></div>" +
-    "<div class='row'>" +
-    "<div class='col'>" +
-    "<p><h6>" + "SAUVEGARDER" + "</h6></p>" +
-    "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRecYes();'/></p></div>" +
-    "<div class='col'>" + "<p><h6>" + "NON" + "</h6></p>" +
-    "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRecNo();'/></p></div>" +
-    "</div></div>"
-    }
 
     message_cut = {"messages": "<div class='cta-inner text-center rounded'>" +
     "<div class='row'>" +
@@ -78,16 +41,17 @@ def clairvoyant(input_value):
         if input_value == "Quit":
             inputs = []
 
-        if len(inputs) == 1:
-            return user_choices
-
         if input_value == "one":          
-
-            global rand_card
-            rand_card = MajorArcana.objects.order_by('?')[0]
-            
-            value = one_card(user_name, rand_card)
-            return {'messages' : value + record['message']}        
+            return {"messages" : {
+                "subject" : "one_card",
+                "name" : user_name,
+                "card_image" : rand_card.card_image.url,
+                'card_name': rand_card.card_name,
+                "card_signification_warnings": rand_card.card_signification_warnings,
+                "card_signification_love": rand_card.card_signification_love,
+                "card_signification_work": rand_card.card_signification_work,
+                "card_signification_gen": rand_card.card_signification_gen,
+            }}
 
         if input_value == "love":
             inputs[1] = "love"
@@ -129,10 +93,10 @@ def clairvoyant(input_value):
         if input_value == "right":
             inputs[3] = card_deck[inputs[2]:37]
 
-
+        #recording session
         if input_value == "rec":
             if inputs[1] == "one":
-                card = MajorArcana.objects.filter(id=rand_card)
+                card = MajorArcana.objects.filter(card_name=rand_card.card_name)
                 theme = "Tirage Rapide"
                 
             else:
@@ -141,13 +105,14 @@ def clairvoyant(input_value):
                 theme =inputs[1]
 
             del inputs[1:]                
-            return [card[0], theme, user_choices]        
+            return [card[0], theme]        
             
 
         if input_value == "rec_no":
             del inputs[1:]
-            return user_choices
+            pass
 
-        result = clairvoyante_sort_cards(user_name, inputs[3], inputs[1])
-        return {'messages' : result["messages"] + record['message']}
+        #result = clairvoyante_sort_cards(user_name, inputs[3], inputs[1])
+        else:
+            pass
 
