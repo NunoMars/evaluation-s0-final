@@ -66,30 +66,22 @@ function getMessageClairvoyant(msg) {
             messageInput: msg,
         },
         success: function(data) {
-            menuChoices(msg);
-            if (data.messages.subject == "one_card") {
-                card_response = "<div class='col cta-inner text-center rounded'>" +
-                    "<h2>" + data.messages.name.charAt(0).toUpperCase() + data.messages.name.slice(1) + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
-                    "<a href='#'><img src='" + '/static/img/cards/Back.jpg' + "'" +
-                    "onmouseover=" + '"this.src=' + "'" + data.messages.card_image + "'" + '"' +
-                    " alt='' height='15%' width='15%'/>" +
-                    "<p><h3>" + data.messages.card_name.charAt(0).toUpperCase() + data.messages.card_name.slice(1) + "</h3></p>" +
-                    "<div class='mb-0'><h3>" + "Attention" + "</h3></div>" +
-                    "<p class='mb-0'>" + data.messages.card_signification_warnings + "</p>" +
-                    "<div class='mb-0'><h4>" + "En general" + "</h4></div>" +
-                    "<p class='mb-0'>" + data.messages.card_signification_gen + "</p>" +
-                    "<div class='mb-0'><h4>" + "En amour" + "</h4></div>" +
-                    "<p class='mb-0'>" + data.messages.card_signification_love + "</p>" +
-                    "<div class='mb-0'><h4>" + "Dans le travail" + "</h4></div>" +
-                    "<p class='mb-0'>" + data.messages.card_signification_work + "</p>" +
-                    "</div>"
-                clairvoyantMessage(card_response);
-                recordChoice();
-
-            } else {
-                clairvoyantMessage(data.messages);
+            if (data.subject == "menu") {
+                menuChoices(data);
             }
-
+            if (data.subject == "one_card") {
+                oneCardResponse(data);
+                recordChoice();
+            }
+            if (data.subject == "rec_no") {
+                menuChoices(data);
+            }
+            if (data.subject == "sorry") {
+                clairvoyantMessage(data.message);
+            }
+            if (data.subject == "rec_ok") {
+                clairvoyantMessage(data.message);
+            }
         },
     });
 };
@@ -123,6 +115,21 @@ function firstClairvoyantMessage() {
     clairvoyantMessage(msg);
 };
 
+function displayMessageCut(data) {
+    message_cut = "<div class='cta-inner text-center rounded'>" +
+        "<div class='row'>" +
+        "<div class='col'>" +
+        "<p><h4>" + "Merci beaucoup " + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " !</h4></p>" +
+        " <p>" + "Encore une chose svp!" + "</p>" +
+        " <p>" + "Cliquez afin de couper le jeu de cartes!" +
+        "</p></div></div>" +
+        "<div class='row'>" +
+        "<div class='col'>" +
+        "<input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageCut();'/></div>" +
+        "</div></div></div>"
+    clairvoyantMessage(message_cut);
+};
+
 function recordChoice() {
     msg = "<div class='cta-inner text-center rounded'>" +
         "<div class='row'>" +
@@ -138,11 +145,11 @@ function recordChoice() {
     clairvoyantMessage(msg);
 };
 
-function menuChoices(msg) {
+function menuChoices(data) {
     menu = "<div class='cta-inner text-center rounded'>" +
         "<div class='row'>" +
         "<div class='col'>" +
-        "<p><h6>" + "Merci beaucoup " + msg.charAt(0).toUpperCase() + msg.slice(1) + " !</h6></p>" +
+        "<p><h6>" + "Merci beaucoup " + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " !</h6></p>" +
         "<p><h5>" + " Je mélange les lâmes du tarot..." + "</h5></p></div></div>" +
         "<div class='row'>" +
         "<div class='col'>" +
@@ -150,10 +157,10 @@ function menuChoices(msg) {
         "<p><h6>" + "Cliquez sur le paquet de cartes svp!" + "</h6></p></div></div>" +
         "<div class='row'>" +
         "<div class='col'>" +
-        "<p><h6>" + "AMOUR" + "<h6></p>" +
+        "<p><h6>" + "TIRAGE AMOUR" + "<h6></p>" +
         "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageLove();'/></p></div>" +
         "<div class='col'>" +
-        "<p><h6>" + "TRAVAIL" + "</h6></p>" +
+        "<p><h6>" + "TIRAGE TRAVAIL" + "</h6></p>" +
         "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageWork();'/></p></div>" +
         "<div class='col'>" +
         "<p><h6>" + " TIRAGE GENERAL" + "</h6></p>" +
@@ -163,6 +170,25 @@ function menuChoices(msg) {
         "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageOneCard();'/></p></div>" +
         "</div></div>"
     clairvoyantMessage(menu);
+};
+
+function oneCardResponse(data) {
+    card_response = "<div class='col cta-inner text-center rounded'>" +
+        "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
+        "<a href='#'><img src='" + '/static/img/cards/Back.jpg' + "'" +
+        "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
+        " alt='' height='15%' width='15%'/>" +
+        "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
+        "<div class='mb-0'><h3>" + "Attention" + "</h3></div>" +
+        "<p class='mb-0'>" + data.card_signification_warnings + "</p>" +
+        "<div class='mb-0'><h4>" + "En general" + "</h4></div>" +
+        "<p class='mb-0'>" + data.card_signification_gen + "</p>" +
+        "<div class='mb-0'><h4>" + "En amour" + "</h4></div>" +
+        "<p class='mb-0'>" + data.card_signification_love + "</p>" +
+        "<div class='mb-0'><h4>" + "Dans le travail" + "</h4></div>" +
+        "<p class='mb-0'>" + data.card_signification_work + "</p>" +
+        "</div>"
+    clairvoyantMessage(card_response);
 };
 
 $('.button').click(function() {

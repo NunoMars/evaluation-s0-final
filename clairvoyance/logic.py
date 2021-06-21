@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 from random import shuffle as choice, randint as rand
 from .card_prints import clairvoyante_sort_cards
-from accounts.models import History
+from accounts.models import CustomUser, History
 from .models import MajorArcana
 from django.contrib.auth.decorators import login_required
 
@@ -23,47 +23,40 @@ def clairvoyant(input_value):
     user_name = inputs[0]
 
 
-    message_cut = {"messages": "<div class='cta-inner text-center rounded'>" +
-    "<div class='row'>" +
-    "<div class='col'>" + 
-    "<p><h4>" + "Merci beaucoup " + user_name.capitalize() + " !</h4></p>" +
-    " <p>" + "Encore une chose svp!" + "</p>" +
-    " <p>" + "Cliquez afin de couper le jeu de cartes!" + 
-    "</p></div></div>" +
-    "<div class='row'>" +
-    "<div class='col'>" + 
-    "<input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageCut();'/></div>" +
-    "</div></div></div>"
-    }
-
 
     while True:        
 
         if input_value == "Quit":
             inputs = []
 
+        if len(inputs) == 1:
+            return {
+                    "subject" : "menu",
+                    "user_name" : user_name
+                }
+
         if input_value == "one":          
-            return {"messages" : {
+            return {
                 "subject" : "one_card",
-                "name" : user_name,
+                "user_name" : user_name,
                 "card_image" : rand_card.card_image.url,
                 'card_name': rand_card.card_name,
                 "card_signification_warnings": rand_card.card_signification_warnings,
                 "card_signification_love": rand_card.card_signification_love,
                 "card_signification_work": rand_card.card_signification_work,
                 "card_signification_gen": rand_card.card_signification_gen,
-            }}
+            }
 
         if input_value == "love":
-            inputs[1] = "love"
+            chosed_theme = "love"
             return message_cut
 
         if input_value == "work":
-            inputs[1] = "work"
+            chosed_theme = "work"
             return message_cut
 
         if input_value == "gen":
-            inputs[1] = "gen"
+            chosed_theme = "gen"
             return message_cut
         
 
@@ -99,6 +92,9 @@ def clairvoyant(input_value):
             if inputs[1] == "one":
                 card = MajorArcana.objects.filter(card_name=rand_card.card_name)
                 theme = "Tirage Rapide"
+                message = "Sauvegarde réussie"
+                return [card, theme, message]
+
                 
             else:
                 index_card = round(sum(inputs[3])/len(inputs[3]))
@@ -111,15 +107,12 @@ def clairvoyant(input_value):
 
         if input_value == "rec_no":
             del inputs[1:]
-            print(user_name)
-            return {"message": {
-                "loop": "stop",
-                }}
+            return {
+                "subject": "rec_no",
+                "user_name" : user_name
+                }
 
         #result = clairvoyante_sort_cards(user_name, inputs[3], inputs[1])
-        else:
-            return{
-                "messages" : "ups bavure!"
-            }
+
 
 

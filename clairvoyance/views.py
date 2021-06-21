@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-
+from django.conf import settings
 from .logic import clairvoyant
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import MajorArcana
 from accounts.models import CustomUser, History, DailySortedCards
@@ -48,29 +48,30 @@ def clairvoyante(request):
 
             if input_value == "rec":
 
-                if request.user.is_authenticated:                   
+                if not request.user.is_authenticated:
+                    return render(request, "accounts/login.html")                   
 
-                    user = request.user
-                    sorted_card=result[0]
-                    chosed_theme=result[1]
-                    date = datetime.datetime.today()
-                    
-                    try:
-                        h = History.objects.create(
-                        user=user,
-                        sorted_card=sorted_card,
-                        chosed_theme=chosed_theme,
-                        sorted_cards_date=date  
-                        )
-                        h.save()
-                        return JsonResponse(result[2])
+                user = request.user
+                sorted_card=result[0]
+                chosed_theme=result[1]
+                date = datetime.datetime.today()
+                
+                try:
+                    h = History(
+                    user=user,
+                    sorted_card=sorted_card,
+                    chosed_theme=chosed_theme,
+                    sorted_cards_date=date  
+                    )
+                    h.save()
+                    return JsonResponse(result[2])
 
-                    except:
-                        return JsonResponse(
-                            {
-                                'messages': "<h3>" + "Impossible d'enregistrer le tirage, rafraîchissez la page svp!" + "</h3>"
-                            }
-                        )
+                except:
+                    return JsonResponse(
+                        {
+                            'messages': "<h3>" + "Impossible d'enregistrer le tirage, rafraîchissez la page svp!" + "</h3>"
+                        }
+                    )
                         
                 else:
                     return JsonResponse(

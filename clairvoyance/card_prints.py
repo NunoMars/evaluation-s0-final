@@ -148,7 +148,7 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
         f = ''.join(final_card_deck)
 
         polarity = polarity_calcul(list_of_polarity)
-        print(polarity)
+
 
         return {"messages": "<div class='col'><div class='cta-inner text-center rounded'>" +
                 "<h4>" + name.capitalize() + _(" vois-ci votre réponse!") + "</h4>" +
