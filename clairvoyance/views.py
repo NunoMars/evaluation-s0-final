@@ -32,12 +32,10 @@ def card_deck(request):
     return render(request, 'clairvoyance/card_deck.html', args)
 
 def card_detail(request, card):
-    print(card)
+
     args = {}
     card = MajorArcana.objects.get(id=card)
-    print(card.card_name)
     args["card"] = card
-
     return render(request, 'clairvoyance/card_detail.html', args)
 
 def clairvoyante(request):
