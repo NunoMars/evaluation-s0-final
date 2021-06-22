@@ -67,7 +67,7 @@ def clairvoyante(request):
                         return JsonResponse(
                             {
                                 "subject": "Error_record",
-                                'message': "<h3>" + "UPS!!! Impossible d'enregistrer le tirage, rafraîchissez la page svp!" + "</h3>"
+                                'message': "<h3>" + "UPS!!! Impossible d'enregistrer le tirage, réessayez plus tard svp!" + "</h3>"
                             }
                         )
                         
