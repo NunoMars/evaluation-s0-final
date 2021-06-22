@@ -69,7 +69,7 @@ class History(models.Model):
     """ Class to define the History table."""
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     sorted_cards_date = models.DateTimeField(auto_now_add=True)
-    sorted_card = models.ForeignKey(MajorArcana, verbose_name=_("Tiragem"), on_delete=models.CASCADE)
+    sorted_card = models.ForeignKey(MajorArcana, on_delete=models.CASCADE)
     chosed_theme = models.CharField(default="theme", max_length=10)
 
     class Meta:

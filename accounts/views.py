@@ -87,13 +87,12 @@ def logout_view(request):
 @login_required() 
 def email_change(request):
     user = request.user
-    user = CustomUser.objects.get(email=user)
+    user = CustomUser.objects.get(email=user.email)
     form = EmailChangeForm(user)
     if request.method=='POST':
         form = EmailChangeForm(user, request.POST)
         if form.is_valid():
             form.save()
-            print(user.email)
             return redirect("history")            
     else:
         form =EmailChangeForm(user)

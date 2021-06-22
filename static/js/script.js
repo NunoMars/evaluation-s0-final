@@ -82,6 +82,26 @@ function getMessageClairvoyant(msg) {
             if (data.subject == "rec_ok") {
                 clairvoyantMessage(data.message);
             }
+            if (data.subject == "cut") {
+                sendMessageCut();
+            }
+            if (data.subject == "choose_deck") {
+                chooseCutDeck(data);
+            }
+            if (data.subject == "final_response") {
+                clairvoyantMessage(data.message.final_response_tittle);
+                responseCard(data.message.response_card)
+                recordChoice();
+            }
+            if (data.subject == "rec_response") {
+                clairvoyantMessage(data.messages);
+            }
+            if (data.subject == "Error_record") {
+                clairvoyantMessage(data.message);
+            }
+            if (data.subject == "succes_rec") {
+                clairvoyantMessage(data.message);
+            }
         },
     });
 };
@@ -190,6 +210,36 @@ function oneCardResponse(data) {
         "</div>"
     clairvoyantMessage(card_response);
 };
+
+function chooseCutDeck(data) {
+    deck_choice = "<div class='col'><div class='cta-inner text-center rounded'>" +
+        "<p class='mb-0'><h4>" + "Merci !" + "</h4></p>" +
+        "<p class='mb-0'>" + "On a donc deux paquets de cartes!" + "</p>" +
+        "<p class='mb-0'>" + "Cliques sur celui de votre choix svp!" + "</p></div></div>" +
+        "<div class='row'>" +
+        "<div class='col''><div class='cta-inner text-center rounded'>" +
+        "<h1>Ce paquet a " + data.len_left_deck + " cartes!" +
+        "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageLeft();'/></div></div></div>" +
+        "<div class='col''><div class='cta-inner text-center rounded'>" +
+        "<h1>Celui ci a " + data.len_right_deck + " cartes!" +
+        "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRight();'/></div></div></div>" +
+        "</div>"
+    clairvoyantMessage(deck_choice);
+};
+
+function responseCard(data) {
+    response_card_message = "<div class='col cta-inner text-center rounded'>" +
+        "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " c ce-ci est le votre message, ce que le Tarot a vous dire!" + "</h2>" +
+        "<a href='#'><img src='/static/img/cards/Back.jpg'" +
+        "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
+        " alt='' height='15%' width='15%'/>" +
+        "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
+        "<div class='mb-0'><h3>" + "Réponse" + "</h3></div>" +
+        "<p class='mb-0'>" + data.chosed_theme_signification + "</p>" +
+        "</div>"
+    clairvoyantMessage(response_card_message)
+};
+
 
 $('.button').click(function() {
     $('.menu .items span').toggleClass('active');

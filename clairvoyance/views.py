@@ -47,39 +47,38 @@ def clairvoyante(request):
             result = clairvoyant(input_value)
 
             if input_value == "rec":
+                if request.user.is_authenticated:
+                    user = request.user
+                    user = CustomUser.objects.get(email=user.email)
 
-                if not request.user.is_authenticated:
-                    return render(request, "accounts/login.html")                   
+                    try:
+                        save = History(
+                        user = user,
+                        sorted_card = result[0],
+                        chosed_theme = result[1]
+                        )
+                        save.save()
+                        return JsonResponse({
+                            "subject" : "succes_rec",
+                            'message': "Le tirage est à présent enregistré!"
+                        })
 
-                user = request.user
-                sorted_card=result[0]
-                chosed_theme=result[1]
-                date = datetime.datetime.today()
-                
-                try:
-                    h = History(
-                    user=user,
-                    sorted_card=sorted_card,
-                    chosed_theme=chosed_theme,
-                    sorted_cards_date=date  
-                    )
-                    h.save()
-                    return JsonResponse(result[2])
-
-                except:
-                    return JsonResponse(
-                        {
-                            'messages': "<h3>" + "Impossible d'enregistrer le tirage, rafraîchissez la page svp!" + "</h3>"
-                        }
-                    )
+                    except:
+                        return JsonResponse(
+                            {
+                                "subject": "Error_record",
+                                'message': "<h3>" + "UPS!!! Impossible d'enregistrer le tirage, rafraîchissez la page svp!" + "</h3>"
+                            }
+                        )
                         
                 else:
                     return JsonResponse(
                         {
+                            "subject" : "rec_response",
                             'messages':"<div class='container-fluid w-100 h-100'> "+
                             "<div class='row h-100 w-100 justify-content-center align-items-center text-cente'>" +
                             "<div class='col align-items-center text-center' >" +
-                            '<a href="{% url ' + "'history'" + ' %}">LOGIN</a>'
+                            '<a href="{% url '+ 'history' +' %}"' + ">Afin de sauvevarder vous devez être logué! Connectez-vous ICI!</a>"
                         }
                     )
             
@@ -93,19 +92,13 @@ def clairvoyante(request):
 
 @login_required()
 def user_history(request):
-    """Fonction for show the sorted cards,
+    """Fonction for show the user's sorted cards,
      login required."""
     user = request.user
-    user = CustomUser.objects.get(email=user)
+    user = CustomUser.objects.get(email=user.email)
 
     user_history = History.objects.filter(user=user)
     daily_user_card = DailySortedCards.objects.filter(user=user)
-    """products_list = []
-    for item in get_user_history:
-        chosen_product = item.chosen_product
-        products_list.append(chosen_product)
-        remplacement_product = item.remplacement_product
-        products_list.append(remplacement_product)"""
 
     context = {
         "user": user,

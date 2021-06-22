@@ -7,22 +7,31 @@ from django.contrib.auth.decorators import login_required
 
 inputs = []
 
+def recordTirage(card, theme):
+    card = MajorArcana.objects.filter(card_name=card.card_name)
+    theme = "Tirage Rapide"
+    message = "Sauvegarde réussie"
+    return [card, theme, message]
 
 def clairvoyant(input_value):
     """
-        Construct the bot reponse.
+        Construct the bot response.
     """
-    card_deck = [i+1 for i in range(38)]
+    card_deck = MajorArcana.objects.all()
     global inputs
-    
+    global chosed_theme
+    global deck_choice
+
     rand_card = MajorArcana.objects.order_by('?')[0]
     if input_value not in inputs:
-        inputs.append(input_value)
-    
+        inputs.append(input_value)    
 
     user_name = inputs[0]
 
-
+    cards_in_deck = card_deck.count()
+    cut_point = rand(1, cards_in_deck)
+    left_deck = card_deck[0:cut_point]
+    right_deck = card_deck[cut_point:cards_in_deck]
 
     while True:        
 
@@ -47,63 +56,40 @@ def clairvoyant(input_value):
                 "card_signification_gen": rand_card.card_signification_gen,
             }
 
+
         if input_value == "love":
             chosed_theme = "love"
-            return message_cut
+            return {
+            "subject" : "cut"
+        }
 
         if input_value == "work":
             chosed_theme = "work"
-            return message_cut
+            return {
+            "subject" : "cut"
+        }         
 
         if input_value == "gen":
-            chosed_theme = "gen"
-            return message_cut
+            chosed_theme = "gen"            
+            return {
+                "subject" : "cut"
+            }
         
 
         if input_value == "cut":
-            cut_point = rand(1, 37)
-            inputs[2] = cut_point
-            left_deck = card_deck[0:cut_point]
-            right_deck = card_deck[cut_point:37]
 
-            return {"messages": "<div class='col'><div class='cta-inner text-center rounded'>" +
-                    "<p class='mb-0'><h4>" +"Merci !" + "</h4></p>" +
-                    "<p class='mb-0'>" + "On a donc deux paquets de cartes!" + "</p>" +
-                    "<p class='mb-0'>" + "Cliques sur celui de votre choix svp!" + "</p></div></div>" +
-                    "<div class='row'>" +
-                    "<div class='col''><div class='cta-inner text-center rounded'>" +
-                    "<h1>Ce paquet a " + str(len(left_deck)) + " cartes!" +
-                    "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageLeft();'/></div></div></div>" +
-                    "<div class='col''><div class='cta-inner text-center rounded'>" +
-                    "<h1>Celui ci a " + str(len(right_deck)) + " cartes!" +
-                    "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRight();'/></div></div></div>" +
-                    "</div>"
-                    }
+            return {
+                "subject" : "choose_deck",
+                "len_left_deck" : str(len(left_deck)),
+                "len_right_deck" : str(len(right_deck))
+            }
 
         # chose the deck
         if input_value == "left":
-            inputs[3] = card_deck[0:inputs[2]]
+            deck_choice = left_deck
 
         if input_value == "right":
-            inputs[3] = card_deck[inputs[2]:37]
-
-        #recording session
-        if input_value == "rec":
-            if inputs[1] == "one":
-                card = MajorArcana.objects.filter(card_name=rand_card.card_name)
-                theme = "Tirage Rapide"
-                message = "Sauvegarde réussie"
-                return [card, theme, message]
-
-                
-            else:
-                index_card = round(sum(inputs[3])/len(inputs[3]))
-                card = MajorArcana.objects.filter(id=index_card)
-                theme =inputs[1]
-
-            del inputs[1:]                
-            return [card[0], theme]        
-            
+            deck_choice = right_deck          
 
         if input_value == "rec_no":
             del inputs[1:]
@@ -112,7 +98,22 @@ def clairvoyant(input_value):
                 "user_name" : user_name
                 }
 
-        #result = clairvoyante_sort_cards(user_name, inputs[3], inputs[1])
+        result = clairvoyante_sort_cards(user_name, deck_choice, chosed_theme)
+                #recording session
+        if input_value == "rec":
+            if inputs[1] == "one":
 
+                card = rand_card
+                theme = "Tirage Rapide"
+              
+            else:
+                card = MajorArcana.objects.filter(id=result[1])
+                theme =inputs[1]
 
+                del inputs[1:]                
+            return [card, theme]  
 
+        return {
+            "subject" : "final_response",
+            "message" : result[0]
+        }
