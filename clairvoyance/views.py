@@ -26,15 +26,16 @@ def clairvoyance(request):
     return render(request, 'clairvoyance/clairvoyance.html', args)
 
 def card_deck(request):
-
     args = {}
     cards = MajorArcana.objects.all()
     args["cards"] = cards
     return render(request, 'clairvoyance/card_deck.html', args)
 
 def card_detail(request, card):
+    print(card)
     args = {}
-    card = MajorArcana.objects.get(id=card.id)
+    card = MajorArcana.objects.get(id=card)
+    print(card.card_name)
     args["card"] = card
 
     return render(request, 'clairvoyance/card_detail.html', args)

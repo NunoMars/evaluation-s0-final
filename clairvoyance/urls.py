@@ -10,5 +10,5 @@ urlpatterns = [
     url('clairvoyante', csrf_exempt(clairvoyante), name='clairvoyante'),
     url('history', user_history, name='history'),
     url('card_deck', card_deck, name='card_deck'),
-    url('card_detail', card_detail, name='card_detail'),
+    url(r"^card_detail/(?P<card>[0-9]+)/$", card_detail, name='card_detail'),
 ]
