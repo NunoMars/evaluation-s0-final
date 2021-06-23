@@ -5,24 +5,27 @@
 
 {% block title %}<title><h3>{{card.card_name}}</h3></title>{% endblock %}
 <style>
-    p {
-    width: 300px;
-    }
     .imagefloat {
         float: left;
         margin-right: 10px;
+        margin-left: 10px;
     }
 </style>
 {% block content %}
     <!-- Card detail-->
     <section class="container-fluid" id="card_deck">        
-        <div class="row">
-            <h3>{{card.card_name}}</h3>
+        <div class="row p-1 justify-content-center align-items-center text-center">
+            <h1>{{card.card_name}}</h1>
             </div>       
-            <div class="row p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                
-                <p>
-                    <img class="img-fluid imagefloat" src="{{card.card_image.url}}">
-                </p>                           
+            <div class="row p-1 justify-content-center text-white align-items-center text-center">                                                
+                <p><img class="img-fluid pull-left" width="15%" src="{{card.card_image.url}}">
+                {{card.card_signification_gen}}</p> 
+                <h3>Les aspects negatifs de {{card.card_name}}</h3>
+                <p>{{card.card_signification_warnings}}</p>
+                <h3>{{card.card_name}} en amour:</h3>
+                <p>{{card.card_signification_love}}</p>
+                <h3>{{card.card_name}} au Travail</h3>
+                <p>{{card.card_signification_work}}</p>                        
             </div>        
         </div>
     </section>

@@ -5,7 +5,6 @@ from accounts.models import CustomUser, History
 from .models import MajorArcana
 from django.contrib.auth.decorators import login_required
 
-inputs = []
 
 def recordTirage(card, theme):
     card = MajorArcana.objects.filter(card_name=card.card_name)
@@ -18,7 +17,7 @@ def clairvoyant(input_value):
         Construct the bot response.
     """
     card_deck = MajorArcana.objects.all()
-    global inputs
+    inputs = list()
     global chosed_theme
     global deck_choice
 

@@ -22,17 +22,17 @@ class CustomUserCreationFormTest(TestCase):
     def test_custom_user_creation_form_password1_field_label(self):
         form = CustomUserCreationForm()
         self.assertTrue(
-            form.fields['password1'].label == None or form.fields['password1'].label == 'Mot de passe')
+            form.fields['password1'].label == None or form.fields['password1'].label == 'Password')
 
     def test_custom_user_creation_form_password2_field_label(self):
         form = CustomUserCreationForm()
         self.assertTrue(
-            form.fields['password2'].label == None or form.fields['password2'].label == 'Confirmation du mot de passe')
+            form.fields['password2'].label == None or form.fields['password2'].label == 'Password confirmation')
 
     def test_custom_user_creation_form_phone_field_label(self):
         form = CustomUserCreationForm()
         self.assertTrue(
-            form.fields['phone_number'].label == None or form.fields['phone_number'].label == 'Numero de telephone')
+            form.fields['phone_number'].label == None or form.fields['phone_number'].label == 'Phone number')
 
     def test_custom_user_creation_form(self):
         form_data = {
