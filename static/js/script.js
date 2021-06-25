@@ -229,7 +229,7 @@ function chooseCutDeck(data) {
 
 function responseCard(data) {
     response_card_message = "<div class='col cta-inner text-center rounded'>" +
-        "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " c ce-ci est le votre message, ce que le Tarot a vous dire!" + "</h2>" +
+        "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci votre votre message, ce que le Tarot a vous dire!" + "</h2>" +
         "<a href='#'><img src='/static/img/cards/Back.jpg'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
         " alt='' height='15%' width='15%'/>" +

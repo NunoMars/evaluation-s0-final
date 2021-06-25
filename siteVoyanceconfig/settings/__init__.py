@@ -15,7 +15,6 @@ from pathlib import Path
 import django_heroku
 
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 

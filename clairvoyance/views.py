@@ -66,7 +66,7 @@ def clairvoyante(request):
                         return JsonResponse(
                             {
                                 "subject": "Error_record",
-                                'message': "<h3>" + "UPS!!! Impossible d'enregistrer le tirage, réessayez plus tard svp!" + "</h3>"
+                                'message': "UPS!!! Impossible d'enregistrer le tirage, réessayez plus tard svp!"
                             }
                         )
                         
@@ -74,10 +74,7 @@ def clairvoyante(request):
                     return JsonResponse(
                         {
                             "subject" : "rec_response",
-                            'messages':"<div class='container-fluid w-100 h-100'> "+
-                            "<div class='row h-100 w-100 justify-content-center align-items-center text-cente'>" +
-                            "<div class='col align-items-center text-center' >" +
-                            '<a href="{% url '+ 'history' +' %}"' + ">Afin de sauvevarder vous devez être logué! Connectez-vous ICI!</a>"
+                            'messages': '<a href="{% url '+ 'history' +' %}"' + ">Afin de sauvevarder vous devez être logué! Connectez-vous ICI! et revenez pour un autre tirage gratuit!</a>"
                         }
                     )
             

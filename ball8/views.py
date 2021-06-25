@@ -12,7 +12,7 @@ def ball8(request):
 
         if request.GET.get('bouton_submit'):
             user_question = request.GET['question']
-            page_title = _("ORÁCULO")
+            page_title = "ORACLE"
             args["page_title"] = page_title
             args["user_question"] = user_question
 

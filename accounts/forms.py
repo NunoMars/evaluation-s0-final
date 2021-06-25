@@ -23,8 +23,8 @@ class EmailChangeForm(forms.Form):
     e-mail.
     """
     error_messages = {
-        'email_mismatch': _("Les champs des deux adresses e-mail ne correspondent pas."),
-        'not_changed': _("L'adresse e-mail renseigné est déjà utilisé."),
+        'email_mismatch': "Les champs des deux adresses e-mail ne correspondent pas.",
+        'not_changed': "L'adresse e-mail renseigné est déjà utilisé."
     }
 
     new_email1 = forms.EmailField(

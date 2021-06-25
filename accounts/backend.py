@@ -8,7 +8,6 @@ class CustomUserAuth(object):
         """
         try:
             user = CustomUser.objects.get(email=username)
-            print(user)
             if user.check_password(password):
                 return user
         except CustomUser.DoesNotExist:
