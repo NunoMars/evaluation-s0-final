@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'ball8.apps.Ball8Config',
     'clairvoyance.apps.ClairvoyanceConfig',
     'accounts.apps.AccountsConfig',
-    #'rosetta',
 ]
 
 ######################AUTH#########################
@@ -52,22 +51,20 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 AUTHENTIFICATION_BACKENDS = "accounts.backends.CustomUserAuth"
 LOGOUT_REDIRECT_URL = "home"
 LOGIN_REDIRECT_URL = "history"
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = "login"
 ###################################################
 
-#####################ROSETTA#TRANS#################
-ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
-AZURE_CLIENT_SECRET = '20f1b26ad3414e65b51e4ad12f56336d'
-ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = "fr"
-ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = "fr"
-###################################################
 
 ########################EMAIL######################
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'patricia.nunes.tarot@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+#EMAIL_USE_SSL = True
+EMAIL_PORT = 587
+#EMAIL_PORT_SSL = 465
+EMAIL_HOST_USER = "patricia.nunes.tarot@gmail.com" #os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = "Ruben1Mara2"# os.environ.get("EMAIL_HOST_PASSWORD")
+
 ###################################################
 
 MIDDLEWARE = [

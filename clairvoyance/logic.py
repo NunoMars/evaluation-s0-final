@@ -4,15 +4,7 @@ from random import shuffle as choice, randint as rand
 from .card_prints import clairvoyante_sort_cards
 from accounts.models import CustomUser, History
 from .models import MajorArcana
-from django.contrib.auth.decorators import login_required
 
-
-@login_required
-def recordTirage(card, theme, user):
-    card = MajorArcana.objects.filter(card_name=card.card_name)
-    theme = "Tirage Rapide"
-    message = "Sauvegarde réussie"
-    return [card, theme, message]
 
 def clairvoyant(input_value):
     """

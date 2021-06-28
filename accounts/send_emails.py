@@ -1,112 +1,55 @@
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
+from django.conf import settings
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
 import random
-from .models import CustomUser
+from .models import CustomUser, DailySortedCards
 from clairvoyance.models import MajorArcana
 
 
 
 def send_welcome_email(user):
-    plaintext = get_template('accounts/email_account_created.txt')
-    htmly     = get_template('accounts/email_account_created.html')
-
-    context = { 'username': user.first_name }
-
-    if user.user_language == 'en':
-        sentence = 'Wellcome to world of Tarot !!! '
-
-    if user.user_language == 'es':
-        sentence = 'Benvenido a El mundo del Tarot !!! '
-
-    if user.user_language == 'pt':
-        sentence = 'Benvindo ao meu site de cartonância gratuito!!'
-    else:
-        sentence = 'Benvenu/a a mon site de voyance gratuit !!! '
-
-    subject, from_email, to = sentence, 'patricia.nunes.tarot@gmail.com', user.email
-    text_content = plaintext.render(context)
-    html_content = htmly.render(context)
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
+    subject = 'Merci de votre création de compte, Monde Du Tarot'
+    message = 'Bonjour ' + user.first_name + " ! Vous allez pouvoir recevoir votre tirage de Tarot quotidien par email! MERCI"
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [user.email,]
+    send_mail( subject, message, email_from, recipient_list )
 
 def send_one_card_daily_email():
     users = CustomUser.objects.all()
-    htmly = get_template('accounts/daily_card.html')
     cards = MajorArcana.objects.all()
+    host_email = settings.EMAIL_HOST_USER
 
     for user in users:
-        print(user.send_email)
-        if user.send_email:
+
+        if user.send_email == True:
             card = random.choice(cards)
-            print(user.first_name + " l'ordinateur a choisi  " + card.card_name_fr + " !")
-
-            if user.user_language == 'pt':
-                sentence = "A Sua carta Tarot do dia"
-                context = {
-                    "username" : user.get_full_name(),
-                    "card_name" : card.card_name_pt,
-                    "card_signification_gen" : card.card_signification_gen_pt,
-                    "tag_warning" : "Atenção",
-                    "card_singnification_warning" : card.card_signification_warnings_pt,
-                    "tag_work" : "Trabalho",
-                    "card_signification_work" : card.card_signification_work_pt,
-                    "tag_love" : "Amor",
-                    "card_signification_love" : card.card_signification_love_pt,
-                    "card_image" : card.card_image
-                }
-            if user.user_language == 'en':
-                sentence = "Your daily card!"
-                context = {
-                    "username" : user.get_full_name(),
-                    "card_name" : card.card_name_en,
-                    "card_signification_gen" : card.card_signification_gen_en,
-                    "tag_warning" : "Atenção",
-                    "card_singnification_warning" : card.card_signification_warnings_en,
-                    "tag_work" : "Trabalho",
-                    "card_signification_work" : card.card_signification_work_en,
-                    "tag_love" : "Amor",
-                    "card_signification_love" : card.card_signification_love_en,
-                    "card_image" : card.card_image
-                }
-            if user.user_language == 'es':
-                sentence = "A tua carta do dia"
-                context = {
-                    "username" : user.get_full_name(),
-                    "card_name" : card.card_name_es,
-                    "card_signification_gen" : card.card_signification_gen_es,
-                    "tag_warning" : "Atenção",
-                    "card_singnification_warning" : card.card_signification_warnings_es,
-                    "tag_work" : "Trabalho",
-                    "card_signification_work" : card.card_signification_work_es,
-                    "tag_love" : "Amor",
-                    "card_signification_love" : card.card_signification_love_es,
-                    "card_image" : card.card_image
-                }
-                
-            else:
-                sentence = "Ta prevision Tarot Du jour"
-                context = {
-                    "username" : user.get_full_name(),
-                    "card_name" : card.card_name_fr,
-                    "card_signification_gen" : card.card_signification_gen_fr,
-                    "tag_warning" : "Atenção",
-                    "card_singnification_warning" : card.card_signification_warnings_fr,
-                    "tag_work" : "Trabalho",
-                    "card_signification_work" : card.card_signification_work_fr,
-                    "tag_love" : "Amor",
-                    "card_signification_love" : card.card_signification_love_fr,
-                    "card_image" : card.card_image
-                }
-
-            html_content = htmly.render(context)
-            msg = EmailMultiAlternatives(
-                subject=sentence,
-                from_email='patricia.nunes.tarot@gmail.com',
-                to=[user.email]             
+            h_save = DailySortedCards(
+                user = user,
+                daily_sorted_cards = card,
                 )
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
-        else:
-            pass
+            h_save.save()
+
+            print(user.first_name + " l'ordinateur a choisi  " + card.card_name + " !")
+            # import file with html content
+            html_version = 'accounts/daily_card.html'
+            card_url ="https://site-voyance.herokuapp.com"+card.card_image.url
+            c = {
+                "username" : user.get_full_name(),
+                "card_name" : card.card_name,
+                "card_signification_gen" : card.card_signification_gen,
+                "tag_warning" : "Atention",
+                "card_singnification_warnings" : card.card_signification_warnings,
+                "tag_work" : "Travail",
+                "card_signification_work" : card.card_signification_work,
+                "tag_love" : "Amour",
+                "card_signification_love" : card.card_signification_love,
+                "card_image" : card_url
+                }
+            html_message = render_to_string(html_version, c)
+
+            subject = "Ta prevision Tarot Du jour"
+
+            message = EmailMessage(subject, html_message, host_email, [user.email])
+            message.content_subtype = 'html'
+            message.send()
+

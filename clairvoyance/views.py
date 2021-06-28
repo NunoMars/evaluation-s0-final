@@ -46,38 +46,27 @@ def clairvoyante(request):
             result = clairvoyant(input_value)
 
             if input_value == "rec":
-                if request.user.is_authenticated:
-                    user = request.user
-                    user = CustomUser.objects.get(email=user.email)
+                if not request.user.is_authenticated:
+                    return JsonResponse({
+                    "subject" : "Error_record",
+                    'message': "Vos devez vous loguer afin de pouvoir enregistrer" +
+                    " le tirage, si pas de compte vous devez en créer un en haut sur la barre de Menu!"
+                })
+                user = request.user
+                user = CustomUser.objects.get(email=user.email)
 
-                    try:
-                        save = History(
-                        user = user,
-                        sorted_card = result[0],
-                        chosed_theme = result[1]
-                        )
-                        save.save()
-                        return JsonResponse({
-                            "subject" : "succes_rec",
-                            'message': "Le tirage est à présent enregistré!"
-                        })
+                h_save = History(
+                user = user,
+                sorted_card = result[0],
+                chosed_theme = result[1]
+                )
+                h_save.save()
 
-                    except:
-                        return JsonResponse(
-                            {
-                                "subject": "Error_record",
-                                'message': "UPS!!! Impossible d'enregistrer le tirage, réessayez plus tard svp!"
-                            }
-                        )
-                        
-                else:
-                    return JsonResponse(
-                        {
-                            "subject" : "rec_response",
-                            'messages': '<a href="{% url '+ 'history' +' %}"' + ">Afin de sauvevarder vous devez être logué! Connectez-vous ICI! et revenez pour un autre tirage gratuit!</a>"
-                        }
-                    )
-            
+                return JsonResponse({
+                    "subject" : "succes_rec",
+                    'message': "Le tirage est à présent enregistré!"
+                })
+
             else:
                 return JsonResponse(result)
             

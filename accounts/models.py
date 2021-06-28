@@ -41,9 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     email = models.EmailField(blank=False, unique=True)
-    phone_number = models.BigIntegerField(default="0000000000", blank=True)
     send_email = models.BooleanField(default=False)
-    send_text_message = models.BooleanField(default=False)
     
     USERNAME_FIELD = "email"
 
@@ -54,27 +52,23 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("user")
         verbose_name_plural = _("users")
 
-    def get_absolute_url(self):
-        return "/users/%s/" % (self.email)
-
     def get_full_name(self):
         full_name = "%s %s" % (self.first_name, self.second_name)
         return full_name.strip()
 
     def __str__(self):
-        return f"{self.first_name}, {self.second_name}, {self.email}"
+        return self.email
 
 
 class History(models.Model):
     """ Class to define the History table."""
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sorted_cards_date = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default= now)
     sorted_card = models.ForeignKey(MajorArcana, on_delete=models.CASCADE)
-    chosed_theme = models.CharField(default="theme", max_length=10)
-
+    chosed_theme = models.CharField(default="theme", max_length=20)
+    
     class Meta:
         db_table = "history"
-
 
 
 class DailySortedCards(models.Model):
@@ -82,7 +76,7 @@ class DailySortedCards(models.Model):
     rec the daily_cards
     """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sorted_cards_date = models.DateTimeField(auto_now_add=True)
+    sorted_cards_date = models.DateTimeField(default= now)
     daily_sorted_cards = models.ForeignKey(MajorArcana, verbose_name=_("Tiragem"), on_delete=models.CASCADE)
 
     class Meta:

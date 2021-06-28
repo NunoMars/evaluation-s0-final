@@ -4,9 +4,7 @@ from accounts.send_emails import send_one_card_daily_email
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
-
-        
+    def handle(self, *args, **options):        
 
         help = "Send a daily email to users."
 

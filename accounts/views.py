@@ -43,38 +43,13 @@ def create_account_view(request):
             else:
                 login(request, user)
 
-            return render(request, "accounts/thanks.html")
+            return render(request, "clairvoyance/history.html")
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = CustomUserCreationForm()
 
     return render(request, "accounts/create_account.html", {"form": form})
-
-
-def login_view(request):
-
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(CuA, username=username, password=password)
-
-    if user is not None:
-        login(request, user)
-        # Redirect to a success page.
-        msg = "Bienvenu"
-        return render(request, "accounts/my_account.html", {"msg": msg})
-    else:
-        # Return an 'invalid login' error message.
-        msg = "Compte utilisateur non trouvé!"
-        vars_to_template = {
-            "msg": msg,
-            "link": "../create_account",
-            "link_msg": "Créez un compte utilisateur!",
-        }
-
-        return render(request, "accounts/my_account.html", vars_to_template)
-
-    return render(request, "accounts/my_account.html")
 
 
 def logout_view(request):
