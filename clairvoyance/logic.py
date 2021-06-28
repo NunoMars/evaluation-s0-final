@@ -7,7 +7,8 @@ from .models import MajorArcana
 from django.contrib.auth.decorators import login_required
 
 
-def recordTirage(card, theme):
+@login_required
+def recordTirage(card, theme, user):
     card = MajorArcana.objects.filter(card_name=card.card_name)
     theme = "Tirage Rapide"
     message = "Sauvegarde réussie"

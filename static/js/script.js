@@ -145,7 +145,7 @@ function displayMessageCut(data) {
         "</p></div></div>" +
         "<div class='row'>" +
         "<div class='col'>" +
-        "<input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageCut();'/></div>" +
+        "<input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageCut();'/></div>" +
         "</div></div></div>"
     clairvoyantMessage(message_cut);
 };
@@ -158,9 +158,9 @@ function recordChoice() {
         "<div class='row'>" +
         "<div class='col'>" +
         "<p><h6>" + "SAUVEGARDER" + "</h6></p>" +
-        "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRecYes();'/></p></div>" +
+        "<p><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageRecYes();'/></p></div>" +
         "<div class='col'>" + "<p><h6>" + "NON" + "</h6></p>" +
-        "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRecNo();'/></p></div>" +
+        "<p><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageRecNo();'/></p></div>" +
         "</div></div>"
     clairvoyantMessage(msg);
 };
@@ -178,16 +178,16 @@ function menuChoices(data) {
         "<div class='row'>" +
         "<div class='col'>" +
         "<p><h6>" + "TIRAGE AMOUR" + "<h6></p>" +
-        "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageLove();'/></p></div>" +
+        "<p><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageLove();'/></p></div>" +
         "<div class='col'>" +
         "<p><h6>" + "TIRAGE TRAVAIL" + "</h6></p>" +
-        "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageWork();'/></p></div>" +
+        "<p><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageWork();'/></p></div>" +
         "<div class='col'>" +
         "<p><h6>" + " TIRAGE GENERAL" + "</h6></p>" +
-        "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageGen();'/></p></div>" +
+        "<p><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageGen();'/></p></div>" +
         "<div class='col'>" +
         "<p><h6>" + "TIRAGE RAPIDE" + "</h6></p>" +
-        "<p><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageOneCard();'/></p></div>" +
+        "<p><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageOneCard();'/></p></div>" +
         "</div></div>"
     clairvoyantMessage(menu);
 };
@@ -195,9 +195,9 @@ function menuChoices(data) {
 function oneCardResponse(data) {
     card_response = "<div class='col cta-inner text-center rounded'>" +
         "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
-        "<a href='#'><img src='" + '/static/img/cards/Back.jpg' + "'" +
+        "<a href='#'><img class='img-fluid' src='" + '/static/img/cards/Back.jpg' + "'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
-        " alt='' height='15%' width='15%'/>" +
+        " alt='' width='20%'/>" +
         "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
         "<div class='mb-0'><h3>" + "Attention" + "</h3></div>" +
         "<p class='mb-0'>" + data.card_signification_warnings + "</p>" +
@@ -219,10 +219,10 @@ function chooseCutDeck(data) {
         "<div class='row'>" +
         "<div class='col''><div class='cta-inner text-center rounded'>" +
         "<h1>Ce paquet a " + data.len_left_deck + " cartes!" +
-        "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageLeft();'/></div></div></div>" +
+        "<div class='mb-0'><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageLeft();'/></div></div></div>" +
         "<div class='col''><div class='cta-inner text-center rounded'>" +
         "<h1>Celui ci a " + data.len_right_deck + " cartes!" +
-        "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card' onClick='sendMessageRight();'/></div></div></div>" +
+        "<div class='mb-0'><input id='bouton_card img-fluid' type='submit' class='bouton_card' onClick='sendMessageRight();'/></div></div></div>" +
         "</div>"
     clairvoyantMessage(deck_choice);
 };
@@ -230,7 +230,7 @@ function chooseCutDeck(data) {
 function responseCard(data) {
     response_card_message = "<div class='col cta-inner text-center rounded'>" +
         "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci votre votre message, ce que le Tarot a vous dire!" + "</h2>" +
-        "<a href='#'><img src='/static/img/cards/Back.jpg'" +
+        "<a href='#'><img class='img-fluid' src='/static/img/cards/Back.jpg'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
         " alt='' height='15%' width='15%'/>" +
         "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
