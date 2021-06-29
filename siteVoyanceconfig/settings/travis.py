@@ -1,4 +1,5 @@
 from . import *
+SECRET_KEY = '\\\ta(xZQ;xUIly1X@IGT:4re$'
 
 DATABASES = {
     'default': {
