@@ -3,5 +3,5 @@ from .models import MajorArcana
 
 # Register your models here.
 admin.site.register(MajorArcana)
-fields = ['image_tag']
-readonly_fields = ['image_tag']
+fields = ["image_tag"]
+readonly_fields = ["image_tag"]

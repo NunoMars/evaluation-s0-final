@@ -7,21 +7,39 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='MajorArcana',
+            name="MajorArcana",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('card_name', models.CharField(max_length=50)),
-                ('card_signification_gen', models.TextField()),
-                ('card_signification_warnings', models.TextField()),
-                ('card_signification_love', models.TextField()),
-                ('card_signification_work', models.TextField()),
-                ('card_image', models.CharField(max_length=100)),
-                ('card_polarity', models.CharField(choices=[('Positif', 'Positif'), ('Negatif', 'Negatif'), ('Neutral', 'neutral')], default='Positif', max_length=10)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("card_name", models.CharField(max_length=50)),
+                ("card_signification_gen", models.TextField()),
+                ("card_signification_warnings", models.TextField()),
+                ("card_signification_love", models.TextField()),
+                ("card_signification_work", models.TextField()),
+                ("card_image", models.CharField(max_length=100)),
+                (
+                    "card_polarity",
+                    models.CharField(
+                        choices=[
+                            ("Positif", "Positif"),
+                            ("Negatif", "Negatif"),
+                            ("Neutral", "neutral"),
+                        ],
+                        default="Positif",
+                        max_length=10,
+                    ),
+                ),
             ],
         ),
     ]

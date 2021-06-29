@@ -6,16 +6,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0004_alter_history_chosed_theme'),
+        ("accounts", "0004_alter_history_chosed_theme"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='customuser',
-            name='phone_number',
-        ),
-        migrations.RemoveField(
-            model_name='customuser',
-            name='send_text_message',
-        ),
+        migrations.RemoveField(model_name="customuser", name="phone_number",),
+        migrations.RemoveField(model_name="customuser", name="send_text_message",),
     ]

@@ -7,14 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clairvoyance', '0002_alter_majorarcana_card_image'),
-        ('accounts', '0005_auto_20210629_0010'),
+        ("clairvoyance", "0002_alter_majorarcana_card_image"),
+        ("accounts", "0005_auto_20210629_0010"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dailysortedcards',
-            name='daily_sorted_cards',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='clairvoyance.majorarcana', verbose_name='Carte de la journée'),
+            model_name="dailysortedcards",
+            name="daily_sorted_cards",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="clairvoyance.majorarcana",
+                verbose_name="Carte de la journée",
+            ),
         ),
     ]

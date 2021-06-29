@@ -14,16 +14,19 @@ class CardsPrintTest(TestCase):
                 card_signification_warnings="Signification_warnings" + str(i),
                 card_signification_love="Signification_love" + str(i),
                 card_signification_work="Signification_work" + str(i),
-                card_image=str(i)+ ".jpg",
+                card_image=str(i) + ".jpg",
             )
 
-        self.name = 'Nuno'
+        self.name = "Nuno"
 
     def test_response_card(self):
         self.card_to_test = MajorArcana.objects.get(card_name="carte13")
-        self.assertTrue(response_card(self.name, self.card_to_test.id, "love") == {
-            "user_name" : "Nuno",
-            "card_image" : "/media/3.jpg",
-            "card_name": "carte13",
-            "chosed_theme_signification" : "Signification_love3",
-        })
+        self.assertTrue(
+            response_card(self.name, self.card_to_test.id, "love")
+            == {
+                "user_name": "Nuno",
+                "card_image": "/media/3.jpg",
+                "card_name": "carte13",
+                "chosed_theme_signification": "Signification_love3",
+            }
+        )

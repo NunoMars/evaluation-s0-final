@@ -20,9 +20,8 @@ def create_account_view(request):
             first_name = form.cleaned_data["first_name"]
             second_name = form.cleaned_data["second_name"]
             password = form.cleaned_data["password2"]
-            send_email = form.cleaned_data['send_email']
+            send_email = form.cleaned_data["send_email"]
 
-            
             user = authenticate(request, username=email, password=password)
 
             if user == None:
@@ -54,19 +53,21 @@ def logout_view(request):
     # Redirect to a success page.
     return redirect("home")
 
+
 ####### email change #######
 
-@login_required() 
+
+@login_required()
 def email_change(request):
     user = request.user
     user = CustomUser.objects.get(email=user.email)
     form = EmailChangeForm(user)
-    if request.method=='POST':
+    if request.method == "POST":
         form = EmailChangeForm(user, request.POST)
         if form.is_valid():
             form.save()
-            return redirect("history")            
+            return redirect("history")
     else:
-        form =EmailChangeForm(user)
-    
-    return render(request, "accounts/email_change.html", {'form':form})
+        form = EmailChangeForm(user)
+
+    return render(request, "accounts/email_change.html", {"form": form})

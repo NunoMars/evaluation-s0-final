@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class ClairvoyanceConfig(AppConfig):
-    default_auto_field = 'django.db.models.AutoField'
-    name = 'clairvoyance'
+    default_auto_field = "django.db.models.AutoField"
+    name = "clairvoyance"

@@ -1,76 +1,82 @@
 from django.shortcuts import render
 from .logic import clairvoyant
-from django.http import  JsonResponse
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import MajorArcana
 from accounts.models import CustomUser, History, DailySortedCards
 
 
 def index(request):
-    args= {
-        "first_title" : "Benvenu/e dans mon monde",
-        "second_title" : "TAROT T",
-        }
+    args = {
+        "first_title": "Benvenu/e dans mon monde",
+        "second_title": "TAROT T",
+    }
 
-    return render(request, 'home.html', args)
+    return render(request, "home.html", args)
 
 
 def clairvoyance(request):
     args = {}
     page_title = "Tarot"
-    args["page_title"]= page_title
-    
-    return render(request, 'clairvoyance/clairvoyance.html', args)
+    args["page_title"] = page_title
+
+    return render(request, "clairvoyance/clairvoyance.html", args)
+
 
 def card_deck(request):
     args = {}
     cards = MajorArcana.objects.all()
     args["cards"] = cards
-    return render(request, 'clairvoyance/card_deck.html', args)
+    return render(request, "clairvoyance/card_deck.html", args)
+
 
 def card_detail(request, card):
 
     args = {}
     card = MajorArcana.objects.get(id=card)
     args["card"] = card
-    return render(request, 'clairvoyance/card_detail.html', args)
+    return render(request, "clairvoyance/card_detail.html", args)
+
 
 def clairvoyante(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
-            input_value = request.POST.get('messageInput')
+            input_value = request.POST.get("messageInput")
             result = clairvoyant(input_value)
 
             if input_value == "rec":
                 if not request.user.is_authenticated:
-                    return JsonResponse({
-                    "subject" : "Error_record",
-                    'message': "Vos devez vous loguer afin de pouvoir enregistrer" +
-                    " le tirage, si pas de compte vous devez en créer un en haut sur la barre de Menu!"
-                })
+                    return JsonResponse(
+                        {
+                            "subject": "Error_record",
+                            "message": "Vos devez vous loguer afin de pouvoir enregistrer"
+                            + " le tirage, si pas de compte vous devez en créer un en haut sur la barre de Menu!",
+                        }
+                    )
                 user = request.user
                 user = CustomUser.objects.get(email=user.email)
 
                 h_save = History(
-                user = user,
-                sorted_card = result[0],
-                chosed_theme = result[1]
+                    user=user, sorted_card=result[0], chosed_theme=result[1]
                 )
                 h_save.save()
 
-                return JsonResponse({
-                    "subject" : "succes_rec",
-                    'message': "Le tirage est à présent enregistré!"
-                })
+                return JsonResponse(
+                    {
+                        "subject": "succes_rec",
+                        "message": "Le tirage est à présent enregistré!",
+                    }
+                )
 
             else:
                 return JsonResponse(result)
-            
+
         except ValueError:
             pass
     else:
-        pass 
+        pass
+
 
 @login_required()
 def user_history(request):
@@ -85,10 +91,10 @@ def user_history(request):
     context = {
         "user": user,
         "user_history": user_history,
-        "daily_user_card": daily_user_card
+        "daily_user_card": daily_user_card,
     }
     return render(request, "clairvoyance/history.html", context)
 
-def contacts(request):
-    return render(request, 'clairvoyance/contacts.html')
 
+def contacts(request):
+    return render(request, "clairvoyance/contacts.html")

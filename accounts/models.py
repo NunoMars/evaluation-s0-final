@@ -17,7 +17,6 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
     def create_superuser(self, email, password, **extra_fields):
         """
         Create and save a SuperUser with the given email and password.
@@ -36,9 +35,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     email = models.EmailField(blank=False, unique=True)
     send_email = models.BooleanField(default=False)
-    
-    USERNAME_FIELD = "email"
 
+    USERNAME_FIELD = "email"
 
     objects = CustomUserManager()
 
@@ -56,11 +54,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class History(models.Model):
     """ Class to define the History table."""
+
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    created = models.DateTimeField(default= now)
+    created = models.DateTimeField(default=now)
     sorted_card = models.ForeignKey(MajorArcana, on_delete=models.CASCADE)
     chosed_theme = models.CharField(default="theme", max_length=20)
-    
+
     class Meta:
         db_table = "history"
 
@@ -69,10 +68,12 @@ class DailySortedCards(models.Model):
     """
     rec the daily_cards
     """
+
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sorted_cards_date = models.DateTimeField(default= now)
-    daily_sorted_cards = models.ForeignKey(MajorArcana, verbose_name="Carte de la journée", on_delete=models.CASCADE)
+    sorted_cards_date = models.DateTimeField(default=now)
+    daily_sorted_cards = models.ForeignKey(
+        MajorArcana, verbose_name="Carte de la journée", on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "daily_cards"
-    

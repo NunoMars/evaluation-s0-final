@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_auto_20210628_1511'),
+        ("accounts", "0003_auto_20210628_1511"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='history',
-            name='chosed_theme',
-            field=models.CharField(default='theme', max_length=20),
+            model_name="history",
+            name="chosed_theme",
+            field=models.CharField(default="theme", max_length=20),
         ),
     ]
