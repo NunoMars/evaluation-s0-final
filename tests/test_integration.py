@@ -64,12 +64,7 @@ class TestIntegrations(StaticLiveServerTestCase):
 
         self.driver.find_element_by_id('create_account').click()
 
-
-        element = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "auth_icon"))
-        )
-        
-        self.assertTrue(element.is_displayed())
+        self.assertTrue(self.driver.title == 'history')
 
 
     def test_user_can_connect_and_disconnect(self):
