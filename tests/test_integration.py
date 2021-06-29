@@ -65,7 +65,10 @@ class TestIntegrations(StaticLiveServerTestCase):
         self.driver.find_element_by_id('create_account').click()
 
 
-        element = self.driver.find_element_by_id("auth_icon")
+        element = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "auth_icon"))
+        )
+        
         self.assertTrue(element.is_displayed())
 
 
