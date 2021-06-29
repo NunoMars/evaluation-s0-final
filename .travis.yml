@@ -19,7 +19,7 @@ before_script:
 
   - export CHROME_BIN=chromium-browser
 
-  - psql -c 'create database site-voyance;' -U postgres
+  - psql -c 'create database sitevoyance;' -U postgres
 
 env:
   - DJANGO_SETTINGS_MODULE=siteVoyanceconfig.settings.travis
