@@ -1,3 +1,4 @@
+from random import random as rand
 from .card_prints import clairvoyante_sort_cards
 from .models import MajorArcana
 
