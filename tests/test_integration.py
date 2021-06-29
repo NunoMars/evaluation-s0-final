@@ -64,6 +64,7 @@ class TestIntegrations(StaticLiveServerTestCase):
 
         self.driver.find_element_by_id('create_account').click()
 
+        print(self.driver.title)
         self.assertTrue(self.driver.title == 'history')
 
 
