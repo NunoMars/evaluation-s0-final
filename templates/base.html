@@ -59,7 +59,7 @@
           <li class="nav-item px-lg-3">
             <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">
               {% if user.is_authenticated %}
-                  <img height="70px"  src="{% static 'img/connected-icon.png' %}" alt='connected icon'/>    
+                  <img id="auth_icon"height="70px"  src="{% static 'img/connected-icon.png' %}" alt='connected icon'/>    
               {% else %}
                   <img height="70px"  src="{% static 'img/people-icon.png' %}" alt='people icon'/>
               {% endif %}<div class='font-weight-bold'>Se connecter</div></a>
