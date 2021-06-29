@@ -22,7 +22,7 @@ before_script:
   - psql -c 'create database site-voyance;' -U postgres
 
 env:
-  - DJANGO_SETTINGS_MODULE=purbeurreconfig.settings.travis
+  - DJANGO_SETTINGS_MODULE=siteVoyanceconfig.settings.travis
 
 script:
   - python manage.py makemigrations
