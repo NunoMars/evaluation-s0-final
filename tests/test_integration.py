@@ -64,8 +64,7 @@ class TestIntegrations(StaticLiveServerTestCase):
 
         self.driver.find_element_by_id('create_account').click()
 
-        print(self.driver.title)
-        #self.assertTrue(self.driver.title == 'history')
+        self.assertTrue(self.driver.title == 'Mon compte')
 
 
     def test_user_can_connect_and_disconnect(self):

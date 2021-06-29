@@ -20,9 +20,8 @@ def create_account_view(request):
             first_name = form.cleaned_data["first_name"]
             second_name = form.cleaned_data["second_name"]
             password = form.cleaned_data["password2"]
-            phone_number = form.cleaned_data['phone_number']
             send_email = form.cleaned_data['send_email']
-            send_text_message = form.cleaned_data['send_text_message']
+
             
             user = authenticate(request, username=email, password=password)
 
@@ -32,9 +31,7 @@ def create_account_view(request):
                     first_name=first_name,
                     second_name=second_name,
                     email=email,
-                    phone_number=phone_number,
                     send_email=send_email,
-                    send_text_message=send_text_message,
                 )
                 user.save()
 
