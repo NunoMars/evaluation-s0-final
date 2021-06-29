@@ -24,6 +24,9 @@ def send_one_card_daily_email():
 
         if user.send_email == True:
             card = random.choice(cards)
+            list_of_daily_cards = DailySortedCards.objects.filter(user=user)
+            if len(list_of_daily_cards) == 31:
+                DailySortedCards.objects.filter(user=user).delete()
             h_save = DailySortedCards(
                 user = user,
                 daily_sorted_cards = card,
