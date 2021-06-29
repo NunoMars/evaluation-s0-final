@@ -1,7 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import logout, login, authenticate
-from accounts.models import CustomUser, History
 
 
 class AccountsPagesTest(TestCase):

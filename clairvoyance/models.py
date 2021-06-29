@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
 
 
 class MajorArcana(models.Model):

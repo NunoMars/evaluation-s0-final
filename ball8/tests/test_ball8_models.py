@@ -8,5 +8,9 @@ class Ball8ModelsTest(TestCase):
         sentence = Sentences.objects.create(
             sentence = "Test sentence"
         )
-        self.assertEqual(sentence, "Test sentence")
+        s = Sentences.objects.get(sentence = "Test sentence")
+
+        self.assertEqual(s.sentence,"Test sentence")
+        self.assertEqual(s.sentence_polarity,"Positif")
+        self.assertEqual(str(s), 'Test sentence, Positif')
       

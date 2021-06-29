@@ -1,12 +1,9 @@
-from django.shortcuts import render, redirect
-from django.conf import settings
+from django.shortcuts import render
 from .logic import clairvoyant
-from django.http import Http404, JsonResponse, HttpResponseRedirect
+from django.http import  JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import MajorArcana
 from accounts.models import CustomUser, History, DailySortedCards
-from django.contrib.auth.models import User
-import datetime
 
 
 def index(request):
