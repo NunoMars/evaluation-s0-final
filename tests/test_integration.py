@@ -118,7 +118,7 @@ class TestIntegrations(StaticLiveServerTestCase):
         password2_input = self.driver.find_element_by_name("password2")
         password2_input.send_keys('a.345679')
 
-        self.driver.find_element_by_xpath('//input[@value="Submit"]').click()
+        self.driver.find_element_by_id('Submit').click()
 
 
         element = self.driver.find_element_by_id("auth_icon")
@@ -147,7 +147,7 @@ class TestIntegrations(StaticLiveServerTestCase):
         password = self.driver.find_element_by_id('id_password')
         password.send_keys("a.1234S1")
 
-        self.driver.find_element_by_xpath('//input[@value="Login"]').click()
+        self.driver.find_element_by_id('login').click()
 
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "auth_icon"))
