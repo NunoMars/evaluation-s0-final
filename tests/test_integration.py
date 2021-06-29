@@ -36,62 +36,6 @@ class TestIntegrations(StaticLiveServerTestCase):
         super().tearDownClass()
         cls.driver.quit()        
 
-    def test_results_page_shows(self):
-        '''
-        Tests the search page, and the products page.
-        '''
-        i = 1
-        while i <= 20:
-            
-            c = Categorys(
-                category="category",
-            )
-            c.save()
-            if 1 <= 10:
-                p = Products(
-                    product="123456"+str(i),
-                    nutrition_grade_fr= 1,
-                    product_name_fr="Product"+str(i),
-                    ingredients_text_fr="Ingredients"+str(i),
-                    product_image_large="Product_img_l"+str(i),
-                    product_image_small="Product_img_s"+str(i),
-                    product_image_nutrition_large="Product_img_n_l"+str(i),
-                    product_image_nutrition_small="Product_img_n_s"+str(i),
-                    stores="Stores"+str(i),
-                    url="Url"+str(i),
-                    )
-                
-                cat = Categorys.objects.get(category="category")
-                p.category = cat
-                p.save()
-            else:
-                p = Products(
-                    product="123456"+str(i),
-                    nutrition_grade_fr= 2,
-                    product_name_fr="Product"+str(i),
-                    ingredients_text_fr="Ingredients"+str(i),
-                    product_image_large="Product_img_l"+str(i),
-                    product_image_small="Product_img_s"+str(i),
-                    product_image_nutrition_large="Product_img_n_l"+str(i),
-                    product_image_nutrition_small="Product_img_n_s"+str(i),
-                    stores="Stores"+str(i),
-                    url="Url"+str(i),
-                    )
-                
-                cat = Categorys.objects.get(category="category")
-                p.category = cat
-                p.save()
-            i += 1
-
-        self.driver.get(self.live_server_url)
-        self.driver.find_element_by_id("searchForm").send_keys('Product')
-        self.driver.find_element_by_id("searchForm").submit()
-
-        
-
-        self.assertTrue(self.driver.title == 'Page Products')
-
-
     def test_create_account(self):
         '''
         Tests the account creation page an verify that the account icon change.
@@ -118,7 +62,7 @@ class TestIntegrations(StaticLiveServerTestCase):
         password2_input = self.driver.find_element_by_name("password2")
         password2_input.send_keys('a.345679')
 
-        self.driver.find_element_by_id('Submit').click()
+        self.driver.find_element_by_id('create_account').click()
 
 
         element = self.driver.find_element_by_id("auth_icon")
