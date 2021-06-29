@@ -1,0 +1,30 @@
+language: python
+
+python:
+  - '3.8.1'
+
+before_install:
+  - python -m pip install --upgrade pip
+  
+install:
+  - pip install -r requirements.txt
+
+services:
+  - postgresql
+
+before_script:
+  - wget https://chromedriver.storage.googleapis.com/83.0.4103.14/chromedriver_linux64.zip
+
+  - unzip chromedriver_linux64.zip -d /home/travis/build/NunoMars/P8-Pur-Beurre/
+
+  - export CHROME_BIN=chromium-browser
+
+  - psql -c 'create database site-voyance;' -U postgres
+
+env:
+  - DJANGO_SETTINGS_MODULE=purbeurreconfig.settings.travis
+
+script:
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - python manage.py test
