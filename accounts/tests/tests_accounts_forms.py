@@ -37,10 +37,6 @@ class CustomUserCreationFormTest(TestCase):
         self.assertTrue(
             form.fields['password2'].label == None or form.fields['password2'].label == 'Password confirmation')
 
-    def test_custom_user_creation_form_phone_field_label(self):
-        form = CustomUserCreationForm()
-        self.assertTrue(
-            form.fields['phone_number'].label == None or form.fields['phone_number'].label == 'Phone number')
 
     def test_custom_user_creation_form(self):
         form_data = {
@@ -49,9 +45,7 @@ class CustomUserCreationFormTest(TestCase):
             "second_name": "PetitChef",
             "password1": "Some.hi1",
             "password2": "Some.hi1",
-            "phone_number": "1234567890",
             "send_email": "True",
-            "send_text_message": "True"
             }
 
         self.form = CustomUserCreationForm(data=form_data)
@@ -82,14 +76,11 @@ class EmailChangeFormTest(TestCase):
             form.fields['new_email2'].label == None or form.fields['new_email2'].label == 'New email address confirmation')
 
     def test_email_change_form(self):
-
-        form = EmailChangeForm(self.user5)
         form_data = {
-            "New_email1" : "123@hotmail.fr",
-            "New_email2" : "123@hotmail.fr"
-
+            "new_email1" : "123@hotmail.fr",
+            "new_email2" : "123@hotmail.fr"
         }
-        form = EmailChangeForm(data=form_data)
+        form = EmailChangeForm(self.user5, data=form_data)
         self.assertTrue(form.is_valid())
-        self.assertEqual(self.user.email, "123@hotmail.fr")
+        self.assertTrue(self.user5.email, "123@hotmail.fr")
         

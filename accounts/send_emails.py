@@ -13,6 +13,7 @@ def send_welcome_email(user):
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [user.email,]
     send_mail( subject, message, email_from, recipient_list )
+    return "Email envoyé"
 
 def send_one_card_daily_email():
     users = CustomUser.objects.all()
@@ -52,4 +53,4 @@ def send_one_card_daily_email():
             message = EmailMessage(subject, html_message, host_email, [user.email])
             message.content_subtype = 'html'
             message.send()
-
+    return "Tous les mails sont envoyés"

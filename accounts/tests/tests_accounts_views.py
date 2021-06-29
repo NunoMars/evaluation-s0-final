@@ -9,16 +9,16 @@ class AccountsPagesTest(TestCase):
     def test_create_account_page(self):
         url = reverse('create_account')
         response = self.client.get(url)
-        self.assertTemplateNotUsed(response, 'accounts/create_account.html')
+        self.assertTemplateUsed(response, 'accounts/create_account.html')
         self.assertEqual(response.status_code, 200)
 
-    def test_history_page(self):
-        url = reverse('history')
+    def test_log_out(self):
+        url = reverse('logout')
         response = self.client.get(url)
-        self.assertTemplateNotUsed(response, 'accounts/history.html')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
-    def test_history_page(self):
+
+    def test_email_change_page(self):
         url = reverse('email_change')
         response = self.client.get(url)
         self.assertTemplateNotUsed(response, 'accounts/email_change.html')

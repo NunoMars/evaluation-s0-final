@@ -29,3 +29,13 @@ class UserCreationTest(TestCase):
         )
         self.user_to_test = CustomUser.objects.get(email="email2@email.com")
         self.assertEqual(self.user2, self.user_to_test)
+
+class SuperUserCreationTest(TestCase):
+    def test_super_user_creation(self):
+        self.user10 = CustomUser.objects.create_superuser(
+                email="email10@email.com",
+                password="123456782"
+            )
+        
+        self.user_to_test2 = CustomUser.objects.get(email="email10@email.com")
+        self.assertTrue(self.user_to_test2.is_superuser)
