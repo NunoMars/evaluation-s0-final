@@ -1,4 +1,4 @@
-from apscheduler import Scheduler
+from apscheduler.scheduler import Scheduler
 from accounts.send_emails import send_one_card_daily_email
 
 
