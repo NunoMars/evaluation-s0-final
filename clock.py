@@ -1,11 +1,16 @@
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler import Scheduler
 from accounts.send_emails import send_one_card_daily_email
 
-sched = BlockingScheduler()
 
+sched = Scheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-fri', hour=8)
-def scheduled_job():
-    send_one_card_daily_email()
+@sched.cron_schedule(day_of_week='mon-sun', hour=8, minute=0)
+def a_weekly_job():
+  send_one_card_daily_email()
 
 sched.start()
+
+print ("Service cron demarée")
+
+while __name__ == '__main__':
+  pass
