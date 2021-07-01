@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load static i18n %}
+
 
 {% block content %}
     <section>
         <div class="section-heading mb-0 cta text-center rounded mb-4">
-            <h1>{% trans "Oráculo" %}</h1>
-            <h6 style="color:white">{% trans "Pergunte o que deseja saber e o Oraculo responde SIM ou Não" %}</h6>
+            <h1>Oracle</h1>
+            <h6 style="color:white">Posez votre question, l'oracle vous repondra par oui ou par non!!!</h6>
         </div>
         <div class="container">
             <div class="row">
@@ -18,7 +18,7 @@
                     right: 0;
                     color: white;
                     width: 25%;
-                    font-size: 25px;">{% trans 'A sua pergunta' %} : {{user_question}}
+                    font-size: 25px;">Votre question : {{user_question}}
                 </div>
                 <div class="col section-heading text-center rounded mb-4">
                     
@@ -50,8 +50,8 @@
                     <p class="mb-0">
                         <form>
                             {% csrf_token %}
-                            <input type="text" class="message-send" name ="question" placeholder="{% trans 'Ponha aqui sua pergunta...'%}" style="font-size: 20px;padding-left: 20px;width: 500px;border-radius: 20px 20px 20px 20px;">
-                            <button type="submit" name="bouton_submit" value="bouton_submit" style="font-size: 25px; border-radius: 15px 15px 15px 15px;">{% trans 'Enviar'%}</button>
+                            <input type="text" class="message-send" name ="question" placeholder="Ecrivez ici votre question..." style="font-size: 20px;padding-left: 20px;width: 500px;border-radius: 20px 20px 20px 20px;">
+                            <button type="submit" name="bouton_submit" value="bouton_submit" style="font-size: 25px; border-radius: 15px 15px 15px 15px;">Envoyer</button>
                         </form>
                     </p>
                 </div>
