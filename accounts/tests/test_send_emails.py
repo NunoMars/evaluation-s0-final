@@ -30,6 +30,4 @@ class SendEmailsTest(TestCase):
     def test_send_one_card_daily_email(self):
         send_one_card_daily_email()
         self.assertTrue(send_one_card_daily_email() == "Tous les mails sont envoyés")
-        cont_entries =len(History.objects.all())
-        print(cont_entries)
-        self.assertTrue(cont_entries == 1)        
+    
