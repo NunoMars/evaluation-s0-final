@@ -21,6 +21,9 @@ class CardsPrintTest(TestCase):
 
     def test_response_card(self):
         self.card_to_test = MajorArcana.objects.get(card_name="carte13")
+        
+        self.assertTrue(str(self.card_to_test) == "carte13")
+
         self.assertTrue(
             response_card(self.name, self.card_to_test.id, "love")
             == {

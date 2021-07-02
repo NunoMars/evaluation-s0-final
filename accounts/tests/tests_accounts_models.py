@@ -17,6 +17,9 @@ class UserCreationTest(TestCase):
         self.assertEqual(user.first_name, "first_name")
         self.assertEqual(user.second_name, "second_name")
         self.assertEqual(user.password, "12345678")
+        self.assertEqual(str(user), "email@email.com")
+        fullname =  user.get_full_name()
+        self.assertEqual(fullname, "first_name second_name")
 
     def test_custom_user_manager(self):
 
@@ -38,3 +41,5 @@ class SuperUserCreationTest(TestCase):
 
         self.user_to_test2 = CustomUser.objects.get(email="email10@email.com")
         self.assertTrue(self.user_to_test2.is_superuser)
+        self.assertTrue(self.user_to_test2.is_staff)
+        self.assertTrue(self.user_to_test2.is_active)

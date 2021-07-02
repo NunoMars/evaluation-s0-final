@@ -92,3 +92,5 @@ class EmailChangeFormTest(TestCase):
         form = EmailChangeForm(self.user5, data=form_data)
         self.assertTrue(form.is_valid())
         self.assertTrue(self.user5.email, "123@hotmail.fr")
+
+        

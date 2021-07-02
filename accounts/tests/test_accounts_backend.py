@@ -20,4 +20,6 @@ class UserBackendTest(TestCase):
         self.assertTrue(
             (CustomUserAuth.authenticate("email5@email.com", "123456785"), self.user)
         )
-        self.assertIsNone((CustomUserAuth.authenticate("toto@toto.com")))
+        test_none = CustomUserAuth.authenticate("toto@toto.com")
+
+        self.assertTrue(test_none == None)

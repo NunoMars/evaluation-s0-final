@@ -1,5 +1,5 @@
 from accounts.models import CustomUser, DailySortedCards
-from django.test import TestCase, client
+from django.test import TestCase, Client
 from django.urls import reverse
 from clairvoyance.models import MajorArcana
 from accounts.models import History, DailySortedCards
@@ -23,6 +23,7 @@ class ClairvoyancePagesTest(TestCase):
             second_name="second_name",
             password="12345678",
         )
+        self.client = Client()
         self.client.login(username="email@email.com", password="12345678")
         rand_card = MajorArcana.objects.order_by("?")[0]
         h = History.objects.create(
