@@ -44,7 +44,13 @@ INSTALLED_APPS = [
     "ball8.apps.Ball8Config",
     "clairvoyance.apps.ClairvoyanceConfig",
     "accounts.apps.AccountsConfig",
+    "django_crontab",
 ]
+##################################################
+CRONJOBS = [
+    ('30 8 * * *', 'accounts.send_emails.send_one_card_daily_email')
+]
+##################################################
 
 ######################AUTH#########################
 AUTH_USER_MODEL = "accounts.CustomUser"

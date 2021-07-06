@@ -6,13 +6,13 @@
 {% block content %}
     <!-- Card deck-->
     <section class="container-fluid" id="card_deck">
-        <div class="col p-1 justify-content-center align-items-center text-center">  
+        <div class="col-sm justify-content-center align-items-center text-center">  
             <h1 class="text-white" > Les cartes du tarot </h1>
             <h3 class="text-white"> Cliquez sur la carte afin de mieux les connaitre! </h3>
         </div>
         <div class="row">
             {% for card in cards %}                
-                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                
+                <div class="col-sm justify-content-center align-items-center text-center" style="position:relative;">                                                
                     <a href="{% url 'card_detail' card=card.id %}"><img class="img-fluid" src="{{card.card_image.url}}">
                         <h3>{{card.card_name}}</h3></a>
                 </div>

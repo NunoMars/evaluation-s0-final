@@ -14,21 +14,19 @@
 {% block content %}
     <!-- Card detail-->
     <section class="container-fluid" id="card_deck">        
-        <div class="row p-1 justify-content-center align-items-center text-center">
+        <div class="row-md justify-content-center align-items-center text-center">
             <h1>{{card.card_name}}</h1>
-            </div>       
-            <div class="row p-1 justify-content-center text-white align-items-center text-center">                                                
-                <div><img class="img-fluid pull-left" width ="20%" src="{{card.card_image.url}}">
-                    {{card.card_signification_gen}}
-                    <h3>Les aspects negatifs de {{card.card_name}}</h3>
-                    {{card.card_signification_warnings}}
-                    <h3>{{card.card_name}} en amour:</h3>
-                    <p>{{card.card_signification_love}}</p>
-                    <h3>{{card.card_name}} au Travail</h3>
-                    <p>{{card.card_signification_work}}</p> 
-                </div>    
-                                       
-            </div>        
+        </div>       
+        <div class="row-md justify-content-center text-white align-items-center text-center">                                                
+            <div><img class="img-fluid pull-left" width ="20%" src="{{card.card_image.url}}">
+                {{card.card_signification_gen}}
+                <h3>Les aspects negatifs de {{card.card_name}}</h3>
+                {{card.card_signification_warnings}}
+                <h3>{{card.card_name}} en amour:</h3>
+                <p>{{card.card_signification_love}}</p>
+                <h3>{{card.card_name}} au Travail</h3>
+                <p>{{card.card_signification_work}}</p> 
+            </div>     
         </div>
     </section>
 {% endblock%}
