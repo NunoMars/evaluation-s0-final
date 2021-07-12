@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 ]
 ##################################################
 CRONJOBS = [
-    ('30 8 * * *', 'django.core.management.call_command', ['send_daily_email'])
+    ('30 8 * * *', 'accounts.cron.send_emails')
 ]
 ##################################################
 
