@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     "ball8.apps.Ball8Config",
     "clairvoyance.apps.ClairvoyanceConfig",
     "accounts.apps.AccountsConfig",
-    "django_crontab",
 ]
 ##################################################
 CRONJOBS = [
