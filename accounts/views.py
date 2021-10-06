@@ -11,7 +11,6 @@ def create_account_view(request):
     """
     Ceates user account
     """
-    language = request.LANGUAGE_CODE
 
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
