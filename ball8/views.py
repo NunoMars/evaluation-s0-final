@@ -8,9 +8,8 @@ from .models import Sentences
 def ball8(request):
     args = {}
 
-    if request.method == "GET":
+    if request.method == "GET" and request.GET.get("bouton_submit"):
 
-        if request.GET.get("bouton_submit"):
             user_question = request.GET["question"]
             page_title = "ORACLE"
             args["page_title"] = page_title

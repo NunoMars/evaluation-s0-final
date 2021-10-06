@@ -37,8 +37,7 @@ def polarity_calcul(list_of_polarity):
     items_on_list = len(list_of_polarity)
 
     def percentage(items_on_list, count_list):
-        percentage = count_list * 100 / items_on_list
-        return percentage
+        return count_list * 100 / items_on_list
 
     how_positif = list_of_polarity.count("Positif")
     if how_positif != 0:
@@ -81,9 +80,7 @@ def average(chosed_card_deck):
     """
     calcul the cards average.             
     """
-    ids_list = []
-    for card in chosed_card_deck:
-        ids_list.append(card.id)
+    ids_list = [card.id for card in chosed_card_deck]
 
     return sum(ids_list) / chosed_card_deck.count()
 

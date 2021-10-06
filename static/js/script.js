@@ -197,7 +197,7 @@ function oneCardResponse(data) {
         "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
         "<a href='#'><img class='img-fluid' src='" + '/static/img/cards/Back.jpg' + "'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
-        " alt='' width='20%'/>" +
+        " alt='' width='18%'/>" +
         "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
         "<div class='mb-0'><h3>" + "Attention" + "</h3></div>" +
         "<p class='mb-0'>" + data.card_signification_warnings + "</p>" +
@@ -232,7 +232,7 @@ function responseCard(data) {
         "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci votre votre message, ce que le Tarot a vous dire!" + "</h2>" +
         "<a href='#'><img class='img-fluid' src='/static/img/cards/Back.jpg'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
-        " alt='' height='15%' width='15%'/>" +
+        " alt='' height='18%' width='18%'/>" +
         "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
         "<div class='mb-0'><h3>" + "Réponse" + "</h3></div>" +
         "<p class='mb-0'>" + data.chosed_theme_signification + "</p>" +

@@ -7,8 +7,7 @@
 <style>
     .imagefloat {
         float: left;
-        margin-right: 10px;
-        margin-left: 10px;
+        margin: 20px;
     }
 </style>
 {% block content %}
@@ -17,8 +16,8 @@
         <div class="row-md justify-content-center align-items-center text-center">
             <h1>{{card.card_name}}</h1>
         </div>       
-        <div class="row-md justify-content-center text-white align-items-center text-center">                                                
-            <div><img class="img-fluid pull-left" width ="20%" src="{{card.card_image.url}}">
+        <div class="row-md mx-auto justify-content-center text-white align-items-center text-center">                                                
+            <div><img class="imagefloat pull-left" width ="15%" src="{{card.card_image.url}}">
                 {{card.card_signification_gen}}
                 <h3>Les aspects negatifs de {{card.card_name}}</h3>
                 {{card.card_signification_warnings}}

@@ -82,7 +82,6 @@ def clairvoyant(input_value):
     if input_value == "rec_no":
         return {"subject": "rec_no", "user_name": user_name}
 
-        result = clairvoyante_sort_cards(user_name, deck_choice, chosed_theme)
         # recording session
     if input_value == "rec":
         if chosed_theme == "one":

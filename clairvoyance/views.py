@@ -16,9 +16,7 @@ def index(request):
 
 
 def clairvoyance(request):
-    args = {}
-    page_title = "Tarot"
-    args["page_title"] = page_title
+    args = {'page_title': 'Tarot'}
 
     return render(request, "clairvoyance/clairvoyance.html", args)
 
@@ -69,13 +67,12 @@ def clairvoyante(request):
                     }
                 )
 
-            else:
-                return JsonResponse(result)
+
+            return JsonResponse(result)
 
         except ValueError:
             pass
-    else:
-        pass
+
 
 
 @login_required()
