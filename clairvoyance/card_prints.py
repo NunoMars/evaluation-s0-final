@@ -7,26 +7,18 @@ def response_card(name, index_result_card, chosed_theme):
     Draw the Tarot response, the last card.
     """
     card = MajorArcana.objects.get(pk=index_result_card)
-
-    card_name = card.card_name
-
-    if chosed_theme == "love":
-
-        chosed_theme_signification = card.card_signification_love
-
-    if chosed_theme == "work":
-
-        chosed_theme_signification = card.card_signification_work
-
-    if chosed_theme == "gen":
-
-        chosed_theme_signification = card.card_signification_gen
+    themes = {
+        "love" : card.card_signification_love,
+        "work" : card.card_signification_work,
+        "gen" : card.card_signification_gen,
+    }
 
     return {
         "user_name": name,
         "card_image": card.card_image.url,
         "card_name": card.card_name,
-        "chosed_theme_signification": chosed_theme_signification,
+        "chosed_theme_signification": themes[chosed_theme],
+        "warnings" : card.card_signification_warnings,
     }
 
 
@@ -40,42 +32,25 @@ def polarity_calcul(list_of_polarity):
         return count_list * 100 / items_on_list
 
     how_positif = list_of_polarity.count("Positif")
-    if how_positif != 0:
-        percentage_positif = round(percentage(items_on_list, how_positif), 2)
-    else:
-        percentage_positif = 0
-
     how_negatif = list_of_polarity.count("Negatif")
-    if how_negatif != 0:
-        percentage_negatif = round(percentage(items_on_list, how_negatif), 2)
-    else:
-        percentage_negatif = 0
+    percentage_positif = round(percentage(items_on_list, how_positif), 2)
+    percentage_negatif = round(percentage(items_on_list, how_negatif), 2)
 
-    how_neutral = list_of_polarity.count("Neutral")
+    print(items_on_list)
+    print(how_positif)
+    print(how_negatif)
+    print(percentage_positif)
+    print(percentage_negatif)
+    
+    if how_negatif != 0 and how_negatif < how_positif:
+        return "Résultat plutôt positif avec "+ str(percentage_positif) + "% des cartes!!"
 
-    if how_neutral != 0:
-        percentage_neutral = round(percentage(items_on_list, how_neutral), 2)
-    else:
-        percentage_neutral = 0
+    elif how_positif != 0 and how_positif < how_negatif:
+        return "Résultat plutôt négatif avec "+ str(percentage_negatif) + "% des cartes!!"    
 
-    if percentage_positif == 0 or percentage_negatif == 0 or percentage_neutral == 0:
-        if list_of_polarity[0] == "Positif":
-            msg = [
-                "Résultat plutôt positif avec "
-                + str(percentage_positif)
-                + "% des cartes!!"
-            ]
-        if list_of_polarity[0] == "Negatif":
-            msg = [
-                " Tirage négatif avec "
-                + str(percentage_negatif)
-                + "%, mais le tarot vous montre le chemin ...!"
-            ]
-        if list_of_polarity[0] == "Neutral":
-            msg = ["Il ya un equilibre dans votre tirage!"]
-        return msg[0]
+    return "Il ya un equilibre dans votre tirage!"
 
-
+ 
 def average(chosed_card_deck):
     """
     calcul the cards average.             
@@ -90,7 +65,7 @@ def splitBy(li, n=1):
     """
     Generate the split of the cards list.
     """
-    return [li[i : i + n] for i in range(0, len(li), n)]
+    return [li[i : i + n] for i in range(1, len(li), n)]
 
 
 def create_cards_message(card, chosed_theme):
@@ -148,7 +123,7 @@ def create_final_response(list_of_cards, name, list_of_polarity, chosed_card_dec
     f = "".join(final_card_deck)
 
     polarity = polarity_calcul(list_of_polarity)
-
+    print("liste des polarités " + str(len(list_of_polarity)) + "et liste de cartes" + str(len(list_of_cards)))
     final_tittle = {
         "final_response_tittle": "<div class='col'><div class='cta-inner text-center rounded'>"
         + "<h4>"
@@ -176,16 +151,16 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
     list_of_polarity = []
 
     for card in chosed_card_deck:
-        card_polarity = card.card_polarity
-        list_of_polarity.append(card_polarity)
+        list_of_polarity.append(card.card_polarity)
 
-        message_card = create_cards_message(card, chosed_theme)
-        list_of_cards.append(message_card)
-        final = create_final_response(
-            list_of_cards, name, list_of_polarity, chosed_card_deck
-        )
-        index_final_card = final[1]
-        response = response_card(name, index_final_card, chosed_theme)
+    print("premiére" + str(len(list_of_polarity)))
+    message_card = create_cards_message(card, chosed_theme)
+    list_of_cards.append(message_card)
+    final = create_final_response(
+        list_of_cards, name, list_of_polarity, chosed_card_deck
+    )
+    index_final_card = final[1]
+    response = response_card(name, index_final_card, chosed_theme)
 
-        final[0]["response_card"] = response
+    final[0]["response_card"] = response
     return final[0], index_final_card

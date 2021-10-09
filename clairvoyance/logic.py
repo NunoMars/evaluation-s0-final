@@ -31,8 +31,14 @@ def clairvoyant(input_value):
     rand_card = MajorArcana.objects.order_by("?")[0]
 
     cards_in_deck = card_deck.count()
-    cut_point = rand(1, cards_in_deck)
-    left_deck = card_deck[1:cut_point]
+    while True:
+        cut_point = rand(0, cards_in_deck)
+        if cut_point == 0:
+            continue
+        else:
+            break
+
+    left_deck = card_deck[0:cut_point]
     right_deck = card_deck[cut_point:cards_in_deck]
 
     if input_value not in list_of_words:

@@ -195,7 +195,7 @@ function menuChoices(data) {
 function oneCardResponse(data) {
     card_response = "<div class='col cta-inner text-center rounded'>" +
         "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci ce que le Tarot a vous dire!" + "</h2>" +
-        "<a href='#'><img class='img-fluid' src='" + '/static/img/cards/Back.jpg' + "'" +
+        "<a href='#'><img class='img-fluid card' src='" + '/static/img/cards/Back.jpg' + "'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
         " alt='' width='18%'/>" +
         "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
@@ -218,10 +218,10 @@ function chooseCutDeck(data) {
         "<p class='mb-0'>" + "Cliques sur celui de votre choix svp!" + "</p></div></div>" +
         "<div class='row'>" +
         "<div class='col''><div class='cta-inner text-center rounded'>" +
-        "<h1>Ce paquet a " + data.len_left_deck + " cartes!" +
+        "<h4>Ce paquet a " + data.len_left_deck + " cartes!" +
         "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card img-fluid' onClick='sendMessageLeft();'/></div></div></div>" +
         "<div class='col''><div class='cta-inner text-center rounded'>" +
-        "<h1>Celui ci a " + data.len_right_deck + " cartes!" +
+        "<h4>Celui ci a " + data.len_right_deck + " cartes!" +
         "<div class='mb-0'><input id='bouton_card' type='submit' class='bouton_card img-fluid' onClick='sendMessageRight();'/></div></div></div>" +
         "</div>"
     clairvoyantMessage(deck_choice);
@@ -229,13 +229,16 @@ function chooseCutDeck(data) {
 
 function responseCard(data) {
     response_card_message = "<div class='col cta-inner text-center rounded'>" +
-        "<h2>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) + " vois-ci votre votre message, ce que le Tarot a vous dire!" + "</h2>" +
-        "<a href='#'><img class='img-fluid' src='/static/img/cards/Back.jpg'" +
+        "<h3>" + data.user_name.charAt(0).toUpperCase() + data.user_name.slice(1) +
+        " vois-ci votre votre message, ce que le Tarot a vous dire!</h3>" +
+        "<a href='#'><img class='img-fluid card' src='/static/img/cards/Back.jpg'" +
         "onmouseover=" + '"this.src=' + "'" + data.card_image + "'" + '"' +
-        " alt='' height='18%' width='18%'/>" +
-        "<p><h3>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h3></p>" +
+        " alt='arcana card'/>" +
+        "<p><h2>" + data.card_name.charAt(0).toUpperCase() + data.card_name.slice(1) + "</h2></p>" +
         "<div class='mb-0'><h3>" + "Réponse" + "</h3></div>" +
         "<p class='mb-0'>" + data.chosed_theme_signification + "</p>" +
+        "<h3>Attention Toutefois</h3>" +
+        "<p class='mb-0'>" + data.warnings + "</p>" +
         "</div>"
     clairvoyantMessage(response_card_message)
 };

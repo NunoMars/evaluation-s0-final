@@ -29,17 +29,22 @@ span {
 #bouton_card {
     background-image: url("/static/img/cards/Back.jpg");
     background-size: contain;
-    min-width: 90px;
-    min-height: 160px;
-    max-width: 60%;
-    max-height: 60%;
+    max-height: 100%;
+    width: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10%;
 }
 
 .card {
+    text-align: center;
+    margin: auto;
+    display: flex;
     min-width: 90px;
     min-height: 160px;
     max-width: 180px;
     max-height: 320%;
+    border-radius: 5%;
 }
 
 span {
@@ -842,7 +847,7 @@ Chat Title
 .chat-title h1,
 .chat-title h2 {
     font-weight: normal;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .chat-title h2 {
@@ -911,7 +916,7 @@ Messages
     border-radius: 20px 20px 20px 0;
     background: #eee;
     margin: 8px;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
     margin-left: 50px;
     position: relative;
@@ -922,7 +927,7 @@ Messages
 .messages .message .timestamp {
     position: absolute;
     bottom: -20px;
-    font-size: 10px;
+    font-size: 15px;
     color: #555;
     right: 30px;
 }
@@ -931,7 +936,7 @@ Messages
     position: absolute;
     bottom: -25px;
     right: 15px;
-    font-size: 10px;
+    font-size: 15px;
     color: #999;
 }
 
@@ -1006,7 +1011,7 @@ Messages
 
 .messages .message.loading span {
     display: block;
-    font-size: 0;
+    font-size: 15px;
     width: 50px;
     height: 30px;
     position: relative;
@@ -1069,7 +1074,7 @@ Message Box
     border: none;
     outline: none !important;
     resize: none;
-    font-size: 16px;
+    font-size: 15px;
     height: 32px;
     margin: 0;
     padding-right: 20px;
@@ -1090,7 +1095,7 @@ Message Box
     border: none;
     box-shadow: 0px 4px 2px 2px rgba(0, 0, 0, 0.4);
     background-color: #4A90E2;
-    font-size: 20px;
+    font-size: 15px;
     font-style: inherit;
     text-transform: uppercase;
     line-height: 1;
@@ -1288,7 +1293,7 @@ Bounce
 }
 
 .avenue-messenger div {
-    font-size: 16px;
+    font-size: 15px;
     color: #232323;
 }
 
@@ -1360,7 +1365,7 @@ Bounce
 .menu .items span {
     color: #111;
     z-index: 12;
-    font-size: 14px;
+    font-size: 10px;
     text-align: center;
     position: absolute;
     right: 0;
@@ -1381,7 +1386,7 @@ Bounce
 }
 
 .menu .button {
-    font-size: 30px;
+    font-size: 15px;
     z-index: 12;
     text-align: right;
     color: #333;
@@ -1435,7 +1440,7 @@ screen and (max-device-width: 800px) {
     }
     .messages .message,
     .message-box .message-input {
-        font-size: 12px;
+        font-size: 15px;
     }
     .footer {
         display: none;

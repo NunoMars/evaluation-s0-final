@@ -38,40 +38,43 @@ def card_detail(request, card):
 
 def clairvoyante(request):
 
-    if request.method == "POST":
-        try:
-            input_value = request.POST.get("messageInput")
-            result = clairvoyant(input_value)
+    if request.method != "POST":
+        return
+    try:
+        input_value = request.POST.get("messageInput")
+        result = clairvoyant(input_value)
 
-            if input_value == "rec":
-                if not request.user.is_authenticated:
-                    return JsonResponse(
-                        {
-                            "subject": "Error_record",
-                            "message": "Vos devez vous loguer afin de pouvoir enregistrer"
-                            + " le tirage, si pas de compte vous devez en créer un en haut sur la barre de Menu!",
-                        }
-                    )
-                user = request.user
-                user = CustomUser.objects.get(email=user.email)
+        if input_value == "rec":
+            return _extracted_from_clairvoyante_9(request, result)
+        return JsonResponse(result)
 
-                h_save = History(
-                    user=user, sorted_card=result[0], chosed_theme=result[1]
-                )
-                h_save.save()
+    except ValueError:
+        pass
 
-                return JsonResponse(
-                    {
-                        "subject": "succes_rec",
-                        "message": "Le tirage est à présent enregistré!",
-                    }
-                )
+# TODO Rename this here and in `clairvoyante`
+def _extracted_from_clairvoyante_9(request, result):
+    if not request.user.is_authenticated:
+        return JsonResponse(
+            {
+                "subject": "Error_record",
+                "message": "Vos devez vous loguer afin de pouvoir enregistrer"
+                + " le tirage, si pas de compte vous devez en créer un en haut sur la barre de Menu!",
+            }
+        )
+    user = request.user
+    user = CustomUser.objects.get(email=user.email)
 
+    h_save = History(
+        user=user, sorted_card=result[0], chosed_theme=result[1]
+    )
+    h_save.save()
 
-            return JsonResponse(result)
-
-        except ValueError:
-            pass
+    return JsonResponse(
+        {
+            "subject": "succes_rec",
+            "message": "Le tirage est à présent enregistré!",
+        }
+    )
 
 
 
