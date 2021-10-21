@@ -30,7 +30,7 @@ span {
     background-image: url("/static/img/cards/Back.jpg");
     background-size: contain;
     max-width: 100%;
-    height: auto;
+    height: 110px;
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 10%;

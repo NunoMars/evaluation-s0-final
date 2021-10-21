@@ -83,7 +83,7 @@ function getMessageClairvoyant(msg) {
                 clairvoyantMessage(data.message);
             }
             if (data.subject == "cut") {
-                sendMessageCut();
+                displayMessageCut(data);
             }
             if (data.subject == "choose_deck") {
                 chooseCutDeck(data);

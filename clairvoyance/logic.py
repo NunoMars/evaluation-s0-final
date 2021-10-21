@@ -24,8 +24,6 @@ def clairvoyant(input_value):
 
 
     rand_card = MajorArcana.objects.order_by("?")[0]
-    left_deck = LeftDeck.objects.all()
-    right_deck = RightDeck.objects.all()
 
     if input_value not in list_of_words:
         user_name = input_value
@@ -55,18 +53,24 @@ def clairvoyant(input_value):
 
     elif input_value in ["love", "work", "gen"]:
         chosed_theme = input_value
-        return {"subject" : "cut"}
+
+        return {
+            "subject" : "cut",
+            "user_name" : user_name
+            }
 
     elif input_value == "cut":
-        prepare_decks()
+
+        decks = prepare_decks()
+        len_left_deck = decks[0].count()
+        len_right_deck = decks[1].count()
         return {
             "subject" : "choose_deck",
-            "len_left_deck" : str(len(left_deck)),
-            "len_right_deck" : str(len(right_deck)),
-        },
+            "len_left_deck" : str(len_left_deck),
+            "len_right_deck" : str(len_right_deck)
+        }
 
     elif input_value == "rec_no":
-
         return {
             "subject" : "rec_no",
             "user_name" : user_name,
@@ -76,13 +80,13 @@ def clairvoyant(input_value):
         left_deck = LeftDeck.objects.all()
         return {
             "subject" : "final_response",
-            "message" :  clairvoyante_sort_cards(user_name, left_deck, chosed_theme)[0],
+            "message" :  clairvoyante_sort_cards(user_name, left_deck, chosed_theme),
         }
 
     elif input_value == "right":
         right_deck = RightDeck.objects.all()
         return {
             "subject" : "final_response",
-            "message" :  clairvoyante_sort_cards(user_name, right_deck, chosed_theme)[0],
+            "message" :  clairvoyante_sort_cards(user_name, right_deck, chosed_theme),
         }
 

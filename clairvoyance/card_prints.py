@@ -1,12 +1,15 @@
-from random import shuffle as suf, choice, randint as rand
-from .models import MajorArcana,LeftDeck,RightDeck
+import numpy
+from random import randint as rand
+from .models import MajorArcana
 
     
-def response_card(name, index_result_card, chosed_theme):
+def response_card(name, chosed_card_deck, chosed_theme):
     """
     Draw the Tarot response, the last card.
     """
-    card = MajorArcana.objects.get(pk=index_result_card)
+
+    card = average_result_card(chosed_card_deck)
+
     themes = {
         "love" : card.card_signification_love,
         "work" : card.card_signification_work,
@@ -36,12 +39,7 @@ def polarity_calcul(list_of_polarity):
     percentage_positif = round(percentage(items_on_list, how_positif), 2)
     percentage_negatif = round(percentage(items_on_list, how_negatif), 2)
 
-    print("Nombre d'items_on_list " + str(items_on_list))
-    print(how_positif)
-    print(how_negatif)
-    print(percentage_positif)
-    print(percentage_negatif)
-    
+   
     if how_negatif != 0 and how_negatif < how_positif:
         return "Résultat plutôt positif avec "+ str(percentage_positif) + "% des cartes!!"
 
@@ -51,14 +49,17 @@ def polarity_calcul(list_of_polarity):
     return "Il ya un equilibre dans votre tirage!"
 
  
-def average(chosed_card_deck):
+def average_result_card(chosed_card_deck):
     """
-    calcul the cards average.             
+    calcul and return the response card.             
     """
-    print("liste des cartes " + str(len(chosed_card_deck)))
-    ids_list = [card.id for card in chosed_card_deck]
 
-    return sum(ids_list) / len(chosed_card_deck)
+    list_of_cards_ids = []
+    for card in chosed_card_deck:
+        card = MajorArcana.objects.get(card_name=card)
+        list_of_cards_ids.append(card.id)
+    mean = round(numpy.mean(list_of_cards_ids))
+    return MajorArcana.objects.get(id = mean)
 
 
 # construire tableau
@@ -103,13 +104,14 @@ def create_cards_message(card, chosed_theme):
     return msg[0]
 
 
-def create_final_response(list_of_cards, name, list_of_polarity, chosed_card_deck):
+def create_final_response(list_of_cards, name, list_of_polarity):
     """ 
     Construct the cards board and generate the response heads tittle.
     """
 
     column = 6
-    index_result_card = round(average(chosed_card_deck))
+
+
     card_board = splitBy(list_of_cards, column)
 
     final_card_deck = []
@@ -122,8 +124,8 @@ def create_final_response(list_of_cards, name, list_of_polarity, chosed_card_dec
     f = "".join(final_card_deck)
 
     polarity = polarity_calcul(list_of_polarity)
-    print("liste des polarités " + str(len(list_of_polarity)) + "et liste de cartes" + str(len(list_of_cards)))
-    final_tittle = {
+
+    return {
         "final_response_tittle": "<div class='col'><div class='cta-inner text-center rounded'>"
         + "<h4>"
         + name.capitalize()
@@ -139,8 +141,6 @@ def create_final_response(list_of_cards, name, list_of_polarity, chosed_card_dec
         + "</div>"
     }
 
-    return final_tittle, index_result_card
-
 
 def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
     """
@@ -150,17 +150,16 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
     list_of_polarity = []
 
     for card in chosed_card_deck:
+        card = MajorArcana.objects.get(card_name=card)
         list_of_polarity.append(card.card_polarity)
+        message_card = create_cards_message(card, chosed_theme)
+        list_of_cards.append(message_card)
 
-    print("nombre de crates " + str(len(chosed_card_deck)))
-    print("Nombre de polarités " + str(len(list_of_polarity)))
-    message_card = create_cards_message(card, chosed_theme)
-    list_of_cards.append(message_card)
     final = create_final_response(
-        list_of_cards, name, list_of_polarity, chosed_card_deck
+        list_of_cards, name, list_of_polarity
     )
-    index_final_card = final[1]
-    response = response_card(name, index_final_card, chosed_theme)
 
-    final[0]["response_card"] = response
-    return final[0], index_final_card
+    response = response_card(name, chosed_card_deck, chosed_theme)
+
+    final["response_card"] = response
+    return final
