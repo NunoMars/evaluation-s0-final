@@ -25,3 +25,22 @@ class MajorArcana(models.Model):
         )
 
     image_tag.short_description = "Image"
+
+
+
+
+class LeftDeck(models.Model):
+    """ Class to define the left deck."""
+
+    card_id = models.ForeignKey(MajorArcana, on_delete=models.CASCADE)
+
+    def __str__(self):  
+        return self.card_id.card_name
+
+class RightDeck(models.Model):
+    """ Class to define the right deck."""
+    
+    card_id = models.ForeignKey(MajorArcana, on_delete=models.CASCADE)
+
+    def __str__(self):  
+        return self.card_id.card_name

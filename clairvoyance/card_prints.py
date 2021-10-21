@@ -1,7 +1,7 @@
 from random import shuffle as suf, choice, randint as rand
-from .models import MajorArcana
+from .models import MajorArcana,LeftDeck,RightDeck
 
-
+    
 def response_card(name, index_result_card, chosed_theme):
     """
     Draw the Tarot response, the last card.
@@ -36,7 +36,7 @@ def polarity_calcul(list_of_polarity):
     percentage_positif = round(percentage(items_on_list, how_positif), 2)
     percentage_negatif = round(percentage(items_on_list, how_negatif), 2)
 
-    print(items_on_list)
+    print("Nombre d'items_on_list " + str(items_on_list))
     print(how_positif)
     print(how_negatif)
     print(percentage_positif)
@@ -55,9 +55,10 @@ def average(chosed_card_deck):
     """
     calcul the cards average.             
     """
+    print("liste des cartes " + str(len(chosed_card_deck)))
     ids_list = [card.id for card in chosed_card_deck]
 
-    return sum(ids_list) / chosed_card_deck.count()
+    return sum(ids_list) / len(chosed_card_deck)
 
 
 # construire tableau
@@ -72,8 +73,6 @@ def create_cards_message(card, chosed_theme):
     """
     Draw a bouton card with the name.
     """
-    card_name = card.card_name
-    card_signification_warnings = card.card_signification_warnings
 
     msg = [
         "<div class='col'>"
@@ -89,12 +88,12 @@ def create_cards_message(card, chosed_theme):
         + "this.src='/static/img/cards/Back.jpg'"
         + " alt=''/>"
         + "<span><p>"
-        + card_name.capitalize()
+        + card.card_name.capitalize()
         + "</p>"
         + "<p>"
         + "Mise en Garde!"
         + "</p>"
-        + card_signification_warnings
+        + card.card_signification_warnings
         + "<p>"
         + "ce que signifie la carte!"
         + "</p>"
@@ -153,7 +152,8 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
     for card in chosed_card_deck:
         list_of_polarity.append(card.card_polarity)
 
-    print("premiére" + str(len(list_of_polarity)))
+    print("nombre de crates " + str(len(chosed_card_deck)))
+    print("Nombre de polarités " + str(len(list_of_polarity)))
     message_card = create_cards_message(card, chosed_theme)
     list_of_cards.append(message_card)
     final = create_final_response(
