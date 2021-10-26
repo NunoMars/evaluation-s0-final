@@ -1,6 +1,7 @@
 from django.test import TestCase
 from clairvoyance.models import MajorArcana
 from clairvoyance.logic import clairvoyant
+from clairvoyance.prepare_decks_cards import prepare_decks
 
 
 class ClairvoyantTest(TestCase):
@@ -15,23 +16,34 @@ class ClairvoyantTest(TestCase):
                 card_signification_work="Signification_work" + str(i),
                 card_image=str(i) + ".jpg",
             )
+            i += 1
+
+        decks = prepare_decks()
+        self.right_deck = decks[1]
+        self.left_deck = decks[0]
 
     def test_clairvoyant_usermane_response(self):
         response = clairvoyant("nuno")
         self.assertTrue(response, {"subject": "menu", "user_name": "nuno"})
 
     def test_clairvoyance_one_response(self):
-        clairvoyant("nuno")
-        response = clairvoyant("one")
-        self.assertTrue(response, {"subject": "one_card"})
+        self._extracted_from_test_clairvoyance_love_response_left_2(
+            "nuno", "one", "one_card"
+        )
 
     def test_clairvoyance_love_response_cut(self):
-        clairvoyant("nuno")
-        response = clairvoyant("love")
-        self.assertTrue(response, {"subject": "cut"})
+        self._extracted_from_test_clairvoyance_love_response_left_2(
+            "nuno", "love", "cut"
+        )
 
     def test_clairvoyance_love_response_left(self):
         clairvoyant("nuno")
-        clairvoyant("love")
-        response = clairvoyant("left")
-        self.assertTrue(response, {"subject": "final_response"})
+        self._extracted_from_test_clairvoyance_love_response_left_2(
+            "love", "left", "final_response"
+        )
+
+    # TODO Rename this here and in `test_clairvoyance_one_response`, `test_clairvoyance_love_response_cut` and `test_clairvoyance_love_response_left`
+    def _extracted_from_test_clairvoyance_love_response_left_2(self, arg0, arg1, arg2):
+        clairvoyant(arg0)
+        response = clairvoyant(arg1)
+        self.assertTrue(response, {'subject': arg2})

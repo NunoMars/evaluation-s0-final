@@ -1,8 +1,8 @@
 from django.test import TestCase
-from accounts.models import CustomUser
-from clairvoyance.models import MajorArcana
-from clairvoyance.card_prints import response_card
 
+from clairvoyance.models import MajorArcana, LeftDeck, RightDeck
+from clairvoyance.card_prints import response_card
+from clairvoyance.prepare_decks_cards import prepare_decks
 
 class CardsPrintTest(TestCase):
     def setUp(self):
@@ -19,17 +19,22 @@ class CardsPrintTest(TestCase):
 
         self.name = "Nuno"
 
+        self.right_deck = prepare_decks()[1]
+        self.left_deck = prepare_decks()[0]
+
     def test_response_card(self):
         self.card_to_test = MajorArcana.objects.get(card_name="carte13")
         
         self.assertTrue(str(self.card_to_test) == "carte13")
+        to_test = response_card(self.name, self.left_deck, "love")
 
         self.assertTrue(
-            response_card(self.name, self.card_to_test.id, "love")
+            to_test[0]
             == {
-                "user_name": "Nuno",
-                "card_image": "/media/3.jpg",
-                "card_name": "carte13",
-                "chosed_theme_signification": "Signification_love3",
+                'user_name': 'Nuno',
+                'card_image': '/media/' + str(to_test[1].card_image),
+                'card_name': to_test[1].card_name,
+                'chosed_theme_signification': to_test[1].card_signification_love,
+                'warnings': to_test[1].card_signification_warnings,
             }
         )

@@ -8,7 +8,7 @@ def response_card(name, chosed_card_deck, chosed_theme):
     Draw the Tarot response, the last card.
     """
 
-    card = average_result_card(chosed_card_deck)
+    card = _average_result_card(chosed_card_deck)
 
     themes = {
         "love" : card.card_signification_love,
@@ -49,7 +49,7 @@ def polarity_calcul(list_of_polarity):
     return "Il ya un equilibre dans votre tirage!"
 
  
-def average_result_card(chosed_card_deck):
+def _average_result_card(chosed_card_deck):
     """
     calcul and return the response card.             
     """
@@ -63,14 +63,14 @@ def average_result_card(chosed_card_deck):
 
 
 # construire tableau
-def splitBy(li, n=1):
+def _splitBy(li, n=1):
     """
     Generate the split of the cards list.
     """
     return [li[i : i + n] for i in range(1, len(li), n)]
 
 
-def create_cards_message(card, chosed_theme):
+def _create_cards_message(card, chosed_theme):
     """
     Draw a bouton card with the name.
     """
@@ -112,7 +112,7 @@ def create_final_response(list_of_cards, name, list_of_polarity):
     column = 6
 
 
-    card_board = splitBy(list_of_cards, column)
+    card_board = _splitBy(list_of_cards, column)
 
     final_card_deck = []
     for i in card_board:
@@ -152,7 +152,7 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
     for card in chosed_card_deck:
         card = MajorArcana.objects.get(card_name=card)
         list_of_polarity.append(card.card_polarity)
-        message_card = create_cards_message(card, chosed_theme)
+        message_card = _create_cards_message(card, chosed_theme)
         list_of_cards.append(message_card)
 
     final = create_final_response(
