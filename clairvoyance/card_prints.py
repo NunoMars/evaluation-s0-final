@@ -22,7 +22,7 @@ def response_card(name, chosed_card_deck, chosed_theme):
         "card_name": card.card_name,
         "chosed_theme_signification": themes[chosed_theme],
         "warnings" : card.card_signification_warnings,
-    }
+    }, card
 
 
 def polarity_calcul(list_of_polarity):
@@ -161,5 +161,5 @@ def clairvoyante_sort_cards(name, chosed_card_deck, chosed_theme):
 
     response = response_card(name, chosed_card_deck, chosed_theme)
 
-    final["response_card"] = response
-    return final
+    final["response_card"] = response[0]
+    return final, response[1]

@@ -2,6 +2,15 @@ from .card_prints import clairvoyante_sort_cards
 from .models import MajorArcana, RightDeck, LeftDeck
 from .prepare_decks_cards import prepare_decks
 
+
+def _extracted_from_clairvoyant_64(arg0):
+    left_deck = arg0.objects.all()
+    final_tarot_response = clairvoyante_sort_cards(user_name, left_deck, chosed_theme)
+    return {
+        "subject" : "final_response",
+        "message" :  final_tarot_response[0],
+    }
+
 def clairvoyant(input_value):
     """
         Construct the bot response.
@@ -29,7 +38,7 @@ def clairvoyant(input_value):
         user_name = input_value
         return {"subject": "menu", "user_name": user_name}
 
-    if input_value == "one":
+    elif input_value == "one":
         return {
             "subject" : "one_card",
             "user_name" : user_name,
@@ -40,16 +49,6 @@ def clairvoyant(input_value):
             "card_signification_work" : rand_card.card_signification_work,
             "card_signification_gen" : rand_card.card_signification_gen,
         }
-
-    # recording session
-    if input_value == "rec":
-        if chosed_theme == "one":
-            card = rand_card
-            theme = "Tirage Rapide"
-
-        card = MajorArcana.objects.filter(id=clairvoyante_sort_cards(user_name, right_deck, chosed_theme)[1])
-        theme = chosed_theme
-        return [card, theme]
 
     elif input_value in ["love", "work", "gen"]:
         chosed_theme = input_value
@@ -77,16 +76,15 @@ def clairvoyant(input_value):
             }
 
     elif input_value == "left":
-        left_deck = LeftDeck.objects.all()
-        return {
-            "subject" : "final_response",
-            "message" :  clairvoyante_sort_cards(user_name, left_deck, chosed_theme),
-        }
-
+        return _extracted_from_clairvoyant_64(LeftDeck)
+    
     elif input_value == "right":
-        right_deck = RightDeck.objects.all()
-        return {
-            "subject" : "final_response",
-            "message" :  clairvoyante_sort_cards(user_name, right_deck, chosed_theme),
-        }
+        return _extracted_from_clairvoyant_64(RightDeck)
 
+    # recording session
+    elif input_value == "rec":
+        if chosed_theme == "one":
+            theme = "Tirage Rapide"
+
+        theme = chosed_theme
+        return [final_tarot_response[1], theme]
