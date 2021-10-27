@@ -3,9 +3,11 @@ from django.urls import path, include, re_path
 from clairvoyance.views import index, contacts
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
+    path('', TemplateView.as_view(template_name='google63b0deadafb5aec1.html'), name='validation'),
     path("", index, name="home"),
     path("admin", admin.site.urls, name="admin"),
     path("accounts/", include("accounts.urls")),
