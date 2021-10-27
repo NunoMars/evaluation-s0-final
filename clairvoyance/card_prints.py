@@ -1,4 +1,3 @@
-import numpy
 from random import randint as rand
 from .models import MajorArcana
 
@@ -58,8 +57,10 @@ def _average_result_card(chosed_card_deck):
     for card in chosed_card_deck:
         card = MajorArcana.objects.get(card_name=card)
         list_of_cards_ids.append(card.id)
-    mean = round(numpy.mean(list_of_cards_ids))
-    return MajorArcana.objects.get(id = mean)
+
+    mean_card = round(sum(list_of_cards_ids)/len(list_of_cards_ids), 2)
+
+    return MajorArcana.objects.get(id = mean_card)
 
 # construire tableau
 def _splitBy(li, n=1):
