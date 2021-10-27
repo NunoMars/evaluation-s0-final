@@ -61,7 +61,6 @@ def _average_result_card(chosed_card_deck):
     mean = round(numpy.mean(list_of_cards_ids))
     return MajorArcana.objects.get(id = mean)
 
-
 # construire tableau
 def _splitBy(li, n=1):
     """
