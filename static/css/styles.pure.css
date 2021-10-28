@@ -3668,12 +3668,12 @@ p {
 .site-heading .site-heading-lower {
     font-size: 5rem;
     font-weight: 100;
-    line-height: 4rem
+    line-height: 4rem;
 }
 
 .page-section {
-    /*! margin-top:5rem; */
-    margin-bottom: 1%
+    margin-top: 5rem;
+    margin-bottom: 5rem;
 }
 
 .section-heading {
@@ -4321,13 +4321,13 @@ a:hover span {
     }
     .message-box .message-input,
     .messages .message {
-        font-size: 12px
+        font-size: medium;
     }
     .footer {
-        display: none
+        display: none;
     }
     .message-box .message-input {
-        height: 18px
+        height: medium;
     }
     .avenue-messenger div.agent-face {
         top: -10px!important

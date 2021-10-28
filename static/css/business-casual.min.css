@@ -44,12 +44,12 @@ p {
 .site-heading .site-heading-lower {
     font-size: 5rem;
     font-weight: 100;
-    line-height: 4rem
+    line-height: 4rem;
 }
 
 .page-section {
     margin-top: 5rem;
-    margin-bottom: 1%
+    margin-bottom: 5rem;
 }
 
 .section-heading {

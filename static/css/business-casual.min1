@@ -44,7 +44,7 @@ p{
     font-weight:100;
     line-height:4rem
 }
-.page-section{margin-top:5rem;margin-bottom:1%}
+.page-section{margin-top:5rem;margin-bottom:5rem;}
 .section-heading{text-transform:uppercase}
 .section-heading .section-heading-upper{display:block;font-size:0.5rem;font-weight:600}
 .section-heading .section-heading-lower{display:block;font-size:rem;font-weight:80}
