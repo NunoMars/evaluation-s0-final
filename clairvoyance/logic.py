@@ -4,8 +4,8 @@ from .prepare_decks_cards import prepare_decks
 
 
 def _extracted_from_clairvoyant_64(arg0):
-    left_deck = arg0.objects.all()
-    final_tarot_response = clairvoyante_sort_cards(user_name, left_deck, chosed_theme)
+    deck = arg0.objects.all()
+    final_tarot_response = clairvoyante_sort_cards(user_name, deck, chosed_theme)
     return {
         "subject" : "final_response",
         "message" :  final_tarot_response[0],
@@ -50,7 +50,7 @@ def clairvoyant(input_value):
             "card_signification_gen" : rand_card.card_signification_gen,
         }
 
-    elif input_value in ["love", "work", "gen"]:
+    elif input_value in ["love", "work", "gen", "one"]:
         chosed_theme = input_value
 
         return {
@@ -82,9 +82,9 @@ def clairvoyant(input_value):
         return _extracted_from_clairvoyant_64(RightDeck)
 
     # recording session
-    elif input_value == "rec":
+    elif input_value == "rec":# il faut que j'enregistre la carte et le theme a chaque fois afin de la retrouver
         if chosed_theme == "one":
             theme = "Tirage Rapide"
 
         theme = chosed_theme
-        return [final_tarot_response[1], theme]
+        return [response[1], theme]
