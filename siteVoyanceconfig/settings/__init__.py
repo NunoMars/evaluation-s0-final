@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "ball8.apps.Ball8Config",
     "clairvoyance.apps.ClairvoyanceConfig",
     "accounts.apps.AccountsConfig",
-]
+    "django-import-export",]
 ##################################################
 CRONJOBS = [
     ('30 8 * * *', 'accounts.cron.send_emails')
