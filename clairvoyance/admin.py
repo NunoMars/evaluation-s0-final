@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import MajorArcana
 from import_export.admin import ImportExportActionModelAdmin
 
-class MajorArcanaAdmin(ImportExportActionModelAdmin):
+class MajorArcanaAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     pass
 
 # Register your models here.
