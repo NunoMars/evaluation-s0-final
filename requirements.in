@@ -20,3 +20,4 @@ whitenoise
 xlrd
 xlwt
 pip-tools
+gunicorn

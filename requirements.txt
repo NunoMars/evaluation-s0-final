@@ -42,6 +42,8 @@ et-xmlfile==1.1.0
     # via
     #   -r requirements.in
     #   openpyxl
+gunicorn==20.1.0
+    # via -r requirements.in
 import-export==0.2.67.dev6
     # via -r requirements.in
 markuppy==1.14
