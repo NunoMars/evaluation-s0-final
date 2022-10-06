@@ -10,21 +10,16 @@ install:
   - pip install -r requirements.txt
 
 addons:
-  postgresql: '12'
+  postgresql: '11'
   apt:
-      packages:
-        - postgresql-12
-env:
-  global:
-  - PGUSER=postgres
-  - PGPORT=5432
-  - PGHOST=localhost
+    packages:
+      - postgresql-11
+      - postgresql-client-11
 
 before_install:
-- sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
-- sudo service postgresql restart
-- sleep 1
-- postgres --version
+  - sudo sed -i -e 's/^#listen_addresses.*/listen_addresses = "*"/' /etc/postgresql/11/main/postgresql.conf
+  - sudo sed -i -e 's/^port = 5433/port = 5432/' /etc/postgresql/11/main/postgresql.conf
+  - sudo service postgresql restart 11
 
 before_script:
 
