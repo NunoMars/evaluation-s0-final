@@ -109,7 +109,7 @@ WSGI_APPLICATION = "siteVoyanceconfig.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-'''DATABASES = {
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "lastProject",
@@ -118,15 +118,15 @@ WSGI_APPLICATION = "siteVoyanceconfig.wsgi.application"
         "HOST": "127.0.0.1",
         "PORT": "5432",
     }
-}'''
-
+}
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+'''
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
