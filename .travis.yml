@@ -9,6 +9,9 @@ before_install:
 install:
   - pip install -r requirements.txt
 
+addons:
+  postgresql: "11"
+
 services:
   - postgresql
 
