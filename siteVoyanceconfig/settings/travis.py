@@ -8,7 +8,7 @@ DATABASES = {
         "NAME": "sitevoyance",
         "USER": "postgres",
         "PASSWORD": "",
-        "HOST": "",
-        "PORT": "",
+        "HOST": "*",
+        "PORT": "5432",
     },
 }
