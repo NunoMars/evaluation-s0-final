@@ -12,11 +12,11 @@
         </div>
         <div class="row">
             {% for card in cards %}                
-                <div class="col-sm justify-content-center align-items-center text-center" style="position:relative;">                                                
+                <div class="col justify-content-center align-items-center text-center" style="position:relative;">                                                
                     <a href="{% url 'card_detail' card=card.id %}"><img class="img-fluid" src="{{card.card_image.url}}">
                         <h3>{{card.card_name}}</h3></a>
                 </div>
-                {% if forloop.counter|divisibleby:8 %}</div><div class="row clearfix">{% endif %}
+                {% if forloop.counter|divisibleby:16 %}</div><div class="row clearfix">{% endif %}
             {% endfor %}           
         </div>
     </section>

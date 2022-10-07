@@ -889,7 +889,7 @@ Messages
     content: "";
     background: url("/static/images/backgound-tapis.jpeg");
     background-position: center;
-    opacity: 0.5;
+    opacity: .25;
     top: 0;
     left: 0;
     bottom: 0;
