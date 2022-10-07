@@ -119,16 +119,14 @@ DATABASES = {
         "PASSWORD": "bcxau9p^^123.",
         "HOST": "127.0.0.1",
         "PORT": "5432",
-    }
-}
-'''
-DATABASES = {
+    } 
+} if "PROD" in os.environ else {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-'''
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
