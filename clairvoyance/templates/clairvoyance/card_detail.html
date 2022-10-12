@@ -7,17 +7,17 @@
 <style>
     .imagefloat {
         float: left;
-        margin: 20px;
+        margin: 40px;
     }
 </style>
 {% block content %}
     <!-- Card detail-->
-    <section class="container-fluid" id="card_deck">        
-        <div class="row-md justify-content-center align-items-center text-center">
+    <section class="container" id="card_deck">        
+        <div class="row-md mx-auto justify-content-center align-items-center text-center">
             <h1>{{card.card_name}}</h1>
         </div>       
         <div class="row-md mx-auto justify-content-center text-white align-items-center text-center">                                                
-            <div><img class="imagefloat pull-left" width ="15%" src="{{card.card_image.url}}">
+            <div><a href="{{card.card_image.url}}"><img class="imagefloat pull-left" width ="30%" src="{{card.card_image.url}}"></a>
                 {{card.card_signification_gen}}
                 <h3>Les aspects negatifs de {{card.card_name}}</h3>
                 {{card.card_signification_warnings}}

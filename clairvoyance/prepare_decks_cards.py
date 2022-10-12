@@ -12,9 +12,9 @@ def prepare_decks():
 
      shuffle_deck = MajorArcana.objects.order_by("?")
      cut_point = rand(1, len(shuffle_deck))
-     left_deck = shuffle_deck[0:cut_point]
+     left_deck = shuffle_deck[:cut_point]
      right_deck = shuffle_deck[cut_point:]  
-    
+
      for card in left_deck:
           LeftDeck.objects.create(card_id=card)
 

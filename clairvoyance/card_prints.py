@@ -38,12 +38,12 @@ def polarity_calcul(list_of_polarity):
     percentage_positif = round(percentage(items_on_list, how_positif), 2)
     percentage_negatif = round(percentage(items_on_list, how_negatif), 2)
 
-   
+
     if how_negatif != 0 and how_negatif < how_positif:
-        return "Résultat plutôt positif avec "+ str(percentage_positif) + "% des cartes!!"
+        return f"Résultat plutôt positif avec {str(percentage_positif)}% des cartes!!"
 
     elif how_positif != 0 and how_positif < how_negatif:
-        return "Résultat plutôt négatif avec "+ str(percentage_negatif) + "% des cartes!!"    
+        return f"Résultat plutôt négatif avec {str(percentage_negatif)}% des cartes!!"    
 
     return "Il ya un equilibre dans votre tirage!"
 
