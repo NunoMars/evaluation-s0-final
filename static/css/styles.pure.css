@@ -3627,7 +3627,7 @@ body {
 
 body {
     font-family: Lora;
-    background-image: linear-gradient( rgba(47, 23, 15, .25)), url(../images/unnamed.jpg);
+    background-image: linear-gradient(rgba(47, 23, 15, .65), rgba(47, 23, 15, .65)), url(../images/unnamed.jpg);
     background-attachment: fixed;
     background-position: center;
     background-size: cover
