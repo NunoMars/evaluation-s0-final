@@ -305,7 +305,7 @@ span {
 
 .navbar-b {
     transition: all .5s ease-in-out;
-    background-image: url("/static/img/bgfacebook1.jpg") !important;
+    background-color: rgba(47, 23, 15, .9);
     padding-top: 1.563rem;
     padding-bottom: 1.563rem;
 }
@@ -384,7 +384,7 @@ span {
 }
 
 .navbar-b.navbar-trans .show>.nav-link,
-.navbar-b.navbar-trans .active>.nav-link,
+.navbar-b.navbar-trans .active>.nav-link,footer
 .navbar-b.navbar-trans .nav-link.show,
 .navbar-b.navbar-trans .nav-link.active {
     color: #fff;
@@ -797,9 +797,8 @@ span {
 
 footer {
     text-align: center;
-    color: #fff;
+    background-color: rgba(47, 23, 15, .9);
     padding: auto;
-    background: #0062d3;
 }
 
 
@@ -892,7 +891,7 @@ Messages
     content: "";
     background: url("/static/images/backgound-tapis.jpeg");
     background-position: center;
-    opacity: 0.25;
+    opacity: 0.15;
     top: 0;
     left: 0;
     bottom: 0;
