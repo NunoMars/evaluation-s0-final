@@ -1,3 +1,4 @@
+import contextlib
 from django.shortcuts import render
 from .logic import clairvoyant
 from django.http import JsonResponse
@@ -22,17 +23,15 @@ def clairvoyance(request):
 
 
 def card_deck(request):
-    args = {}
     cards = MajorArcana.objects.all()
-    args["cards"] = cards
+    args = {"cards": cards}
     return render(request, "clairvoyance/card_deck.html", args)
 
 
 def card_detail(request, card):
 
-    args = {}
     card = MajorArcana.objects.get(id=card)
-    args["card"] = card
+    args = {"card": card}
     return render(request, "clairvoyance/card_detail.html", args)
 
 
@@ -40,16 +39,13 @@ def clairvoyante(request):
 
     if request.method != "POST":
         return
-    try:
+    with contextlib.suppress(ValueError):
         input_value = request.POST.get("messageInput")
         result = clairvoyant(input_value)
 
         if input_value == "rec":
             return _extracted_from_clairvoyante_9(request, result)
         return JsonResponse(result)
-
-    except ValueError:
-        pass
 
 # TODO Rename this here and in `clairvoyante`
 def _extracted_from_clairvoyante_9(request, result):

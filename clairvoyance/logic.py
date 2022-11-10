@@ -1,5 +1,5 @@
 from .card_prints import clairvoyante_sort_cards
-from .models import MajorArcana, RightDeck, LeftDeck
+from .models import LeftDeck, MajorArcana, RightDeck
 from .prepare_decks_cards import prepare_decks
 
 

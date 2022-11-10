@@ -11,7 +11,7 @@ MarkupPy
 odfpy
 openpyxl
 Pillow
-psycopg2
+# psycopg2
 PyYAML
 sqlparse
 tablib

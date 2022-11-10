@@ -7,16 +7,13 @@ from clairvoyance.models import MajorArcana
 
 
 def send_welcome_email(user):
-    subject = "Merci de votre création de compte, Monde Du Tarot"
-    message = (
-        "Bonjour "
-        + user.first_name
-        + " ! Vous allez pouvoir recevoir votre tirage de Tarot quotidien par email! MERCI"
-    )
+    message = f"Bonjour {user.first_name} ! Vous allez pouvoir recevoir votre tirage de Tarot quotidien par email! MERCI"
+
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [
         user.email,
     ]
+    subject = "Merci de votre création de compte, Monde Du Tarot"
     send_mail(subject, message, email_from, recipient_list)
     return "Email envoyé"
 
@@ -39,7 +36,7 @@ def send_one_card_daily_email():
             print(user.first_name + " l'ordinateur a choisi  " + card.card_name + " !")
             # import file with html content
             html_version = "accounts/daily_card.html"
-            card_url = "https://site-voyance.herokuapp.com" + card.card_image.url
+            card_url = f"https://site-voyance.herokuapp.com{card.card_image.url}"
             c = {
                 "username": user.get_full_name(),
                 "card_name": card.card_name,

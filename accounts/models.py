@@ -45,7 +45,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "users"
 
     def get_full_name(self):
-        full_name = "%s %s" % (self.first_name, self.second_name)
+        full_name = f"{self.first_name} {self.second_name}"
         return full_name.strip()
 
     def __str__(self):

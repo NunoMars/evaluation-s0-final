@@ -23,7 +23,7 @@ def create_account_view(request):
 
             user = authenticate(request, username=email, password=password)
 
-            if user == None:
+            if user is None:
                 user = CustomUser.objects.create_user(
                     password=password,
                     first_name=first_name,
@@ -40,7 +40,6 @@ def create_account_view(request):
 
             return render(request, "clairvoyance/history.html")
 
-    # if a GET (or any other method) we'll create a blank form
     else:
         form = CustomUserCreationForm()
 
