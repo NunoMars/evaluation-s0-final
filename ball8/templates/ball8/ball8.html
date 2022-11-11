@@ -2,7 +2,8 @@
 {% load static %}
 
 
-{% block content %}
+{% block body %}
+<body>
     <section>
         <div class="section-heading mb-0 cta text-center rounded mb-4">
             <h1>Oracle</h1>
@@ -24,7 +25,7 @@
                 </div>
                 <div class="col section-heading text-center rounded mb-4">
                     
-                    <div class="container animated zoomInUp">                            
+                    <div class="container animated tada">                            
                         <div style="z-index:1">
                             <img class="img-flex"
                             src={% static 'img/boule-magie-voyance.png' %}
@@ -60,4 +61,5 @@
             </div>
         </div>
     </section>
+</body>
 {% endblock %}

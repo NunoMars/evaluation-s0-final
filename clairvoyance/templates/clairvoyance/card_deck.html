@@ -3,7 +3,8 @@
 
 {% block title %}<title>Mon tarot</title>{% endblock %}
 
-{% block content %}
+{% block body %}
+<body>
     <!-- Card deck-->
     <section class="container" id="card_deck">
         <div class="row">
@@ -16,7 +17,7 @@
             {% for card in cards %}
                 <div class="col-sm justify-content-center align-items-center text-center">    
                     <a href="{% url 'card_detail' card=card.id %}">                                                                    
-                        <img class="img-fluid" src="{{card.card_image.url}}">                                
+                        <img class="img-fluid rounded" src="{{card.card_image.url}}">                                
                         <h6>{{card.card_name}}</h6>                        
                     </a>
                 </div>    
@@ -24,4 +25,5 @@
             {% endfor %}           
         </div>
     </section>
+</body>
 {% endblock%}

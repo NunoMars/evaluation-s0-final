@@ -3,7 +3,8 @@
 
 
 {% block title %}<title>Home Page</title>{% endblock %}
-{% block content %}
+{% block body %}
+
   <div class="container-fluid mt-5">
     <section class="page-section align-content-sm-center animated zoomInUp cta" >  
       <div class="row p-5">      
@@ -13,7 +14,7 @@
               <h3 class="section-heading">Tarot</h3>                
                 <img src={% static 'img/voyante_carre.jpg' %}       
                 alt="voyante"
-                class ="img-fluid img-thumbnail"
+                class ="img-fluid img-thumbnail rounded"
                 width="52%">            
             </div>
           </a>
@@ -44,4 +45,5 @@
       </div>
     </section>
   </div>
+
 {% endblock %}

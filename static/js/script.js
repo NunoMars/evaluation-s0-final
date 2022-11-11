@@ -15,7 +15,9 @@ function updateScrollbar() {
 }
 
 function clairvoyantMessage(message) {
-    $('.message.loading').remove();
+    if ($('.message-input').val() != '') {
+        return false;
+    }
     $('<div class="message new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
     setDate();
     updateScrollbar();
@@ -41,10 +43,8 @@ function insertMessage() {
     setDate();
     $('.message-input').val(null);
     updateScrollbar();
-    $('<div class="message loading new"><figure class="avatar"><img src="../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
-    updateScrollbar();
     getMessageClairvoyant(msg);
-};
+}
 
 function escapeHtml(msg) {
     return msg
@@ -53,7 +53,8 @@ function escapeHtml(msg) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-};
+}
+
 var token = '{{csrf_token}}';
 
 function getMessageClairvoyant(msg) {
@@ -65,54 +66,69 @@ function getMessageClairvoyant(msg) {
         data: {
             messageInput: msg,
         },
-        success: function(data) {
+        success: function (data) {
+            $('.message.loading').remove();            
             if (data.subject == "menu") {
                 menuChoices(data);
             }
             if (data.subject == "one_card") {
+
                 oneCardResponse(data);
                 recordChoice();
             }
             if (data.subject == "rec_no") {
+
                 menuChoices(data);
             }
             if (data.subject == "sorry") {
+
                 clairvoyantMessage(data.message);
             }
             if (data.subject == "rec_ok") {
+
                 clairvoyantMessage(data.message);
             }
             if (data.subject == "cut") {
+
                 displayMessageCut(data);
             }
             if (data.subject == "choose_deck") {
+
                 chooseCutDeck(data);
             }
             if (data.subject == "final_response") {
+
                 clairvoyantMessage(data.message.final_response_tittle);
                 responseCard(data.message.response_card)
                 recordChoice();
             }
             if (data.subject == "rec_response") {
+
                 clairvoyantMessage(data.messages);
             }
             if (data.subject == "Error_record") {
+
                 clairvoyantMessage(data.message);
             }
             if (data.subject == "succes_rec") {
+
                 clairvoyantMessage(data.message);
             }
+            
         },
     });
 };
 
 $('.message-submit').click(function() {
     insertMessage();
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 });
 
 $(window).on('keydown', function(e) {
     if (e.which == 13) {
         insertMessage();
+
         return false;
     };
 });
@@ -120,6 +136,7 @@ $(window).on('keydown', function(e) {
 $('#message-form').submit(function(event) {
     event.preventDefault();
     insertMessage();
+
 });
 
 function firstClairvoyantMessage() {
@@ -251,38 +268,56 @@ $('.button').click(function() {
 
 function sendMessageLove() {
     getMessageClairvoyant("love");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageWork() {
     getMessageClairvoyant("work");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageGen() {
     getMessageClairvoyant("gen");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageOneCard() {
     getMessageClairvoyant("one");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageCut() {
     getMessageClairvoyant("cut");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageLeft() {
     getMessageClairvoyant("left");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageRight() {
     getMessageClairvoyant("right");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageRecYes() {
     getMessageClairvoyant("rec");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 function sendMessageRecNo() {
     getMessageClairvoyant("rec_no");
+    $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
 };
 
 $(window).unload(function() {
