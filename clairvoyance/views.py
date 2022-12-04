@@ -73,41 +73,14 @@ def card_detail(request, card):
 
 
 def clairvoyante(request):
+    lang = request.LANGUAGE_CODE
 
     if request.method != "POST":
         return
     with contextlib.suppress(ValueError):
         input_value = request.POST.get("messageInput")
-        result = clairvoyant(input_value)
-
-        if input_value == "rec":
-            return _extracted_from_clairvoyante_9(request, result)
+        result = clairvoyant(input_value, lang)
         return JsonResponse(result)
-
-
-# TODO Rename this here and in `clairvoyante`
-def _extracted_from_clairvoyante_9(request, result):
-    if not request.user.is_authenticated:
-        return JsonResponse(
-            {
-                "subject": "Error_record",
-                "message": "Vos devez vous loguer afin de pouvoir enregistrer"
-                + " le tirage, si pas de compte vous devez en créer un en haut sur la barre de Menu!",
-            }
-        )
-    user = request.user
-    user = CustomUser.objects.get(email=user.email)
-
-    h_save = History(user=user, sorted_card=result[0], chosed_theme=result[1])
-    h_save.save()
-
-    return JsonResponse(
-        {
-            "subject": "succes_rec",
-            "message": "Le tirage est à présent enregistré!",
-        }
-    )
-
 
 @login_required()
 def user_history(request):

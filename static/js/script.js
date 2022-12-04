@@ -171,13 +171,13 @@ function recordChoice() {
     msg = "<div class='cta-inner text-center rounded'>" +
         "<div class='row'>" +
         "<div class='col'>" +
-        "<p><h3>" + "Voulez-vous enregistrer le tirage?" + "</h3></p></div></div>" +
+        "<p><h3>" + "Voulez-vous refaire un autre tirage?" + "</h3></p></div></div>" +
         "<div class='row'>" +
         "<div class='col'>" +
-        "<p><h6>" + "SAUVEGARDER" + "</h6></p>" +
-        "<p><input id='bouton_card' class='bouton_card img-fluid' onClick='sendMessageRecYes();'/></p></div>" +
+        "<p><h6>" + "OUI" + "</h6></p>" +
+        "<p><input id='bouton_card' class='bouton_card img-fluid' onClick='sendMessageYes();'/></p></div>" +
         "<div class='col'>" + "<p><h6>" + "NON" + "</h6></p>" +
-        "<p><input id='bouton_card' class='bouton_card img-fluid' onClick='sendMessageRecNo();'/></p></div>" +
+        "<p><input id='bouton_card' class='bouton_card img-fluid' onClick='sendMessageNo();'/></p></div>" +
         "</div></div>"
     clairvoyantMessage(msg);
 };
@@ -308,14 +308,14 @@ function sendMessageRight() {
     updateScrollbar();
 };
 
-function sendMessageRecYes() {
-    getMessageClairvoyant("rec");
+function sendMessageYes() {
+    getMessageClairvoyant("Yes");
     $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
     updateScrollbar();
 };
 
-function sendMessageRecNo() {
-    getMessageClairvoyant("rec_no");
+function sendMessageNo() {
+    getMessageClairvoyant("No");
     $('<div class="message loading new"><figure class="avatar"><img src= "../static/img/voyante.jpg"/></figure><span></span></div>').appendTo($('.mCSB_container'));
     updateScrollbar();
 };
