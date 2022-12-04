@@ -1,5 +1,5 @@
 import contextlib
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .logic import clairvoyant
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -79,7 +79,7 @@ def clairvoyante(request):
         return
     with contextlib.suppress(ValueError):
         input_value = request.POST.get("messageInput")
-        result = clairvoyant(input_value, lang)
+        result = clairvoyant(input_value, lang)  
         return JsonResponse(result)
 
 @login_required()

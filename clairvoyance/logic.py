@@ -1,4 +1,3 @@
-from django.shortcuts import redirect
 from .card_prints import clairvoyante_sort_cards
 from .models import LeftDeck, MajorArcana, RightDeck
 from .prepare_decks_cards import prepare_decks
@@ -37,9 +36,18 @@ def clairvoyant(input_value, lang):
 
     rand_card = MajorArcana.objects.order_by("?")[0]
 
-    if input_value not in list_of_words or input_value == "Yes":
+    if input_value not in list_of_words:
         user_name = input_value
         return {"subject": "menu", "user_name": user_name}
+
+    elif input_value == "Yes":
+        return {"subject": "menu", "user_name": user_name}
+
+    elif input_value == "No":
+        return {
+            "subject": "No",
+            "message": "Merci j'ai été ravie de vous aider!!",
+        }
 
     elif input_value == "one":
         return _get_response_one_card(rand_card, lang)
@@ -59,9 +67,6 @@ def clairvoyant(input_value, lang):
             "len_left_deck": str(len_left_deck),
             "len_right_deck": str(len_right_deck),
         }
-
-    elif input_value == "No":
-        return redirect("home")
 
     elif input_value == "left":
         return _extracted_from_clairvoyant_64(LeftDeck)

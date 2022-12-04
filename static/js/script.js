@@ -74,7 +74,7 @@ function getMessageClairvoyant(msg) {
             if (data.subject == "one_card") {
 
                 oneCardResponse(data);
-                recordChoice();
+                continueChoice();
             }
             if (data.subject == "rec_no") {
 
@@ -102,22 +102,22 @@ function getMessageClairvoyant(msg) {
                 responseCard(data.message.response_card)
                 recordChoice();
             }
-            if (data.subject == "rec_response") {
-
-                clairvoyantMessage(data.messages);
+            if (data.subject == "No") {
+                clairvoyantMessage(data.message); 
+                RedirectionJavascript();
             }
-            if (data.subject == "Error_record") {
-
-                clairvoyantMessage(data.message);
-            }
-            if (data.subject == "succes_rec") {
-
-                clairvoyantMessage(data.message);
-            }
-            
         },
     });
 };
+
+function Redirect() 
+{  
+    document.location.href = "/"; 
+} 
+
+function RedirectionJavascript() {    
+    setTimeout(Redirect, 2000); 
+}
 
 $('.message-submit').click(function() {
     insertMessage();
@@ -128,7 +128,6 @@ $('.message-submit').click(function() {
 $(window).on('keydown', function(e) {
     if (e.which == 13) {
         insertMessage();
-
         return false;
     };
 });
@@ -167,7 +166,7 @@ function displayMessageCut(data) {
     clairvoyantMessage(message_cut);
 };
 
-function recordChoice() {
+function continueChoice() {
     msg = "<div class='cta-inner text-center rounded'>" +
         "<div class='row'>" +
         "<div class='col'>" +
