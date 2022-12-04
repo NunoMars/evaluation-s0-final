@@ -4,64 +4,64 @@
 {% block title %}Mon compte{% endblock %}
 
 {% block body %}
-<body>
-    <div class="container h-100">
-        <div class="row h-100 align-items-center justify-content-center text-center">
-            <div class="col-lg-10">
-                <h2 class="text-uppercase text-white font-weight-bold">Bonjour {{user.first_name }}!</h2>
-            </div>
-        </div>
-        <div class="row h-100 align-items-center justify-content-center text-center">
-            <h2 class="font-weight-bold text-white">Em@il: {{user.email}}</h2>
-        </div>
-        <div class="row h-100 align-items-center justify-content-center text-center">
-            <a class="font-weight-bold" href="{% url 'email_change' %}"><h2 class="mt-0 text-white">Changez votre em@il ici!</h2></a>
-        </div>
-        </div>
-    </div>
 
-    <div class='container'>
-    <div class="row">
-            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
-                <h2 class="text-uppercase font-weight-bold">Tirages sauvegardés</h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
-                <h3 class="text-uppercase font-weight-bold">Date du Tirage</h3>
-            </div>
-                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
-                <h3 class="text-uppercase font-weight-bold">Carte enregistrée</h3>
-            </div>
-        </div>
-        <div class="row">
-            {% for history in user_history %}
-                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
-                    <h3 class="text-uppercase text-white font-weight-bold">Tirage le: {{history.created}}</h3>
-                </div>               
-                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                    
-                    <a href="{% url 'card_detail' history.sorted_card.id %}"><img class="img-fluid" width="25%" src="{{history.sorted_card.card_image.url}}"></a>
-                    <h3>{{history.sorted_card.card_name}}</h3>                                
-                </div>
-                {% if forloop.counter|divisibleby:2 %}</div><div class="row clearfix">{% endif %}
-            {% endfor %}
-        </div>
-        <div class="row">
-            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
-                <h2 class="text-uppercase font-weight-bold">Tirages quotidiens</h2>
-            </div>
-            {% for item in daily_user_card %}
-                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
-                    <h3 class="text-uppercase text-white font-weight-bold">Tirage du: {{item.daily_user_card.sorted_cards_date}}</h3>
-                </div>               
-                <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                    
-                    <a href="{% url 'card_detail' item.daily_user_card.id %}"><img class="img-fluid" width="25%" src="{{item.daily_user_card.card_image.url}}"></a>
-                    <h3>{{item.daily_user_card.card_name}}</h3>                                
-                </div>
-                {% if forloop.counter|divisibleby:2 %}</div><div class="row clearfix">{% endif %}
-            {% endfor %}
-        </div>
+<div class="container h-100">
+    <div class="row h-100 align-items-center justify-content-center text-center">
+        <div class="col-lg-10">
+            <h2 class="text-uppercase text-white font-weight-bold">Bonjour {{user.first_name }}!</h2>
         </div>
     </div>
-</body>
+    <div class="row h-100 align-items-center justify-content-center text-center">
+        <h2 class="font-weight-bold text-white">Em@il: {{user.email}}</h2>
+    </div>
+    <div class="row h-100 align-items-center justify-content-center text-center">
+        <a class="font-weight-bold" href="{% url 'email_change' %}"><h2 class="mt-0 text-white">Changez votre em@il ici!</h2></a>
+    </div>
+    </div>
+</div>
+
+<div class='container'>
+<div class="row">
+        <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+            <h2 class="text-uppercase font-weight-bold">Tirages sauvegardés</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+            <h3 class="text-uppercase font-weight-bold">Date du Tirage</h3>
+        </div>
+            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+            <h3 class="text-uppercase font-weight-bold">Carte enregistrée</h3>
+        </div>
+    </div>
+    <div class="row">
+        {% for history in user_history %}
+            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+                <h3 class="text-uppercase text-white font-weight-bold">Tirage le: {{history.created}}</h3>
+            </div>               
+            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                    
+                <a href="{% url 'card_detail' history.sorted_card.id %}"><img class="img-fluid" width="25%" src="{{history.sorted_card.card_image.url}}"></a>
+                <h3>{{history.sorted_card.card_name}}</h3>                                
+            </div>
+            {% if forloop.counter|divisibleby:2 %}</div><div class="row clearfix">{% endif %}
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+            <h2 class="text-uppercase font-weight-bold">Tirages quotidiens</h2>
+        </div>
+        {% for item in daily_user_card %}
+            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">
+                <h3 class="text-uppercase text-white font-weight-bold">Tirage du: {{item.daily_user_card.sorted_cards_date}}</h3>
+            </div>               
+            <div class="col p-1 justify-content-center align-items-center text-center" style="position:relative;">                                                    
+                <a href="{% url 'card_detail' item.daily_user_card.id %}"><img class="img-fluid" width="25%" src="{{item.daily_user_card.card_image.url}}"></a>
+                <h3>{{item.daily_user_card.card_name}}</h3>                                
+            </div>
+            {% if forloop.counter|divisibleby:2 %}</div><div class="row clearfix">{% endif %}
+        {% endfor %}
+    </div>
+    </div>
+</div>
+
 {% endblock %}

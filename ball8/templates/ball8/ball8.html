@@ -8,6 +8,7 @@
         <div class="section-heading mb-0 cta text-center rounded mb-4">
             <h1>Oracle</h1>
             <h6 style="color:white">Posez votre question, l'oracle vous repondra par oui ou par non!!!</h6>
+            <h6 style="color:white">Cliquez sur la balle de cristal afin de connaitre la reponse!</h6>
         </div>
         <div class="container">
             <div class="row">
@@ -20,43 +21,38 @@
                     color: white;
                     width: 25%;
                     font-size: 25px;">
-                    <p>Votre question :</p>
-                    <p>{{user_question}}</p>
+                    <p>Votre question :{{user_question}} </p>
                 </div>
-                <div class="col section-heading text-center rounded mb-4">
-                    
-                    <div class="container animated tada">                            
-                        <div style="z-index:1">
-                            <img class="img-flex"
-                            src={% static 'img/boule-magie-voyance.png' %}
-                            alt="boule de magie"
-                            height="700px" 
-                            width="700px" >
-                        </div>
-                           
-                        <div class ="row animated zoomInUp" style = "background:rgba(253, 253, 253, 0.2);
-                            text-shadow: 1px 4px 4px rgb(0, 0, 0, 0.98);
-                            z-index: 10;
-                            border-radius: 27px 27px 27px 27px;
-                            position: absolute;
-                            text-align: center;
-                            margin: 0 auto;
-                            left: 0;
-                            right: 0;
-                            top: 30%;
-                            color: black;
-                            font-style: inherit;
-                            width: 25%;
-                            font-size: 50px;">{{ball8_message}}
-                        </div>                    
-                    </div>   
-                    <p class="mb-0">
-                        <form>
-                            {% csrf_token %}
-                            <input type="text" class="message-send" name ="question" placeholder="Ecrivez ici votre question..." style="font-size: 20px;padding-left: 20px;width: 500px;border-radius: 20px 20px 20px 20px;">
-                            <button type="submit" name="bouton_submit" value="bouton_submit" style="font-size: 25px; border-radius: 15px 15px 15px 15px;">Envoyer</button>
-                        </form>
-                    </p>
+                <div class="col section-heading text-center rounded mb-4"> 
+                    <form>
+                        {% csrf_token %}
+                        <input type="text" class="message-send" name ="question" placeholder="Ecrivez ici votre question..." style="font-size: 20px;padding-left: 20px;width: 500px;border-radius: 20px 20px 20px 20px;">
+                        <button class="container animated tada"  type="submit" name="bouton_submit" value="bouton_submit" style="font-size: 25px; border-radius: 15px 15px 15px 15px; border: none; background-color: transparent;">                            
+                            <div style="z-index:1">
+                                <img class="img-flex"
+                                src={% static 'img/boule-magie-voyance.png' %}
+                                alt="boule de magie"
+                                height="700px" 
+                                width="700px" >
+                            </div>
+                            
+                            <div class ="row animated zoomInUp" style = "background:rgba(253, 253, 253, 0.2);
+                                text-shadow: 1px 4px 4px rgb(0, 0, 0, 0.98);
+                                z-index: 10;
+                                border-radius: 27px 27px 27px 27px;
+                                position: absolute;
+                                text-align: center;
+                                margin: 0 auto;
+                                left: 0;
+                                right: 0;
+                                top: 30%;
+                                color: black;
+                                font-style: inherit;
+                                width: 25%;
+                                font-size: 45px;">{{ball8_message}}
+                            </div>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

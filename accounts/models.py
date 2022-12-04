@@ -53,7 +53,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class History(models.Model):
-    """ Class to define the History table."""
+    """Class to define the History table."""
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created = models.DateTimeField(default=now)
@@ -72,7 +72,9 @@ class DailySortedCards(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     sorted_cards_date = models.DateTimeField(default=now)
     daily_sorted_cards = models.ForeignKey(
-        MajorArcana, verbose_name="Carte de la journée", on_delete=models.CASCADE
+        MajorArcana,
+        verbose_name="Carte de la journée",
+        on_delete=models.CASCADE,
     )
 
     class Meta:

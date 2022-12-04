@@ -1,29 +1,38 @@
 {% extends 'base.html'%}
 {% load static %}
+ {% load i18n %}
 
-{% block title %}<title>Mon tarot</title>{% endblock %}
+{% block title %}<title>{% trans "Mon tarot" %}</title>{% endblock %}
 
 {% block body %}
-<body>
-    <!-- Card deck-->
-    <section class="container" id="card_deck">
-        <div class="row">
-            <div class="col justify-content-center align-items-center text-center">  
-                <h1 class="text-white" > Les cartes du tarot </h1>
-                <h3 class="text-white"> Cliquez sur la carte afin de mieux les connaitre! </h3>
-            </div>
-        </div>   
-        <div class="row">
-            {% for card in cards %}
-                <div class="col-sm justify-content-center align-items-center text-center">    
-                    <a href="{% url 'card_detail' card=card.id %}">                                                                    
-                        <img class="img-fluid rounded" src="{{card.card_image.url}}">                                
-                        <h6>{{card.card_name}}</h6>                        
-                    </a>
-                </div>    
-                {% if forloop.counter|divisibleby:8 %}</div><div class="row">{% endif %}
-            {% endfor %}           
+
+<!-- Card deck-->
+<section class="container" id="card_deck">
+    <div class="row">
+        <div class="col justify-content-center align-items-center text-center">  
+            <h1 class="text-white" >{% trans "Les cartes du tarot" %}</h1>
+            <h3 class="text-white">{% trans "Cliquez sur la carte afin de mieux les connaitre!" %}</h3>
         </div>
-    </section>
-</body>
+    </div>   
+    <div class="row">
+        {% for card in cards %}
+            <div class="col-sm justify-content-center align-items-center text-center">    
+                <a href="{% url 'card_detail' card=card.id %}">                                                                    
+                    <img class="img-fluid rounded" src="{{card.card_image.url}}">                                
+                    <h6>{% if lang == 'fr' %}
+                            {{card.card_name_fr}}
+                        {% elif lang == 'pt' %}
+                            {{card.card_name_pt}}
+                        {% elif lang == 'en' %}
+                            {{card.card_name_en}}
+                        {% else %}
+                            {{card.card_name_es}}
+                        {% endif %}</h6>                        
+                </a>
+            </div>    
+            {% if forloop.counter|divisibleby:8 %}</div><div class="row">{% endif %}
+        {% endfor %}           
+    </div>
+</section>
+
 {% endblock%}

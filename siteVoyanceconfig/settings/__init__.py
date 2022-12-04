@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "clairvoyance.apps.ClairvoyanceConfig",
     "accounts.apps.AccountsConfig",
     "import_export",
+    "responses.apps.ResponsesConfig",
 ]
 
 ##################################################

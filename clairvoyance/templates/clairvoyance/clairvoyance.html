@@ -4,33 +4,33 @@
 {% block title %}<title>Tirage Tarot</title>{% endblock %}
 
 {% block body %}
-<body>
-    <section class="container">
-        <div class="avenue-messenger">
-            <div class="agent-face">
-                <div class="half">
-                    <img class="agent circle" src={% static "img/voyante.jpg" %} alt="voyante">
-                </div>
+
+<section class="container">
+    <div class="avenue-messenger">
+        <div class="agent-face">
+            <div class="half">
+                <img class="agent circle" src={% static "img/voyante.jpg" %} alt="voyante">
             </div>
-            <div class="chat">
-                <div class="chat-title">
-                    <h1>Mme T</h1>
-                    <h2>Voyante Virtuelle</h2>
-                </div>
-                <div class="messages">
-                    <div class="messages-content"></div>
-                </div>
-                <div class="message-box">
-                    <form action="" id="message-form">
-                        {% csrf_token %}
-                        <textarea type="text" class="message-input" placeholder='Entrez ici votre réponse...'></textarea>
-                        <button type="submit" class="message-submit">Envoyer</button>
-                    </form>
-                </div>
-            </div>    
         </div>
-    </section>
-</body>
+        <div class="chat">
+            <div class="chat-title">
+                <h1>Mme T</h1>
+                <h2>Voyante Virtuelle</h2>
+            </div>
+            <div class="messages">
+                <div class="messages-content"></div>
+            </div>
+            <div class="message-box">
+                <form action="" id="message-form">
+                    {% csrf_token %}
+                    <textarea type="text" class="message-input" placeholder='Entrez ici votre réponse...'></textarea>
+                    <button type="submit" class="message-submit">Envoyer</button>
+                </form>
+            </div>
+        </div>    
+    </div>
+</section>
+
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.min.css'>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.concat.min.js'></script>
 {% endblock%}

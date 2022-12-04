@@ -1,10 +1,9 @@
 {% extends 'base.html'%}
 {% load static %}
+ {% load i18n %}
 
-
-{% block title %}<title>Home Page</title>{% endblock %}
+{% block title %}<title>{% trans 'Home Page' %}</title>{% endblock %}
 {% block body %}
-
   <div class="container-fluid mt-5">
     <section class="page-section align-content-sm-center animated zoomInUp cta" >  
       <div class="row p-5">      
@@ -24,9 +23,9 @@
             <div class="cta-inner text-center rounded">
               <h4>{{first_title}}</h4>
               <h3 class="section-heading">
-                <span class="section-heading-lower">Atention</span>
+                <span class="section-heading-lower">{% trans 'Atention' %}</span>
               </h3>
-              <p class="mb-0">Ce site ne remplacera jamais une consultation avec un/e voyant/e, pour des réponses personalisés, consulter un professionnel!</p>
+              <p class="mb-0">{% trans 'Ce site ne remplacera jamais une consultation avec un/e voyant/e, pour des réponses personalisés, consulter un professionnel!' %}</p>
               <!--<p>Cliquez ici pour créer votre espace personnel et recevoir votre tirage quotidien!</p>-->              
             </div>
           <!--</a>-->
@@ -34,7 +33,7 @@
         <div class="col-sm align-content-sm-center p-5">
         <a href="{% url 'ball8' %}">
             <div class="cta-inner text-center rounded">
-              <h3 class="section-heading">Oracle</h3>
+              <h3 class="section-heading">{% trans 'Oracle' %}</h3>
               <img src={% static 'img/boule-magie-voyance.jpg' %}
                 alt="boule de magie"
                 class="img-fluid img-thumbnail"
@@ -45,5 +44,4 @@
       </div>
     </section>
   </div>
-
 {% endblock %}
