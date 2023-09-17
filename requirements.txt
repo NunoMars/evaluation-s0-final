@@ -34,7 +34,6 @@ django==4.1.2
     #   dj-database-url
     #   django-heroku
     #   django-import-export
-django-heroku==0.3.1
     # via -r requirements.in
 django-import-export==2.9.0
     # via -r requirements.in
@@ -66,7 +65,7 @@ pillow==9.2.0
     # via -r requirements.in
 pip-tools==6.9.0
     # via -r requirements.in
-psycopg2==2.9.3
+# psycopg2==2.9.3
     # via
     #   -r requirements.in
     #   django-heroku

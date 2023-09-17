@@ -3,7 +3,6 @@ defusedxml
 diff-match-patch
 dj-database-url
 Django
-django-heroku
 django-import-export
 et-xmlfile
 import-export
