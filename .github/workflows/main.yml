@@ -19,7 +19,6 @@ jobs:
         
     - name: Set up LXD
       run: |
-        SUDO_PASSWORD="${{ secrets.SUDO_PASSWORD }}"
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto
         
