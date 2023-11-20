@@ -26,7 +26,7 @@ jobs:
 
     - name: Launch LXD containers
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -E lxc launch ubuntu:20.04 app-container-1
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -E -S lxc launch ubuntu:20.04 app-container-1
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -E lxc launch ubuntu:20.04 app-container-2
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -E lxc launch ubuntu:20.04 lb-container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -E lxc launch ubuntu:20.04 db-postgresql
