@@ -27,21 +27,18 @@ jobs:
 
     - name: Launch LXD containers
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-1 -- apt install -y python3
-        
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1 || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2 || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container || true
 
     - name: Configure LXD containers
       run: |
         # Configure app-container-1
-        
-        
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-1 -- apt install -y python3
         # Add more configuration steps specific to app-container-1
 
         # Configure app-container-2
