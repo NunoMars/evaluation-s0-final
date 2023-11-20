@@ -120,24 +120,25 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt install -y nginx certbot python3-certbot-nginx
         
         # Configure Nginx as a reverse proxy (adjust configuration as needed)
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo 'server {' > /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '    listen 80;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '    server_name nunomars-server.eddi.cloud;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '    location / {' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '        proxy_pass http://app-server;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '        proxy_set_header Host $host;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '        proxy_set_header X-Real-IP $remote_addr;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '        proxy_set_header X-Forwarded-Proto $scheme;' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '    }' >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo '}' >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "server {" > /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    listen 80;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    server_name nunomars-server.eddi.cloud;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    location / {" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_pass http://app-server;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header Host $host;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Real-IP $remote_addr;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Forwarded-Proto $scheme;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    }" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "}" >> /etc/nginx/sites-available/default'
         
         # Install SSL certificate with Certbot
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- certbot --nginx -d nunomars-server.eddi.cloud
         
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
+      
 
     - name: Deploy Application to app-container-1
       run: |
