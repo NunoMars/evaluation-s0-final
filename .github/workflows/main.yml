@@ -68,7 +68,8 @@ jobs:
 
         # Ensure port forwarding for services (adjust ports as needed)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:localhost:80
-
+      continue-on-error: true
+      
     - name: Deploy Database (PostgreSQL)
       run: |
         # Install PostgreSQL in the container
