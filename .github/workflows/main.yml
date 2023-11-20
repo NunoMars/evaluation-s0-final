@@ -69,23 +69,23 @@ jobs:
         # Ensure port forwarding for services (adjust ports as needed)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:localhost:80
       continue-on-error: true
-      
+
     - name: Deploy Database (PostgreSQL)
       run: |
         # Install PostgreSQL in the container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- apt install -y postgresql
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt install -y postgresql
 
         # Configure PostgreSQL
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- sudo -u postgres psql -c "CREATE USER Nuno WITH PASSWORD 'bcxau9p^^123.';"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- sudo -u postgres createdb -O Nuno siteVoyance
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -c "CREATE USER Nuno WITH PASSWORD 'bcxau9p^^123.';"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres createdb -O Nuno siteVoyance
 
         # Enable remote access to PostgreSQL
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n echo "host all all 0.0.0.0/0 md5" | lxc exec db-postgresql -- tee -a /etc/postgresql/*/main/pg_hba.conf
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n echo "listen_addresses = '*'" | lxc exec db-postgresql -- tee -a /etc/postgresql/*/main/postgresql.conf
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S echo "host all all 0.0.0.0/0 md5" | lxc exec db-postgresql -- tee -a /etc/postgresql/*/main/pg_hba.conf
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S echo "listen_addresses = '*'" | lxc exec db-postgresql -- tee -a /etc/postgresql/*/main/postgresql.conf
 
         # Restart PostgreSQL to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- systemctl restart postgresql
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- systemctl restart postgresql
 
     - name: Deploy DNS (BIND9)
       run: |
