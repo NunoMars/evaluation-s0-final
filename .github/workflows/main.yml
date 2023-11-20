@@ -86,7 +86,8 @@ jobs:
 
         # Restart PostgreSQL to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- systemctl restart postgresql
-
+      continue-on-error: true
+      
     - name: Deploy DNS (BIND9)
       run: |
         # Install BIND9 in the DNS container
