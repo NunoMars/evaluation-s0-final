@@ -22,7 +22,6 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S usermod -aG lxd $USER
-        exec newgrp lxd
         
       continue-on-error: true
 
