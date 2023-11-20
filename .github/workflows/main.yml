@@ -22,6 +22,7 @@ jobs:
 
     - name: Launch LXD containers
       run: |
+        lxd init --auto
         lxc launch ubuntu:20.04 app-container-1
         lxc launch ubuntu:20.04 app-container-2
         lxc launch ubuntu:20.04 lb-container
