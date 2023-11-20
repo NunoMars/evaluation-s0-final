@@ -17,7 +17,7 @@ jobs:
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S -n lxc delete {} --force
       continue-on-error: true 
-      
+
     - name: Set up LXD
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
@@ -28,6 +28,9 @@ jobs:
     - name: Launch LXD containers
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-1 -- apt install -y python3
+        
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql
@@ -37,8 +40,8 @@ jobs:
     - name: Configure LXD containers
       run: |
         # Configure app-container-1
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-1 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-1 -- apt install -y python3
+        
+        
         # Add more configuration steps specific to app-container-1
 
         # Configure app-container-2
