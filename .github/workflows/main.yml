@@ -15,7 +15,7 @@ jobs:
 
     - name: Delete all LXD containers
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r '.[].name' | xargs -I {} sudo -S lxc delete {} --force
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S lxc delete {} --force'
         
     - name: Set up LXD
       run: |
