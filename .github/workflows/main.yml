@@ -22,7 +22,7 @@ jobs:
 
     - name: Launch LXD containers
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init
         lxc launch ubuntu:20.04 app-container-1
         lxc launch ubuntu:20.04 app-container-2
         lxc launch ubuntu:20.04 lb-container
