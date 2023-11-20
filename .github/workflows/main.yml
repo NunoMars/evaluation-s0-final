@@ -87,31 +87,31 @@ jobs:
         # Restart PostgreSQL to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- systemctl restart postgresql
       continue-on-error: true
-      
+
     - name: Deploy DNS (BIND9)
       run: |
         # Install BIND9 in the DNS container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- apt install -y bind9
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt install -y bind9
 
         # Configure BIND9 for the local zone
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "zone \"local\" {" > /etc/bind/named.conf.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "    type master;" >> /etc/bind/named.conf.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "    file \"/etc/bind/db.local\";" >> /etc/bind/named.conf.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "};" >> /etc/bind/named.conf.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "zone \"local\" {" > /etc/bind/named.conf.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "    type master;" >> /etc/bind/named.conf.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "    file \"/etc/bind/db.local\";" >> /etc/bind/named.conf.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "};" >> /etc/bind/named.conf.local'
 
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "$TTL 86400" > /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "@       IN      SOA     ns1.local. admin.local. (" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "                  2023112001      ; Serial" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "                  3600            ; Refresh" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "                  1800            ; Retry" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "                  604800          ; Expire" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "                  86400 )         ; Negative Cache TTL" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "    IN      NS      ns1.local." >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- bash -c 'echo "ns1     IN      A       192.168.1.10" >> /etc/bind/db.local'  # Replace with the IP address of your DNS server
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "$TTL 86400" > /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "@       IN      SOA     ns1.local. admin.local. (" >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  2023112001      ; Serial" >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  3600            ; Refresh" >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  1800            ; Retry" >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  604800          ; Expire" >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  86400 )         ; Negative Cache TTL" >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "    IN      NS      ns1.local." >> /etc/bind/db.local'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "ns1     IN      A       192.168.1.10" >> /etc/bind/db.local'  # Replace with the IP address of your DNS server
 
         # Restart BIND9 to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- systemctl restart bind9
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
 
     - name: Deploy Load Balancer (Nginx)
       run: |
