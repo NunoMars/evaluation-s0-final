@@ -118,6 +118,8 @@ jobs:
         # Install Nginx in the load balancer container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt update
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt install -y nginx certbot python3-certbot-nginx
+        # Create the Nginx configuration file
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'touch /etc/nginx/sites-available/default'
         
         # Configure Nginx as a reverse proxy (adjust configuration as needed)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "server {" > /etc/nginx/sites-available/default'
