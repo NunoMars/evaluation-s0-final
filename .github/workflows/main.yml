@@ -13,11 +13,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Delete all LXD containers
-      run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S -n lxc delete {} --force
-      continue-on-error: true 
-
     - name: Set up LXD
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
