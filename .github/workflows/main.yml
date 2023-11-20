@@ -13,17 +13,17 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    - name: Delete all LXD containers
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r '.[].name' | xargs -I {} sudo -S lxc delete {} --force
+        
     - name: Set up LXD
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S usermod -aG lxd $USER
-        exec newgrp lxd
+        exec newgrp lxd    
 
-    - name: Delete all LXD containers
-      run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r '.[].name' | xargs -I {} sudo -S lxc delete {} --force
-        
     - name: Launch LXD containers
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1
