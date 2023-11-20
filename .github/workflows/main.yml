@@ -5,13 +5,9 @@ on:
     branches:
       - main
   
-    jobs:
-    deploy:
-      runs-on: self-hosted
-
-    jobs:
-    deploy:
-        runs-on: self-hosted
+jobs:
+  deploy:
+    runs-on: self-hosted
 
     steps:
     - name: Checkout Repository
@@ -114,7 +110,7 @@ on:
         lxc exec dns-container -- systemctl restart bind9
 
     - name: Deploy Load Balancer (Nginx)
-    run: |
+      run: |
         # Install Nginx in the load balancer container
         lxc exec lb-container -- apt update
         lxc exec lb-container -- apt install -y nginx certbot python3-certbot-nginx
@@ -140,7 +136,7 @@ on:
         lxc exec lb-container -- systemctl restart nginx
 
     - name: Deploy Application to app-container-1
-    run: |
+      run: |
         # Clone your Django repository
         lxc exec app-container-1 -- apt update
         lxc exec app-container-1 -- apt install -y git python3-venv
@@ -176,7 +172,7 @@ on:
         lxc exec app-container-1 -- systemctl start site_tarot_gunicorn
 
     - name: Deploy Application to app-container-2
-    run: |
+      run: |
         # Clone your Django repository
         lxc exec app-container-2 -- apt update
         lxc exec app-container-2 -- apt install -y git python3-venv
@@ -211,7 +207,7 @@ on:
         lxc exec app-container-2 -- systemctl start site_tarot_gunicorn
       
     - name: Deploy Firewall (iptables)
-    run: |
+      run: |
         # Allow incoming traffic on the ports used by your Django application (e.g., 8000)
         lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
     
@@ -228,6 +224,6 @@ on:
         lxc exec firewall-container -- iptables -A INPUT -j DROP
     
     - name: Save Firewall Rules
-    run: |
+      run: |
         # Save the firewall rules so they persist after reboot
         lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4
