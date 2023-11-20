@@ -26,12 +26,12 @@ jobs:
 
     - name: Launch LXD containers
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc launch ubuntu:20.04 app-container-1'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc launch ubuntu:20.04 app-container-2'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc launch ubuntu:20.04 lb-container'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc launch ubuntu:20.04 db-postgresql'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc launch ubuntu:20.04 dns-container'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'lxc launch ubuntu:20.04 firewall-container'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container
 
     - name: Configure LXD containers
       run: |
