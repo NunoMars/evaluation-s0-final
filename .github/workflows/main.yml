@@ -67,13 +67,7 @@ jobs:
 
     - name: Deploy Application to app-container-1
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
-          apt update && \
-          apt upgrade -y && \
-          apt install -y git python3 python3-venv && \
-          apt autoremove -y && \
-          rm -rf /home/ubuntu/evaluation-s07-final && \ '
-
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update &&  apt upgrade -y
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
           python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
@@ -111,9 +105,8 @@ jobs:
 
     - name: Deploy Application to app-container-2
       run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt update &&  apt upgrade -y
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
-          apt update && \
-          apt upgrade -y && \
           apt install -y git python3 python3-venv && \
           apt autoremove -y && \
           rm -rf /home/ubuntu/evaluation-s07-final && \
@@ -199,7 +192,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DB_CONTAINER_NAME}
 
         # Update package information
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt update &&  apt upgrade -y
 
         # Check if the role 'nuno' already exists
         if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='nuno'" | grep -q 1; then
