@@ -80,7 +80,7 @@ jobs:
         sleep 3
         recreate_container "${FIREWALL_CONTAINER_NAME}"
         # Wait
-        sleep 3   
+        sleep 3 
     
     - name: Configure LXD containers
       run: |
