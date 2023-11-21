@@ -69,7 +69,7 @@ jobs:
       run: |
         # Update package information
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt update
-    
+
         # Check if the role 'nuno' already exists
         if sudo -S lxc exec db-postgresql -- sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='nuno'" | grep -q 1; then
           echo "Role 'nuno' already exists."
@@ -77,7 +77,7 @@ jobs:
           # Create PostgreSQL user 'nuno' with password
           sudo -S lxc exec db-postgresql -- sudo -u postgres psql -c "CREATE USER nuno WITH PASSWORD 'bcxau9p^^123.';"
         fi
-        
+
         # Check if the database 'siteVoyance' already exists
         if sudo -S lxc exec db-postgresql -- sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw siteVoyance; then
           echo "Database 'siteVoyance' already exists."
@@ -85,15 +85,16 @@ jobs:
           # Create PostgreSQL database 'siteVoyance' owned by 'nuno'
           sudo -S lxc exec db-postgresql -- sudo -u postgres createdb -O nuno siteVoyance
         fi
-    
+
         # Allow connections to PostgreSQL from all IP addresses
-        sudo -S lxc exec db-postgresql -- echo "host all all 0.0.0.0/0 md5" | tee -a /etc/postgresql/*/main/pg_hba.conf
-        
+        sudo -S lxc exec db-postgresql -- bash -c 'echo "host all all 0.0.0.0/0 md5" | tee -a /etc/postgresql/*/main/pg_hba.conf'
+
         # Configure PostgreSQL to listen on all addresses
-        sudo -S lxc exec db-postgresql -- echo "listen_addresses = '*'" | tee -a /etc/postgresql/*/main/postgresql.conf
-        
+        sudo -S lxc exec db-postgresql -- bash -c 'echo "listen_addresses = '\''*'\''" | tee -a /etc/postgresql/*/main/postgresql.conf'
+
         # Restart PostgreSQL to apply changes
-        sudo -S lxc exec db-postgresql -- service postgresql restart    
+        sudo -S lxc exec db-postgresql -- service postgresql restart
+      continue-on-error: true
 
     - name: Deploy DNS (BIND9)
       run: |
