@@ -112,7 +112,6 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
           apt update && \
           apt upgrade -y && \
-          apt install -y git python3 && \
           apt autoremove -y && \
           rm -rf /home/ubuntu/evaluation-s07-final && \
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
