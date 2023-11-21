@@ -58,7 +58,7 @@ jobs:
           fi
     
           # Create the container
-          echo "Creating ${container_name}..."
+          echo "Creating ${container_name}"
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to create ${container_name}"; exit 1; }
         }
     
