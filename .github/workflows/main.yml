@@ -181,7 +181,8 @@ jobs:
                 # Enable and start Gunicorn service
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- systemctl enable site_tarot_gunicorn
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- systemctl start site_tarot_gunicorn
-
+      continue-on-error: true
+      
     - name: Deploy Application to app-container-2
       run: |
         # Clone your Django repository
