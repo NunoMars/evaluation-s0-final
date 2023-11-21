@@ -78,8 +78,13 @@ jobs:
           sudo -S lxc exec db-postgresql -- sudo -u postgres psql -c "CREATE USER nuno WITH PASSWORD 'bcxau9p^^123.';"
         fi
         
-        # Create PostgreSQL database 'siteVoyance' owned by 'nuno'
-        sudo -S lxc exec db-postgresql -- sudo -u postgres createdb -O nuno siteVoyance
+        # Check if the database 'siteVoyance' already exists
+        if sudo -S lxc exec db-postgresql -- sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw siteVoyance; then
+          echo "Database 'siteVoyance' already exists."
+        else
+          # Create PostgreSQL database 'siteVoyance' owned by 'nuno'
+          sudo -S lxc exec db-postgresql -- sudo -u postgres createdb -O nuno siteVoyance
+        fi
     
         # Allow connections to PostgreSQL from all IP addresses
         sudo -S lxc exec db-postgresql -- echo "host all all 0.0.0.0/0 md5" | tee -a /etc/postgresql/*/main/pg_hba.conf
@@ -88,8 +93,7 @@ jobs:
         sudo -S lxc exec db-postgresql -- echo "listen_addresses = '*'" | tee -a /etc/postgresql/*/main/postgresql.conf
         
         # Restart PostgreSQL to apply changes
-        sudo -S lxc exec db-postgresql -- service postgresql restart
-    
+        sudo -S lxc exec db-postgresql -- service postgresql restart    
 
     - name: Deploy DNS (BIND9)
       run: |
