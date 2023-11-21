@@ -59,6 +59,7 @@ jobs:
     
           # Launch the container
           echo "Launching ${container_name}..."
+          echo "Container name: ${container_name}" # Added for debugging
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
         }
     
