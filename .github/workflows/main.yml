@@ -40,39 +40,38 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon
       continue-on-error: true
 
-    - name: Creer ou Recreer des conteneurs LXD
+    - name: Créer ou Recréer des conteneurs LXD
       run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S -n lxc delete {} --force
+    
         recreate_or_create_container() {
           local container_name="$1"
-
+    
           # Stop the container if it is running
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${container_name})" ]]; then
             echo "Stopping running container ${container_name}"
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${container_name}"
           fi
-
+    
           # Check if the container exists
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${container_name})" ]]; then
             echo "Container ${container_name} already exists. Deleting it."
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}"
           fi
-
+    
           # Create the container
           echo "Creating ${container_name}"
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}"
         }
-
+    
+        # Repeat the process for other containers...
+    
         recreate_or_create_container "${LB_CONTAINER_NAME}"
-
         recreate_or_create_container "${APP_CONTAINER_1_NAME}"
-
         recreate_or_create_container "${APP_CONTAINER_2_NAME}"
-
         recreate_or_create_container "${DB_CONTAINER_NAME}"
-
         recreate_or_create_container "${DNS_CONTAINER_NAME}"
-
-        recreate_or_create_container "${FIREWALL_CONTAINER_NAME}"
+        recreate_or_create_container "${FIREWALL_CONTAINER_NAME}"    
 
     - name: Configure LXD containers
       run: |
