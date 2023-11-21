@@ -60,7 +60,7 @@ jobs:
           # Launch the container with detailed output
           echo "Launching ${container_name}..."
           echo "Container name: ${container_name}" # Added for debugging
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; sudo -S lxc info "${container_name}"; exit 1; }
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; sudo -S lxc info "${container_name}"; sudo -S cat /var/snap/lxd/common/lxd/containers/${container_name}/config; exit 1; }
         }
     
         recreate_container "${APP_CONTAINER_1_NAME}"        
@@ -80,7 +80,7 @@ jobs:
         sleep 3
         recreate_container "${FIREWALL_CONTAINER_NAME}"
         # Wait
-        sleep 3    
+        sleep 3   
     
     - name: Configure LXD containers
       run: |
