@@ -33,14 +33,7 @@ jobs:
           # Initialize LXD with explicit configuration
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto --storage-backend=dir --storage-pool=default
         fi
-
-    - name: Restart LXD (Snap)
-      run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop snap.lxd.daemon
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon
         
-      continue-on-error: true
-
     - name: Supprimer tous les containeurs
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${LB_CONTAINER_NAME}
