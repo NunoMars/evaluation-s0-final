@@ -42,48 +42,22 @@ jobs:
 
     - name: Launch LXD containers
       run: |
-        # Check if app-container-1 exists
-        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info app-container-1 2>&1) == *"doesn't exist"* ]]; then
-          echo "Container app-container-1 does not exist. Launching..."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1 || { echo "Failed to launch app-container-1"; exit 1; }
-        else
-          echo "Container app-container-1 already exists. Skipping creation."
-        fi
-      
-        # Check if app-container-2 exists
-        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info app-container-2 2>&1) == *"doesn't exist"* ]]; then
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2 || { echo "Failed to launch app-container-2"; exit 1; }
-        else
-          echo "Container app-container-2 already exists. Skipping creation."
-        fi
-    
-        # Check if lb-container exists
-        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info lb-container 2>&1) == *"doesn't exist"* ]]; then
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container || { echo "Failed to launch lb-container"; exit 1; }
-        else
-          echo "Container lb-container already exists. Skipping creation."
-        fi
-    
-        # Check if db-postgresql exists
-        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info db-postgresql 2>&1) == *"doesn't exist"* ]]; then
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql || { echo "Failed to launch db-postgresql"; exit 1; }
-        else
-          echo "Container db-postgresql already exists. Skipping creation."
-        fi
-    
-        # Check if dns-container exists
-        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info dns-container 2>&1) == *"doesn't exist"* ]]; then
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container || { echo "Failed to launch dns-container"; exit 1; }
-        else
-          echo "Container dns-container already exists. Skipping creation."
-        fi
-    
-        # Check if firewall-container exists
-        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info firewall-container 2>&1) == *"doesn't exist"* ]]; then
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container || { echo "Failed to launch firewall-container"; exit 1; }
-        else
-          echo "Container firewall-container already exists. Skipping creation."
-        fi    
+        check_and_launch_container() {
+          local container_name="$1"
+          if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info "${container_name}" 2>&1) == *"doesn't exist"* ]]; then
+            echo "Container ${container_name} does not exist. Launching..."
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
+          else
+            echo "Container ${container_name} already exists. Skipping creation."
+          fi
+        }
+
+        check_and_launch_container "${APP_CONTAINER_1_NAME}"
+        check_and_launch_container "${APP_CONTAINER_2_NAME}"
+        check_and_launch_container "${LB_CONTAINER_NAME}"
+        check_and_launch_container "${DB_CONTAINER_NAME}"
+        check_and_launch_container "${DNS_CONTAINER_NAME}"
+        check_and_launch_container "${FIREWALL_CONTAINER_NAME}" 
 
     - name: Configure LXD containers
       run: |
