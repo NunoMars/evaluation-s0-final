@@ -150,7 +150,7 @@ jobs:
         # Clone your Django repository
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt install -y git python3-venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- git clone https://github.com/votre-utilisateur/votre-projet.git SiteVoyance
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
     
         # Create and activate a virtual environment
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python3 -m venv SiteVoyance/venv      
@@ -187,7 +187,7 @@ jobs:
         # Clone your Django repository
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- apt update
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- apt install -y git python3-venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- git clone https://github.com/votre-utilisateur/votre-projet.git SiteVoyance
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
             
                 # Create and activate a virtual environment
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- python3 -m venv SiteVoyance/venv
