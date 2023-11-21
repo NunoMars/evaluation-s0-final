@@ -67,8 +67,9 @@ jobs:
 
     - name: Deploy Application to app-container-1
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update &&  apt upgrade -y
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
+          apt update && \
+          apt upgrade -y && \
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
           python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
           source /home/ubuntu/evaluation-s07-final/venv/bin/activate && \
@@ -86,7 +87,8 @@ jobs:
           systemctl enable site_tarot_gunicorn && \
           systemctl start site_tarot_gunicorn && \
           systemctl status site_tarot_gunicorn
-        '       
+        '
+        
       
     - name: Create or Start app-container-2
       run: |
@@ -105,8 +107,9 @@ jobs:
 
     - name: Deploy Application to app-container-2
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt update &&  apt upgrade -y
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
+          apt update && \
+          apt upgrade -y && \
           apt install -y git python3 python3-venv && \
           apt autoremove -y && \
           rm -rf /home/ubuntu/evaluation-s07-final && \
@@ -128,6 +131,7 @@ jobs:
           systemctl start site_tarot_gunicorn && \
           systemctl status site_tarot_gunicorn
         '
+    
 
     - name: Créer et deploy load balancer
       run: |
