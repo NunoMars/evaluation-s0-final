@@ -43,11 +43,20 @@ jobs:
     - name: Recreate LXD containers
       run: |
         recreate_container() {
-          local container_name="$1"
+          local container_name="$1"          
+          # Stop the container if it is running
+          if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${container_name})" ]]; then
+            echo "Stopping running container ${container_name}..."
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${container_name}" || { echo "Failed to stop ${container_name}"; exit 1; }
+          fi
+    
+          # Delete the container if it exists
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${container_name})" ]]; then
             echo "Container ${container_name} exists. Deleting..."
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}" || { echo "Failed to delete ${container_name}"; exit 1; }
           fi
+    
+          # Launch the container
           echo "Launching ${container_name}..."
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
         }
