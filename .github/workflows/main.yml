@@ -73,7 +73,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- git clone https://github.com/NunoMars/evaluation-s07-final.git
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- python3 -m venv venv
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c 'source venv/bin/activate'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- pip install -r requirements.txt'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- pip install -r requirements.txt
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- python manage.py migrate
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- python manage.py collectstatic --noinput
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- python manage.py loaddata database_dumps/MajorArcana.json
