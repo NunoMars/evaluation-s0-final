@@ -46,7 +46,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DNS_CONTAINER_NAME}
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DNS_CONTAINER_NAME}
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${FIREWALL_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}       
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}
       continue-on-error: true
 
     - name: Create or Start app-container-1
