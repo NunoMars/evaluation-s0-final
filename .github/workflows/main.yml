@@ -106,7 +106,7 @@ jobs:
       id: app2_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')"
 
-    - name: Deploy Application to app-container-1
+    - name: Deploy Application to app-container-2
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
           apt update && \
@@ -135,48 +135,60 @@ jobs:
 
     - name: Créer et deploy load balancer
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} -- apt update    
-    
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${LB_CONTAINER_NAME} &> /dev/null; then
+          echo "lb-container already exists. Starting..."
+          sudo lxc start ${LB_CONTAINER_NAME}
+        else
+          echo "Creating lb-container"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
+        fi
+      continue-on-error: true 
+        
     - name: Get Load Balancer IP
       id: lb_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${LB_CONTAINER_NAME}'") | .state.network.eth0.addresses[0].address')"
 
     - name: Deploy Load Balancer (Nginx)
       run: |
-        # Install Nginx in the load balancer container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt install -y nginx certbot python3-certbot-nginx
-
         LB_IP="${{ steps.lb_ip.outputs.ip }}"
         APP1_IP="${{ steps.app1_ip.outputs.ip }}"
         APP2_IP="${{ steps.app2_ip.outputs.ip }}"
-
+    
+        # Install Nginx in the load balancer container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- bash -c '
+          apt update && \
+          apt install -y nginx certbot python3-certbot-nginx
+        '
+    
         # Create the Nginx configuration directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /etc/nginx/sites-available
-
+    
         # Create the Nginx configuration file
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'touch /etc/nginx/sites-available/default'
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "server {" > /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    listen 80;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    server_name nunomars-server.cloud;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    location / {" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_pass http://'$APP1_IP':8000 http://'$APP2_IP':8000;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header Host $host;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Real-IP $remote_addr;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Forwarded-Proto $scheme;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    }" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "}" >> /etc/nginx/sites-available/default'
-
+    
+        # Configure Nginx
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c '
+          echo "server {" > /etc/nginx/sites-available/default
+          echo "    listen 80;" >> /etc/nginx/sites-available/default
+          echo "    server_name nunomars-server.cloud;" >> /etc/nginx/sites-available/default
+          echo "" >> /etc/nginx/sites-available/default
+          echo "    location / {" >> /etc/nginx/sites-available/default
+          echo "        proxy_pass http://'$APP1_IP':8000 http://'$APP2_IP':8000;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header Host $host;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header X-Real-IP $remote_addr;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header X-Forwarded-Proto $scheme;" >> /etc/nginx/sites-available/default
+          echo "    }" >> /etc/nginx/sites-available/default
+          echo "}" >> /etc/nginx/sites-available/default
+        '
+    
         # Install SSL certificate with Certbot
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- certbot --nginx -d nunomars-server.eddi.cloud
-
+    
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
       continue-on-error: true
+    
         
     - name: Create and deploy Database (PostgreSQL)
       run: |
