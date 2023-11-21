@@ -40,7 +40,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon     
       continue-on-error: true
 
-    - name: Créer ou Recréer des conteneurs LXD
+    - name: Creer ou Recreer des conteneurs LXD
       run: |
         # Stop the container if it is running
         if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${LB_CONTAINER_NAME})" ]]; then
