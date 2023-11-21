@@ -128,7 +128,7 @@ jobs:
         # Configure Nginx as a reverse proxy (adjust configuration as needed)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "server {" > /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    listen 80;" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    server_name nunomars-server.eddi.cloud;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    server_name nunomars-server.cloud;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    location / {" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_pass http://nunomars-server.eddi.cloud;" >> /etc/nginx/sites-available/default'
