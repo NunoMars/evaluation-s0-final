@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4      
+      uses: actions/checkout@v4
 
     - name: Set up LXD
       run: |
@@ -26,10 +26,10 @@ jobs:
         if ! command -v lxd &> /dev/null; then
           # Install LXD via snap
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
-          
+
           # Wait for the LXD socket to be ready
           until [ -e /var/snap/lxd/common/lxd/unix.socket ]; do sleep 1; done
-          
+
           # Initialize LXD with explicit configuration
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto --storage-backend=dir --storage-pool=default
         fi
@@ -37,107 +37,43 @@ jobs:
     - name: Restart LXD (Snap)
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop snap.lxd.daemon
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon     
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon
       continue-on-error: true
 
     - name: Creer ou Recreer des conteneurs LXD
       run: |
-        # Stop the container if it is running
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${LB_CONTAINER_NAME})" ]]; then
-          echo "Stopping running container ${LB_CONTAINER_NAME}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${LB_CONTAINER_NAME}"
-        fi
-    
-        # Check if the container exists
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${LB_CONTAINER_NAME})" ]]; then
-          echo "Container ${LB_CONTAINER_NAME} already exists. Deleting it."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${LB_CONTAINER_NAME}"
-        fi
-    
-        # Create the container
-        echo "Creating ${LB_CONTAINER_NAME}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${LB_CONTAINER_NAME}"
-    
-        # Repeat the same process for other containers
-    
-        # App Container 1
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${APP_CONTAINER_1_NAME})" ]]; then
-          echo "Stopping running container ${APP_CONTAINER_1_NAME}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${APP_CONTAINER_1_NAME}"
-        fi
-    
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${APP_CONTAINER_1_NAME})" ]]; then
-          echo "Container ${APP_CONTAINER_1_NAME} already exists. Deleting it."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${APP_CONTAINER_1_NAME}"
-        fi
-    
-        echo "Creating ${APP_CONTAINER_1_NAME}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${APP_CONTAINER_1_NAME}"
-    
-        # Repeat the process for other containers...
-    
-        # App Container 2
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${APP_CONTAINER_2_NAME})" ]]; then
-          echo "Stopping running container ${APP_CONTAINER_2_NAME}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${APP_CONTAINER_2_NAME}"
-        fi
-    
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${APP_CONTAINER_2_NAME})" ]]; then
-          echo "Container ${APP_CONTAINER_2_NAME} already exists. Deleting it."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${APP_CONTAINER_2_NAME}"
-        fi
-    
-        echo "Creating ${APP_CONTAINER_2_NAME}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${APP_CONTAINER_2_NAME}"
-    
-        # Repeat the process for other containers...
-    
-        # DB Container
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${DB_CONTAINER_NAME})" ]]; then
-          echo "Stopping running container ${DB_CONTAINER_NAME}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${DB_CONTAINER_NAME}"
-        fi
-    
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${DB_CONTAINER_NAME})" ]]; then
-          echo "Container ${DB_CONTAINER_NAME} already exists. Deleting it."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${DB_CONTAINER_NAME}"
-        fi
-    
-        echo "Creating ${DB_CONTAINER_NAME}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${DB_CONTAINER_NAME}"
-    
-        # Repeat the process for other containers...
-    
-        # DNS Container
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${DNS_CONTAINER_NAME})" ]]; then
-          echo "Stopping running container ${DNS_CONTAINER_NAME}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${DNS_CONTAINER_NAME}"
-        fi
-    
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${DNS_CONTAINER_NAME})" ]]; then
-          echo "Container ${DNS_CONTAINER_NAME} already exists. Deleting it."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${DNS_CONTAINER_NAME}"
-        fi
-    
-        echo "Creating ${DNS_CONTAINER_NAME}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${DNS_CONTAINER_NAME}"
-    
-        # Repeat the process for other containers...
-    
-        # Firewall Container
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${FIREWALL_CONTAINER_NAME})" ]]; then
-          echo "Stopping running container ${FIREWALL_CONTAINER_NAME}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${FIREWALL_CONTAINER_NAME}"
-        fi
-    
-        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${FIREWALL_CONTAINER_NAME})" ]]; then
-          echo "Container ${FIREWALL_CONTAINER_NAME} already exists. Deleting it."
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${FIREWALL_CONTAINER_NAME}"
-        fi
-    
-        echo "Creating ${FIREWALL_CONTAINER_NAME}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${FIREWALL_CONTAINER_NAME}"    
-    
+        recreate_or_create_container() {
+          local container_name="$1"
+
+          # Stop the container if it is running
+          if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${container_name})" ]]; then
+            echo "Stopping running container ${container_name}"
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${container_name}"
+          fi
+
+          # Check if the container exists
+          if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${container_name})" ]]; then
+            echo "Container ${container_name} already exists. Deleting it."
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}"
+          fi
+
+          # Create the container
+          echo "Creating ${container_name}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}"
+        }
+
+        recreate_or_create_container "${LB_CONTAINER_NAME}"
+
+        recreate_or_create_container "${APP_CONTAINER_1_NAME}"
+
+        recreate_or_create_container "${APP_CONTAINER_2_NAME}"
+
+        recreate_or_create_container "${DB_CONTAINER_NAME}"
+
+        recreate_or_create_container "${DNS_CONTAINER_NAME}"
+
+        recreate_or_create_container "${FIREWALL_CONTAINER_NAME}"
+
     - name: Configure LXD containers
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
@@ -201,7 +137,7 @@ jobs:
         # Install BIND9 in the DNS container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt update
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt install -y bind9
-    
+
         # Configure BIND9 for the local zone
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
         zone "local" {
@@ -209,7 +145,7 @@ jobs:
             file "/etc/bind/db.local";
         };
         EOF'
-        
+
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/db.local
         $TTL 86400
         @       IN      SOA     ns1.local. admin.local. (
@@ -220,40 +156,40 @@ jobs:
                           86400 )         ; Negative Cache TTL
             IN      NS      ns1.local.
         ns1     IN      A       192.168.1.10
-        EOF'    
+        EOF'
         # Restart BIND9 to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9    
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
 
     - name: Deploy Firewall (iptables)
       run: |
         # Update package information
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update || { echo "Failed to update packages."; cat /etc/apt/sources.list; cat /etc/resolv.conf; exit 1; }
-    
+
         # Create the directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
 
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt install iptables
-    
+
         # Set up iptables rules
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
-    
+
         # Save iptables rules to the file
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4 || { echo "Failed to save rules to file."; exit 1; }      
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4 || { echo "Failed to save rules to file."; exit 1; }
 
     - name: Get Load Balancer IP
       id: lb_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${LB_CONTAINER_NAME}'") | .state.network.eth0.addresses[0].address')"
-  
+
     - name: Get App Container 1 IP
       id: app1_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_1_NAME}'") | .state.network.eth0.addresses[0].address')"
 
     - name: Get App Container 2 IP
       id: app2_ip
-      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')" 
+      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')"
 
     - name: Deploy Load Balancer (Nginx)
       run: |
@@ -264,13 +200,13 @@ jobs:
         LB_IP="${{ steps.lb_ip.outputs.ip }}"
         APP1_IP="${{ steps.app1_ip.outputs.ip }}"
         APP2_IP="${{ steps.app2_ip.outputs.ip }}"
-    
+
         # Create the Nginx configuration directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /etc/nginx/sites-available
-    
+
         # Create the Nginx configuration file
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'touch /etc/nginx/sites-available/default'
-        
+
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "server {" > /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    listen 80;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    server_name nunomars-server.cloud;" >> /etc/nginx/sites-available/default'
@@ -283,14 +219,13 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Forwarded-Proto $scheme;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    }" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "}" >> /etc/nginx/sites-available/default'
-        
+
         # Install SSL certificate with Certbot
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- certbot --nginx -d nunomars-server.eddi.cloud
-        
+
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
       continue-on-error: true
-      
 
     - name: Deploy Application to app-container-1
       run: |
