@@ -40,9 +40,9 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon     
       continue-on-error: true
 
-    - name: Recreate LXD containers
+    - name: Créer ou Recréer des conteneurs LXD
       run: |
-        recreate_container() {
+        recreate_or_create_container() {
           local container_name="$1"
           
           # Stop the container if it is running
@@ -51,36 +51,28 @@ jobs:
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${container_name}" || { echo "Failed to stop ${container_name}"; exit 1; }
           fi
     
-          # Delete the container if it exists
+          # Check if the container exists
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${container_name})" ]]; then
-            echo "Container ${container_name} exists. Deleting..."
+            echo "Container ${container_name} already exists. Deleting..."
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}" || { echo "Failed to delete ${container_name}"; exit 1; }
           fi
     
-          # Launch the container with detailed output
-          echo "Launching ${container_name}..."
-          echo "Container name: ${container_name}" # Added for debugging
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; sudo -S lxc info "${container_name}"; sudo -S cat /var/snap/lxd/common/lxd/containers/${container_name}/config; exit 1; }
+          # Create the container
+          echo "Creating ${container_name}..."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to create ${container_name}"; exit 1; }
         }
     
-        recreate_container "${APP_CONTAINER_1_NAME}"        
-        # Wait 
-        sleep 3        
-        recreate_container "${APP_CONTAINER_2_NAME}"
-        # Wait
-        sleep 3
-        recreate_container "${LB_CONTAINER_NAME}"
-        # Wait
-        sleep 3
-        recreate_container "${DB_CONTAINER_NAME}"
-        # Wait
-        sleep 3
-        recreate_container "${DNS_CONTAINER_NAME}"
-        # Wait
-        sleep 3
-        recreate_container "${FIREWALL_CONTAINER_NAME}"
-        # Wait
-        sleep 3 
+        recreate_or_create_container "${LB_CONTAINER_NAME}"
+    
+        recreate_or_create_container "${APP_CONTAINER_1_NAME}"
+    
+        recreate_or_create_container "${APP_CONTAINER_2_NAME}"
+    
+        recreate_or_create_container "${DB_CONTAINER_NAME}"
+    
+        recreate_or_create_container "${DNS_CONTAINER_NAME}"
+    
+        recreate_or_create_container "${FIREWALL_CONTAINER_NAME}"
     
     - name: Configure LXD containers
       run: |
