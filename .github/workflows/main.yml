@@ -91,7 +91,7 @@ jobs:
           systemctl start site_tarot_gunicorn && \
           systemctl status site_tarot_gunicorn
         '
-        
+      continue-on-error: true 
       
     - name: Create or Start app-container-2
       run: |
@@ -136,6 +136,8 @@ jobs:
           systemctl start site_tarot_gunicorn && \
           systemctl status site_tarot_gunicorn
         '
+      continue-on-error: true
+      
     - name: Créer et deploy load balancer
       run: |
         if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${LB_CONTAINER_NAME} &> /dev/null; then
