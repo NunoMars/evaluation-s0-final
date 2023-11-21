@@ -241,6 +241,10 @@ jobs:
         # Create the directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables
     
+        # Check if the directory exists
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- test -d /etc/iptables && \
+        
         # Save the firewall rules so they persist after reboot
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-S -nave > /etc/iptables/rules.v4
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -S -nave > /etc/iptables/rules.v4
+      
       
