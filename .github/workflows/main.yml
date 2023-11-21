@@ -43,7 +43,8 @@ jobs:
     - name: Recreate LXD containers
       run: |
         recreate_container() {
-          local container_name="$1"          
+          local container_name="$1"
+          
           # Stop the container if it is running
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${container_name})" ]]; then
             echo "Stopping running container ${container_name}..."
@@ -67,6 +68,7 @@ jobs:
         recreate_container "${DB_CONTAINER_NAME}"
         recreate_container "${DNS_CONTAINER_NAME}"
         recreate_container "${FIREWALL_CONTAINER_NAME}"
+    
 
     - name: Configure LXD containers
       run: |
