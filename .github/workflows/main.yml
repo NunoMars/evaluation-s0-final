@@ -125,6 +125,12 @@ jobs:
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt install -y iptables
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update
+
+        # Check if the iptables rules file exists, and create it if not
+        if sudo -S lxc exec firewall-container -- [ ! -e /etc/iptables/rules.v4 ]; then
+          sudo -S lxc exec firewall-container -- touch /etc/iptables/rules.v4
+        fi
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
