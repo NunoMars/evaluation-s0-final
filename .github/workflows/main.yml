@@ -22,9 +22,18 @@ jobs:
 
     - name: Set up LXD
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto
-    
+        # Check if LXD is installed
+        if ! command -v lxd &> /dev/null; then
+          # Install LXD via snap
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
+          
+          # Wait for the LXD socket to be ready
+          until [ -e /var/snap/lxd/common/lxd/unix.socket ]; do sleep 1; done
+          
+          # Initialize LXD with explicit configuration
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto --storage-backend=dir --storage-pool=default
+        fi
+        
     - name: Restart LXD (Snap)
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop snap.lxd.daemon
