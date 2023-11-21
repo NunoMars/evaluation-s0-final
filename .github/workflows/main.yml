@@ -57,139 +57,80 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}       
       continue-on-error: true
 
-    - name: Créer ou Recréer des conteneurs LXD
+    - name: Creer app-container-1
       run: |
-        create_container() {
-        local container_name="$1"
-        echo "Creating ${container_name}"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}"
-        echo "Waiting for ${container_name} to finish booting..."
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec "${container_name}" -- wait-for-it -t 0 -- echo "Container ${container_name} is ready."
-        }
-
-        create_container "${LB_CONTAINER_NAME}"
-        create_container "${APP_CONTAINER_1_NAME}"
-        create_container "${APP_CONTAINER_2_NAME}"
-        create_container "${DB_CONTAINER_NAME}"
-        create_container "${DNS_CONTAINER_NAME}"
-        create_container "${FIREWALL_CONTAINER_NAME}"
-
-    - name: Configure LXD containers
-      run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-1 -- apt install -y python3
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-2 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec app-container-2 -- apt install -y python3
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec lb-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec lb-container -- apt install -y nginx certbot python3-certbot-nginx
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec db-postgresql -- apt install -y postgresql
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec dns-container -- apt install -y bind9
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec firewall-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc exec firewall-container -- apt install -y iptables
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc network attach lxdbr0 app-container-1 eth0
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc network attach lxdbr0 app-container-2 eth0
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc network attach lxdbr0 db-postgresql eth0
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:localhost:80
-      continue-on-error: true
-
-    - name: Deploy Database (PostgreSQL)
-      run: |
-        # Update package information
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt update
-
-        # Check if the role 'nuno' already exists
-        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='nuno'" | grep -q 1; then
-          echo "Role 'nuno' already exists."
-        else
-          # Create PostgreSQL user 'nuno' with password
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -c "CREATE USER nuno WITH PASSWORD 'bcxau9p^^123.';"
-        fi
-
-        # Check if the database 'siteVoyance' already exists
-        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw siteVoyance; then
-          echo "Database 'siteVoyance' already exists."
-        else
-          # Create PostgreSQL database 'siteVoyance' owned by 'nuno'
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres createdb -O nuno siteVoyance
-        fi
-
-        # Allow connections to PostgreSQL from all IP addresses
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- bash -c 'echo "host all all 0.0.0.0/0 md5" | tee -a /etc/postgresql/*/main/pg_hba.conf'
-
-        # Configure PostgreSQL to listen on all addresses
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- bash -c 'echo "listen_addresses = '\''*'\''" | tee -a /etc/postgresql/*/main/postgresql.conf'
-
-        # Restart PostgreSQL to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- service postgresql restart
-      continue-on-error: true
-
-    - name: Deploy DNS (BIND9)
-      run: |
-        # Install BIND9 in the DNS container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt install -y bind9
-
-        # Configure BIND9 for the local zone
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
-        zone "local" {
-            type master;
-            file "/etc/bind/db.local";
-        };
-        EOF'
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/db.local
-        $TTL 86400
-        @       IN      SOA     ns1.local. admin.local. (
-                          2023112001      ; Serial
-                          3600            ; Refresh
-                          1800            ; Retry
-                          604800          ; Expire
-                          86400 )         ; Negative Cache TTL
-            IN      NS      ns1.local.
-        ns1     IN      A       192.168.1.10
-        EOF'
-        # Restart BIND9 to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
-
-    - name: Deploy Firewall (iptables)
-      run: |
-        # Update package information
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update || { echo "Failed to update packages."; cat /etc/apt/sources.list; cat /etc/resolv.conf; exit 1; }
-
-        # Create the directory if it doesn't exist
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt install iptables
-
-        # Set up iptables rules
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
-
-        # Save iptables rules to the file
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4 || { echo "Failed to save rules to file."; exit 1; }
-
-    - name: Get Load Balancer IP
-      id: lb_ip
-      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${LB_CONTAINER_NAME}'") | .state.network.eth0.addresses[0].address')"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update
 
     - name: Get App Container 1 IP
       id: app1_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_1_NAME}'") | .state.network.eth0.addresses[0].address')"
 
+    - name: Deploy Application to app-container-1
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt install -y git python3-venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python3 -m venv SiteVoyance/venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- source SiteVoyance/venv/bin/activate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- pip install -r SiteVoyance/requirements.txt
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py migrate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py collectstatic --noinput
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py loaddata SiteVoyance/database_dumps/MajorArcana.json
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "ExecStart=/bin/bash -c '\''source /home/ubuntu/SiteVoyance/venv/bin/activate && exec /home/ubuntu/SiteVoyance/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl enable site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl start site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl status site_tarot_gunicorn
+
+    - name: Creer app-container-2
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt update
+    
     - name: Get App Container 2 IP
       id: app2_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')"
+
+    - name: Deploy Application to app-container-2
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- apt install -y git python3-venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- git clone
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python3 -m venv SiteVoyance/venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- source SiteVoyance/venv/bin/activate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- pip install -r SiteVoyance/requirements.txt
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py migrate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py collectstatic --noinput
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py loaddata SiteVoyance/database_dumps/MajorArcana.json
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "ExecStart=/bin/bash -c '\''source /home/ubuntu/SiteVoyance/venv/bin/activate && exec /home/ubuntu/SiteVoyance/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl enable site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl start site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl status site_tarot_gunicorn
+
+    - name: Créer et deploy load balancer
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} -- apt update    
+    
+    - name: Get Load Balancer IP
+      id: lb_ip
+      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${LB_CONTAINER_NAME}'") | .state.network.eth0.addresses[0].address')"
 
     - name: Deploy Load Balancer (Nginx)
       run: |
@@ -226,50 +167,100 @@ jobs:
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
       continue-on-error: true
-
-    - name: Deploy Application to app-container-1
+        
+    - name: Create and deploy Database (PostgreSQL)
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt install -y git python3-venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python3 -m venv SiteVoyance/venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- source SiteVoyance/venv/bin/activate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- pip install -r SiteVoyance/requirements.txt
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py migrate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py collectstatic --noinput
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py loaddata SiteVoyance/database_dumps/MajorArcana.json
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "ExecStart=/bin/bash -c '\''source /home/ubuntu/SiteVoyance/venv/bin/activate && exec /home/ubuntu/SiteVoyance/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl enable site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl start site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl status site_tarot_gunicorn
+        # Create the database container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DB_CONTAINER_NAME}
 
-    - name: Deploy Application to app-container-2
+        # Update package information
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- apt update
+
+        # Check if the role 'nuno' already exists
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='nuno'" | grep -q 1; then
+          echo "Role 'nuno' already exists."
+        else
+          # Create PostgreSQL user 'nuno' with password
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -c "CREATE USER nuno WITH PASSWORD 'bcxau9p^^123.';"
+        fi
+
+        # Check if the database 'siteVoyance' already exists
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw siteVoyance; then
+          echo "Database 'siteVoyance' already exists."
+        else
+          # Create PostgreSQL database 'siteVoyance' owned by 'nuno'
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- sudo -u postgres createdb -O nuno siteVoyance
+        fi
+
+        # Allow connections to PostgreSQL from all IP addresses
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- bash -c 'echo "host all all 0.0.0.0/0 md5" | tee -a /etc/postgresql/*/main/pg_hba.conf'
+
+        # Configure PostgreSQL to listen on all addresses
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- bash -c 'echo "listen_addresses = '\''*'\''" | tee -a /etc/postgresql/*/main/postgresql.conf'
+
+        # Restart PostgreSQL to apply changes
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec db-postgresql -- service postgresql restart
+      continue-on-error: true
+
+    - name: Create and Deploy DNS (BIND9)
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- apt install -y git python3-venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python3 -m venv SiteVoyance/venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- source SiteVoyance/venv/bin/activate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- pip install -r SiteVoyance/requirements.txt
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py migrate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py collectstatic --noinput
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "ExecStart=/bin/bash -c '\''source /home/ubuntu/SiteVoyance/venv/bin/activate && exec /home/ubuntu/SiteVoyance/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl enable site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl start site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl status site_tarot_gunicorn
+        # Create the DNS container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DNS_CONTAINER_NAME}
+
+        # Install BIND9 in the DNS container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt install -y bind9
+
+        # Configure BIND9 for the local zone
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
+        zone "local" {
+            type master;
+            file "/etc/bind/db.local";
+        };
+        EOF'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/db.local
+        $TTL 86400
+        @       IN      SOA     ns1.local. admin.local. (
+                          2023112001      ; Serial
+                          3600            ; Refresh
+                          1800            ; Retry
+                          604800          ; Expire
+                          86400 )         ; Negative Cache TTL
+            IN      NS      ns1.local.
+        ns1     IN      A       192.168.1.10
+        EOF'
+        # Restart BIND9 to apply changes
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
+
+    - name: Create and deploy Firewall (iptables)
+      run: |
+        # Create the firewall container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${FIREWALL_CONTAINER_NAME}
+
+        # Update package information
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update || { echo "Failed to update packages."; cat /etc/apt/sources.list; cat /etc/resolv.conf; exit 1; }
+
+        # Create the directory if it doesn't exist
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt install iptables
+
+        # Set up iptables rules
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
+
+        # Save iptables rules to the file
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4 || { echo "Failed to save rules to file."; exit 1; }
+        
+    - name: Configure LXD containers
+      run: |
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc network attach lxdbr0 app-container-1 eth0
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc network attach lxdbr0 app-container-2 eth0
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc network attach lxdbr0 db-postgresql eth0
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:localhost:80
+      continue-on-error: true
