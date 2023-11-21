@@ -200,6 +200,9 @@ jobs:
 
     - name: Create and deploy Firewall (iptables)
       run: |
+        # fluwh iptables rules
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -F
+
         # Create the directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
     
