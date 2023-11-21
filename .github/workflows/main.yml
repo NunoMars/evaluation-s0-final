@@ -67,7 +67,7 @@ jobs:
     - name: Deploy Application to app-container-1
       run: |
         # Open an interactive shell in the container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- /bin/bash << 'EOF'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- /bin/bash
           apt update && apt upgrade -y
           apt install -y git python3 python3.8-venv
           apt autoremove -y
@@ -92,7 +92,7 @@ jobs:
           systemctl enable site_tarot_gunicorn
           systemctl start site_tarot_gunicorn
           systemctl status site_tarot_gunicorn
-        EOF    
+          exit  # Exit the interactive shell
     
     - name: Creer app-container-2
       run: |
