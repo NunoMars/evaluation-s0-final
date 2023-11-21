@@ -49,6 +49,9 @@ jobs:
           # Create the container
           echo "Creating ${container_name}"
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}"
+          # Wait for the container to be ready
+          echo "Waiting for ${container_name} to be ready"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec "${container_name}" -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
         }
     
         # Repeat the process for other containers...
