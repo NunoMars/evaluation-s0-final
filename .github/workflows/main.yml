@@ -33,43 +33,43 @@ jobs:
         if sudo -S lxc info app-container-1 &> /dev/null; then
           echo "Container app-container-1 already exists. Skipping creation."
         else
-          sudo -S lxc launch ubuntu:20.04 app-container-1
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1
         fi
     
         # Check if app-container-2 exists
-        if sudo -S lxc info app-container-2 &> /dev/null; then
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info app-container-2 &> /dev/null; then
           echo "Container app-container-2 already exists. Skipping creation."
         else
-          sudo -S lxc launch ubuntu:20.04 app-container-2
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2
         fi
     
         # Check if lb-container exists
-        if sudo -S lxc info lb-container &> /dev/null; then
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info lb-container &> /dev/null; then
           echo "Container lb-container already exists. Skipping creation."
         else
-          sudo -S lxc launch ubuntu:20.04 lb-container
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container
         fi
     
         # Check if db-postgresql exists
-        if sudo -S lxc info db-postgresql &> /dev/null; then
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info db-postgresql &> /dev/null; then
           echo "Container db-postgresql already exists. Skipping creation."
         else
-          sudo -S lxc launch ubuntu:20.04 db-postgresql
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql
         fi
     
         # Check if dns-container exists
-        if sudo -S lxc info dns-container &> /dev/null; then
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info dns-container &> /dev/null; then
           echo "Container dns-container already exists. Skipping creation."
         else
-          sudo -S lxc launch ubuntu:20.04 dns-container
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container
         fi
     
         # Check if firewall-container exists
-        if sudo -S lxc info firewall-container &> /dev/null; then
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info firewall-container &> /dev/null; then
           echo "Container firewall-container already exists. Skipping creation."
         else
-          sudo -S lxc launch ubuntu:20.04 firewall-container
-        fi   
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container
+        fi    
 
     - name: Configure LXD containers
       run: |
