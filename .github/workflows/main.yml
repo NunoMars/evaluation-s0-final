@@ -118,7 +118,7 @@ jobs:
         # Install Nginx in the load balancer container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt update
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- apt install -y nginx certbot python3-certbot-nginx
-        
+
         # Create the Nginx configuration directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /etc/nginx/sites-available
 
@@ -131,7 +131,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    server_name nunomars-server.eddi.cloud;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "    location / {" >> /etc/nginx/sites-available/default'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_pass http://app-server;" >> /etc/nginx/sites-available/default'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_pass http://nunomars-server.eddi.cloud;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header Host $host;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Real-IP $remote_addr;" >> /etc/nginx/sites-available/default'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;" >> /etc/nginx/sites-available/default'
