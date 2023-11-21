@@ -29,7 +29,7 @@ SECRET_KEY = "\\\ta(xZQ;xUIly1X@IGT:4re$"
 
 DEBUG = "PROD" not in os.environ
 
-ALLOWED_HOSTS = ['nunomars-server.eddi.cloud', 'localhost']
+ALLOWED_HOSTS = ['nunomars-server.eddi.cloud', 'localhost', '127.0.0.1']
 
 
 # Application definition
