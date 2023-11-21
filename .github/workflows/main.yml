@@ -171,6 +171,16 @@ jobs:
 
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
+
+    - name: Configure UFW
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ufw allow 'Nginx Full'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ufw allow 'OpenSSH'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ufw --force enable
+
+    - name: Obtain SSL certificate with Certbot
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S certbot --nginx -d nunomars-server.cloud --non-interactive --agree-tos --email nuno.ricardo.mars@gmail.com
     
        
 #   - name: Create and deploy Database (MariaDB)
@@ -244,8 +254,11 @@ jobs:
         
     - name: Configure LXD containers
       run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 app-container-1 eth0 || true
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 app-container-1 eth0
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 app-container-2 eth0 || true
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 app-container-2 eth0
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 lb-container eth0 || true
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 lb-container eth0
         LB_CONTAINER_IP=$(lxc list lb-container -c 4 --format csv)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:${LB_CONTAINER_IP}:80
