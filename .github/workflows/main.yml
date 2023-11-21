@@ -209,13 +209,6 @@ jobs:
 
     - name: Create and Deploy DNS (BIND9)
       run: |
-        # Create the DNS container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DNS_CONTAINER_NAME}
-
-        # Install BIND9 in the DNS container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt install -y bind9
-
         # Configure BIND9 for the local zone
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
         zone "local" {
