@@ -143,7 +143,7 @@ jobs:
         
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
-      
+      continue-on-error: true
 
     - name: Deploy Application to app-container-1
       run: |
