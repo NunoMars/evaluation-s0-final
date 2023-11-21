@@ -57,30 +57,30 @@ jobs:
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}" || { echo "Failed to delete ${container_name}"; exit 1; }
           fi
     
-          # Launch the container
+          # Launch the container with detailed output
           echo "Launching ${container_name}..."
           echo "Container name: ${container_name}" # Added for debugging
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; sudo -S lxc info "${container_name}"; exit 1; }
         }
     
         recreate_container "${APP_CONTAINER_1_NAME}"        
-        # Wait for a short time to ensure the first container is stopped and deleted
+        # Wait 
         sleep 3        
         recreate_container "${APP_CONTAINER_2_NAME}"
-        # Wait for a short time to ensure the first container is stopped and deleted
+        # Wait
         sleep 3
         recreate_container "${LB_CONTAINER_NAME}"
-        # Wait for a short time to ensure the first container is stopped and deleted
+        # Wait
         sleep 3
         recreate_container "${DB_CONTAINER_NAME}"
-        # Wait for a short time to ensure the first container is stopped and deleted
+        # Wait
         sleep 3
         recreate_container "${DNS_CONTAINER_NAME}"
-        # Wait for a short time to ensure the first container is stopped and deleted
+        # Wait
         sleep 3
         recreate_container "${FIREWALL_CONTAINER_NAME}"
-        # Wait for a short time to ensure the first container is stopped and deleted
-        sleep 3
+        # Wait
+        sleep 3    
     
     - name: Configure LXD containers
       run: |
