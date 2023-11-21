@@ -75,18 +75,19 @@ jobs:
         sudo python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
         sudo bash -c 'source /home/ubuntu/evaluation-s07-final/venv/bin/activate && pip install -r /home/ubuntu/evaluation-s07-final/requirements.txt && \
         python /home/ubuntu/evaluation-s07-final/manage.py migrate && \
-        sudo bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "ExecStart=/bin/bash -c '\''/home/ubuntu/evaluation-s07-final/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
-        sudo systemctl enable site_tarot_gunicorn && \
-        sudo systemctl start site_tarot_gunicorn && \
-        sudo systemctl status site_tarot_gunicorn'    
+        bash -c '\''echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "ExecStart=/bin/bash -c '\''/home/ubuntu/evaluation-s07-final/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        bash -c '\''echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'\'' && \
+        systemctl enable site_tarot_gunicorn && \
+        systemctl start site_tarot_gunicorn && \
+        systemctl status site_tarot_gunicorn'
+       
       
     - name: Creer app-container-2
       run: |
