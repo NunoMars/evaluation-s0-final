@@ -99,39 +99,48 @@ jobs:
     - name: Deploy DNS (BIND9)
       run: |
         # Install BIND9 in the DNS container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- apt install -y bind9
-
+        sudo -S lxc exec dns-container -- apt update
+        sudo -S lxc exec dns-container -- apt install -y bind9
+    
         # Configure BIND9 for the local zone
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "zone \"local\" {" > /etc/bind/named.conf.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "    type master;" >> /etc/bind/named.conf.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "    file \"/etc/bind/db.local\";" >> /etc/bind/named.conf.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "};" >> /etc/bind/named.conf.local'
-
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "$TTL 86400" > /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "@       IN      SOA     ns1.local. admin.local. (" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  2023112001      ; Serial" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  3600            ; Refresh" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  1800            ; Retry" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  604800          ; Expire" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "                  86400 )         ; Negative Cache TTL" >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "    IN      NS      ns1.local." >> /etc/bind/db.local'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'echo "ns1     IN      A       192.168.1.10" >> /etc/bind/db.local'  # Replace with the IP address of your DNS server
-
+        sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
+        zone "local" {
+            type master;
+            file "/etc/bind/db.local";
+        };
+        EOF'
+        
+            sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/db.local
+        $TTL 86400
+        @       IN      SOA     ns1.local. admin.local. (
+                          2023112001      ; Serial
+                          3600            ; Refresh
+                          1800            ; Retry
+                          604800          ; Expire
+                          86400 )         ; Negative Cache TTL
+            IN      NS      ns1.local.
+        ns1     IN      A       192.168.1.10
+        EOF'    
         # Restart BIND9 to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
+        sudo -S lxc exec dns-container -- systemctl restart bind9
+    
 
     - name: Deploy Firewall (iptables)
       run: |
+        # Update package information
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update
+    
         # Check if the iptables rules file exists, and create it if not
-        if sudo -S lxc exec firewall-container -- [ ! -e /etc/iptables/rules.v4 ]; then
-          sudo -S lxc exec firewall-container -- touch /etc/iptables/rules.v4
-        fi
+        sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
+        sudo -S lxc exec firewall-container -- touch /etc/iptables/rules.v4
+    
+        # Set up iptables rules
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
+    
+        # Save iptables rules to the file
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4
 
 
