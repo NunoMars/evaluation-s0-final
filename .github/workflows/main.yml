@@ -110,7 +110,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
           apt update && \
           apt upgrade -y && \
-          apt install -y git python3 python3-venv && \
+          apt install -y git python3 && \
           apt autoremove -y && \
           rm -rf /home/ubuntu/evaluation-s07-final && \
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
@@ -131,8 +131,6 @@ jobs:
           systemctl start site_tarot_gunicorn && \
           systemctl status site_tarot_gunicorn
         '
-    
-
     - name: Créer et deploy load balancer
       run: |
         if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${LB_CONTAINER_NAME} &> /dev/null; then
