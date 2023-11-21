@@ -63,16 +63,24 @@ jobs:
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
         }
     
-        recreate_container "${APP_CONTAINER_1_NAME}"
-        
+        recreate_container "${APP_CONTAINER_1_NAME}"        
         # Wait for a short time to ensure the first container is stopped and deleted
-        sleep 5
-        
+        sleep 3        
         recreate_container "${APP_CONTAINER_2_NAME}"
+        # Wait for a short time to ensure the first container is stopped and deleted
+        sleep 3
         recreate_container "${LB_CONTAINER_NAME}"
+        # Wait for a short time to ensure the first container is stopped and deleted
+        sleep 3
         recreate_container "${DB_CONTAINER_NAME}"
+        # Wait for a short time to ensure the first container is stopped and deleted
+        sleep 3
         recreate_container "${DNS_CONTAINER_NAME}"
-        recreate_container "${FIREWALL_CONTAINER_NAME}" 
+        # Wait for a short time to ensure the first container is stopped and deleted
+        sleep 3
+        recreate_container "${FIREWALL_CONTAINER_NAME}"
+        # Wait for a short time to ensure the first container is stopped and deleted
+        sleep 3
     
     - name: Configure LXD containers
       run: |
