@@ -70,6 +70,8 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
           apt update && \
           apt upgrade -y && \
+          apt autoremove -y && \
+          rm -rf /home/ubuntu/evaluation-s07-final && \
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
           python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
           source /home/ubuntu/evaluation-s07-final/venv/bin/activate && \
