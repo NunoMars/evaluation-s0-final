@@ -57,6 +57,7 @@ jobs:
         else
           echo "Creating app-container-1"
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
+
         fi
       continue-on-error: true
 
@@ -71,7 +72,9 @@ jobs:
           apt upgrade -y && \
           apt install -y git python3 python3-venv && \
           apt autoremove -y && \
-          rm -rf /home/ubuntu/evaluation-s07-final && \
+          rm -rf /home/ubuntu/evaluation-s07-final && \ '
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
           python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
           source /home/ubuntu/evaluation-s07-final/venv/bin/activate && \
