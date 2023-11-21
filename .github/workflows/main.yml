@@ -42,37 +42,101 @@ jobs:
 
     - name: Créer ou Recréer des conteneurs LXD
       run: |
-        recreate_or_create_container() {
-          local container_name="$1"
-          
-          # Stop the container if it is running
-          if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${container_name})" ]]; then
-            echo "Stopping running container ${container_name}"
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${container_name}"
-          fi
+        # Stop the container if it is running
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${LB_CONTAINER_NAME})" ]]; then
+          echo "Stopping running container ${LB_CONTAINER_NAME}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${LB_CONTAINER_NAME}"
+        fi
     
-          # Check if the container exists
-          if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${container_name})" ]]; then
-            echo "Container ${container_name} already exists. Deleting it."
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}"
-          fi
+        # Check if the container exists
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${LB_CONTAINER_NAME})" ]]; then
+          echo "Container ${LB_CONTAINER_NAME} already exists. Deleting it."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${LB_CONTAINER_NAME}"
+        fi
     
-          # Create the container
-          echo "Creating ${container_name}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}"
-        }
+        # Create the container
+        echo "Creating ${LB_CONTAINER_NAME}"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${LB_CONTAINER_NAME}"
     
-        recreate_or_create_container "${LB_CONTAINER_NAME}"
+        # Repeat the same process for other containers
     
-        recreate_or_create_container "${APP_CONTAINER_1_NAME}"
+        # App Container 1
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${APP_CONTAINER_1_NAME})" ]]; then
+          echo "Stopping running container ${APP_CONTAINER_1_NAME}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${APP_CONTAINER_1_NAME}"
+        fi
     
-        recreate_or_create_container "${APP_CONTAINER_2_NAME}"
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${APP_CONTAINER_1_NAME})" ]]; then
+          echo "Container ${APP_CONTAINER_1_NAME} already exists. Deleting it."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${APP_CONTAINER_1_NAME}"
+        fi
     
-        recreate_or_create_container "${DB_CONTAINER_NAME}"
+        echo "Creating ${APP_CONTAINER_1_NAME}"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${APP_CONTAINER_1_NAME}"
     
-        recreate_or_create_container "${DNS_CONTAINER_NAME}"
+        # Repeat the process for other containers...
     
-        recreate_or_create_container "${FIREWALL_CONTAINER_NAME}"
+        # App Container 2
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${APP_CONTAINER_2_NAME})" ]]; then
+          echo "Stopping running container ${APP_CONTAINER_2_NAME}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${APP_CONTAINER_2_NAME}"
+        fi
+    
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${APP_CONTAINER_2_NAME})" ]]; then
+          echo "Container ${APP_CONTAINER_2_NAME} already exists. Deleting it."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${APP_CONTAINER_2_NAME}"
+        fi
+    
+        echo "Creating ${APP_CONTAINER_2_NAME}"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${APP_CONTAINER_2_NAME}"
+    
+        # Repeat the process for other containers...
+    
+        # DB Container
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${DB_CONTAINER_NAME})" ]]; then
+          echo "Stopping running container ${DB_CONTAINER_NAME}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${DB_CONTAINER_NAME}"
+        fi
+    
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${DB_CONTAINER_NAME})" ]]; then
+          echo "Container ${DB_CONTAINER_NAME} already exists. Deleting it."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${DB_CONTAINER_NAME}"
+        fi
+    
+        echo "Creating ${DB_CONTAINER_NAME}"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${DB_CONTAINER_NAME}"
+    
+        # Repeat the process for other containers...
+    
+        # DNS Container
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${DNS_CONTAINER_NAME})" ]]; then
+          echo "Stopping running container ${DNS_CONTAINER_NAME}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${DNS_CONTAINER_NAME}"
+        fi
+    
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${DNS_CONTAINER_NAME})" ]]; then
+          echo "Container ${DNS_CONTAINER_NAME} already exists. Deleting it."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${DNS_CONTAINER_NAME}"
+        fi
+    
+        echo "Creating ${DNS_CONTAINER_NAME}"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${DNS_CONTAINER_NAME}"
+    
+        # Repeat the process for other containers...
+    
+        # Firewall Container
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${FIREWALL_CONTAINER_NAME})" ]]; then
+          echo "Stopping running container ${FIREWALL_CONTAINER_NAME}"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${FIREWALL_CONTAINER_NAME}"
+        fi
+    
+        if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${FIREWALL_CONTAINER_NAME})" ]]; then
+          echo "Container ${FIREWALL_CONTAINER_NAME} already exists. Deleting it."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${FIREWALL_CONTAINER_NAME}"
+        fi
+    
+        echo "Creating ${FIREWALL_CONTAINER_NAME}"
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${FIREWALL_CONTAINER_NAME}"    
     
     - name: Configure LXD containers
       run: |
