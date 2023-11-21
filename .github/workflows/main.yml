@@ -43,7 +43,9 @@ jobs:
 
     - name: Supprimer tous les containeurs
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S -n lxc delete --force {}    
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete $(lxc list -c n --format csv)
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc image delete $(lxc image list -c f --format csv)
+
 
     - name: Créer ou Recréer des conteneurs LXD
       run: |
