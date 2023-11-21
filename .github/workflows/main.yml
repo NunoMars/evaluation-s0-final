@@ -31,12 +31,12 @@ jobs:
 
     - name: Launch LXD containers
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1 || true
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2 || true
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container || true
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql || true
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container || true
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1 || { echo "Failed to launch app-container-1"; exit 1; }
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-2 || { echo "Failed to launch app-container-2"; exit 1; }
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 lb-container || { echo "Failed to launch lb-container"; exit 1; }
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 db-postgresql || { echo "Failed to launch db-postgresql"; exit 1; }
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 dns-container || { echo "Failed to launch dns-container"; exit 1; }
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 firewall-container || { echo "Failed to launch firewall-container"; exit 1; }
 
     - name: Configure LXD containers
       run: |
