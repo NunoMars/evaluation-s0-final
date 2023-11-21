@@ -149,10 +149,9 @@ jobs:
 
         # install certbot
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- bash -c '
-          snap install core; \
-          snap refresh core; \
-          snap install --classic certbot; \
-          ln -s /snap/bin/certbot /usr/bin/certbot; \
+          apt-get update; \
+          apt-get install -y nginx \
+          apt-get install -y certbot; \
         '
     
         # Create the Nginx configuration directory if it doesn't exist
