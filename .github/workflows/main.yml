@@ -91,10 +91,16 @@ jobs:
           systemctl status site_tarot_gunicorn
         '       
       
-    - name: Creer app-container-2
+    - name: Create or Start app-container-2
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt update
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_2_NAME} &> /dev/null; then
+          echo "app-container-2 already exists. Starting..."
+          sudo lxc start ${APP_CONTAINER_2_NAME}
+        else
+          echo "Creating app-container-2"
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
+        fi
+      continue-on-error: true
     
     - name: Get App Container 2 IP
       id: app2_ip
