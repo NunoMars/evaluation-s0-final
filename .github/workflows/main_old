@@ -139,7 +139,7 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "}" >> /etc/nginx/sites-available/default'
         
         # Install SSL certificate with Certbot
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- certbot --nginx -d nunomars-server.eddi.cloud
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- certbot --nginx -d nunomars-server.eddi.cloud 
         
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
