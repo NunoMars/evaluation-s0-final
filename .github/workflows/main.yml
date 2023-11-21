@@ -59,24 +59,23 @@ jobs:
 
     - name: Créer ou Recréer des conteneurs LXD
       run: |
-        recreate_or_create_container() {
-          local container_name="$1"
-          # Create the container
-          echo "Creating ${container_name}"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}"
-          # Wait for the container to be ready
-          echo "Waiting for ${container_name} to be ready"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec "${container_name}" -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
-        }
-    
-        # Repeat the process for other containers...
-    
-        recreate_or_create_container "${LB_CONTAINER_NAME}"
-        recreate_or_create_container "${APP_CONTAINER_1_NAME}"
-        recreate_or_create_container "${APP_CONTAINER_2_NAME}"
-        recreate_or_create_container "${DB_CONTAINER_NAME}"
-        recreate_or_create_container "${DNS_CONTAINER_NAME}"
-        recreate_or_create_container "${FIREWALL_CONTAINER_NAME}"    
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DNS_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${FIREWALL_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- bash -c 'while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done'
 
     - name: Configure LXD containers
       run: |
