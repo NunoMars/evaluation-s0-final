@@ -40,24 +40,24 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon     
       continue-on-error: true
 
-    - name: Launch LXD containers
+    - name: Create LXD containers
       run: |
-        check_and_launch_container() {
+        recreate_container() {
           local container_name="$1"
-          if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info "${container_name}" 2>&1) == *"doesn't exist"* ]]; then
-            echo "Container ${container_name} does not exist. Launching..."
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
-          else
-            echo "Container ${container_name} already exists. Skipping creation."
+          if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info "${container_name}" 2>&1) != *"doesn't exist"* ]]; then
+            echo "Container ${container_name} exists. Deleting..."
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}" || { echo "Failed to delete ${container_name}"; exit 1; }
           fi
+          echo "Launching ${container_name}..."
+          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 "${container_name}" || { echo "Failed to launch ${container_name}"; exit 1; }
         }
 
-        check_and_launch_container "${APP_CONTAINER_1_NAME}"
-        check_and_launch_container "${APP_CONTAINER_2_NAME}"
-        check_and_launch_container "${LB_CONTAINER_NAME}"
-        check_and_launch_container "${DB_CONTAINER_NAME}"
-        check_and_launch_container "${DNS_CONTAINER_NAME}"
-        check_and_launch_container "${FIREWALL_CONTAINER_NAME}" 
+        recreate_container "${APP_CONTAINER_1_NAME}"
+        recreate_container "${APP_CONTAINER_2_NAME}"
+        recreate_container "${LB_CONTAINER_NAME}"
+        recreate_container "${DB_CONTAINER_NAME}"
+        recreate_container "${DNS_CONTAINER_NAME}"
+        recreate_container "${FIREWALL_CONTAINER_NAME}"
 
     - name: Configure LXD containers
       run: |
