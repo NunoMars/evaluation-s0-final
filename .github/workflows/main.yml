@@ -68,10 +68,10 @@ jobs:
       run: |
         # Open an interactive shell in the container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- /bin/bash
-          apt update && apt upgrade -y
-          apt install -y git python3 python3.8-venv
-          apt autoremove -y
-          rm -rf evaluation-s07-final
+          sudo apt update && apt upgrade -y
+          sudo apt install -y git python3 python3.8-venv
+          sudo apt autoremove -y
+          sudo rm -rf evaluation-s07-final
           git clone https://github.com/NunoMars/evaluation-s07-final.git
           cd evaluation-s07-final
           python3 -m venv venv
