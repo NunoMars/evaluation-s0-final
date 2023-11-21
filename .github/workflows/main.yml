@@ -43,10 +43,14 @@ jobs:
 
     - name: Supprimer tous les containeurs
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list -c n --format csv | xargs -I {} sudo -S -n lxc stop {} --force
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list -c n --format csv | xargs -I {} sudo -S -n lxc delete {} --force
-
-
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${LB_CONTAINER_NAME} --force
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_1_NAME} --force
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_2_NAME} --force
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DB_CONTAINER_NAME} --force
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DNS_CONTAINER_NAME} --force
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME} --force        
+      continue-on-error: true
+      
     - name: Créer ou Recréer des conteneurs LXD
       run: |
         recreate_or_create_container() {
