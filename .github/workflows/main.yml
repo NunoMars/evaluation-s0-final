@@ -49,16 +49,14 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}       
       continue-on-error: true
 
-    - name: Creer app-container-1
+    - name: Create or Start app-container-1
       run: |
-        if sudo lxc info ${APP_CONTAINER_1_NAME} &> /dev/null; then
-          echo "Container $APP_CONTAINER_1_NAME already exists. Skipping creation."
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_1_NAME} &> /dev/null; then
+          echo "app-container-1 already exists. Starting..."
+          sudo lxc start ${APP_CONTAINER_1_NAME}
         else
-          # Create the container if it doesn't exist
+          echo "Creating app-container-1"
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
-          
-          # Wait for the container to start (adjust the sleep duration based on your needs)
-          sleep 3
         fi
 
     - name: Get App Container 1 IP
