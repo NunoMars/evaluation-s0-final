@@ -43,14 +43,20 @@ jobs:
 
     - name: Supprimer tous les containeurs
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${LB_CONTAINER_NAME} --force
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_1_NAME} --force
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_2_NAME} --force
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DB_CONTAINER_NAME} --force
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DNS_CONTAINER_NAME} --force
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME} --force        
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${LB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${LB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${APP_CONTAINER_1_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_1_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${APP_CONTAINER_2_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_2_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DB_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DNS_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DNS_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${FIREWALL_CONTAINER_NAME}
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}       
       continue-on-error: true
-      
+
     - name: Créer ou Recréer des conteneurs LXD
       run: |
         recreate_or_create_container() {
