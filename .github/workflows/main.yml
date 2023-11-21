@@ -247,5 +247,6 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 app-container-1 eth0
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 app-container-2 eth0
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 lb-container eth0
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:localhost:80
+        LB_CONTAINER_IP=$(lxc list lb-container -c 4 --format csv)
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:${LB_CONTAINER_IP}:80
       
