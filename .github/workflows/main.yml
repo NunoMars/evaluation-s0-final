@@ -69,7 +69,7 @@ jobs:
     - name: Deploy Application to app-container-1
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt install -y git python3-venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt install -y git python3-pip python3-virtualenv
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python3 -m venv SiteVoyance/venv
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- source SiteVoyance/venv/bin/activate
