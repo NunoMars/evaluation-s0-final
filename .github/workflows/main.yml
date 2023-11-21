@@ -176,31 +176,30 @@ jobs:
     - name: Create and deploy Database (MariaDB)
       run: |
         # Create the database container
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DB_CONTAINER_NAME}
+        lxc launch ubuntu:20.04 ${DB_CONTAINER_NAME}
     
         # Update package information
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- apt update && apt upgrade -y
+        lxc exec ${DB_CONTAINER_NAME} -- sudo apt update && sudo apt upgrade -y
     
         # Install MariaDB server
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- apt install -y mariadb-server
+        lxc exec ${DB_CONTAINER_NAME} -- sudo apt install -y mariadb-server
     
         # Secure MariaDB installation (set root password, remove anonymous users, etc.)
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- mysql_secure_installation
+        lxc exec ${DB_CONTAINER_NAME} -- sudo mysql_secure_installation
     
         # Create a database and user
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS siteVoyance;"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- mysql -uroot -p -e "CREATE USER IF NOT EXISTS 'nuno'@'%' IDENTIFIED BY 'bcxau9p^^123.';"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- mysql -uroot -p -e "GRANT ALL PRIVILEGES ON siteVoyance.* TO 'nuno'@'%';"
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- mysql -uroot -p -e "FLUSH PRIVILEGES;"
+        lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS siteVoyance;"
+        lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE USER IF NOT EXISTS 'nuno'@'%' IDENTIFIED BY 'bcxau9p^^123.';"
+        lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "GRANT ALL PRIVILEGES ON siteVoyance.* TO 'nuno'@'%';"
+        lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "FLUSH PRIVILEGES;"
     
         # Allow connections to MariaDB from all IP addresses
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "[mysqld]" > /etc/mysql/conf.d/bind-address.cnf'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "bind-address = 0.0.0.0" >> /etc/mysql/conf.d/bind-address.cnf'
+        lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "[mysqld]" > /etc/mysql/conf.d/bind-address.cnf'
+        lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "bind-address = 0.0.0.0" >> /etc/mysql/conf.d/bind-address.cnf'
     
         # Restart MariaDB to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DB_CONTAINER_NAME} -- service mysql restart
-      continue-on-error: true
-      
+        lxc exec ${DB_CONTAINER_NAME} -- sudo service mysql restart
+      continue-on-error: true      
 
     - name: Create and Deploy DNS (BIND9)
       run: |
