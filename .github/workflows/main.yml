@@ -146,6 +146,14 @@ jobs:
         LB_IP="${{ steps.lb_ip.outputs.ip }}"
         APP1_IP="${{ steps.app1_ip.outputs.ip }}"
         APP2_IP="${{ steps.app2_ip.outputs.ip }}"
+
+        # install certbot
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- bash -c '
+          snap install core; \
+          snap refresh core; \
+          snap install --classic certbot; \
+          ln -s /snap/bin/certbot /usr/bin/certbot; \
+        '
     
         # Create the Nginx configuration directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /etc/nginx/sites-available
