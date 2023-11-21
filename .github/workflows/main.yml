@@ -30,12 +30,12 @@ jobs:
     - name: Launch LXD containers
       run: |
         # Check if app-container-1 exists
-        if sudo -S lxc info app-container-1 &> /dev/null; then
-          echo "Container app-container-1 already exists. Skipping creation."
+        if [[ $(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info app-container-1 2>&1) == *"doesn't exist"* ]]; then
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1 || { echo "Failed to launch app-container-1"; exit 1; }
         else
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 app-container-1  || { echo "Failed to launch app-container-1"; exit 1; }
+          echo "Container app-container-1 already exists. Skipping creation."
         fi
-    
+      
         # Check if app-container-2 exists
         if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info app-container-2 &> /dev/null; then
           echo "Container app-container-2 already exists. Skipping creation."
