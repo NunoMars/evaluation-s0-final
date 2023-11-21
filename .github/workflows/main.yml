@@ -75,8 +75,6 @@ jobs:
         sudo python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
         sudo bash -c 'source /home/ubuntu/evaluation-s07-final/venv/bin/activate && pip install -r /home/ubuntu/evaluation-s07-final/requirements.txt && \
         python /home/ubuntu/evaluation-s07-final/manage.py migrate && \
-        python /home/ubuntu/evaluation-s07-final/manage.py collectstatic --noinput && \
-        python /home/ubuntu/evaluation-s07-final/manage.py loaddata /home/ubuntu/evaluation-s07-final/database_dumps/MajorArcana.json' && \
         sudo bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service' && \
         sudo bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
         sudo bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
@@ -88,9 +86,7 @@ jobs:
         sudo bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
         sudo systemctl enable site_tarot_gunicorn && \
         sudo systemctl start site_tarot_gunicorn && \
-        sudo systemctl status site_tarot_gunicorn
-    
-    
+        sudo systemctl status site_tarot_gunicorn    
       
     - name: Creer app-container-2
       run: |
@@ -110,8 +106,6 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- source SiteVoyance/venv/bin/activate
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- pip install -r SiteVoyance/requirements.txt
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- python SiteVoyance/manage.py migrate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- python SiteVoyance/manage.py collectstatic --noinput
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- python SiteVoyance/manage.py loaddata SiteVoyance/database_dumps/MajorArcana.json
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
