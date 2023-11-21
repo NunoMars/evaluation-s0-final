@@ -196,8 +196,26 @@ jobs:
 #   
 #       # Restart MariaDB to apply changes
 #       lxc exec ${DB_CONTAINER_NAME} -- sudo service mysql restart
-#     continue-on-error: true      
+#     continue-on-error: true 
 
+    - name: Create and deploy Firewall (iptables)
+      run: |
+        # Create the directory if it doesn't exist
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
+    
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt install -y iptables iptables-persistent
+
+    
+        # Set up iptables rules
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
+    
+        # Save iptables rules with iptables-persistent
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- systemctl is-enabled netfilter-persistent.service
+        
     - name: Create and Deploy DNS (BIND9)
       run: |
         # Configure BIND9 for the local zone
@@ -222,26 +240,7 @@ jobs:
         EOF'
 
         # Restart BIND9 to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
-
-
-    - name: Create and deploy Firewall (iptables)
-      run: |
-        # Create the directory if it doesn't exist
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
-    
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- apt install -y iptables
-    
-        # Set up iptables rules
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
-    
-        # Save iptables rules to the file
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-save > /etc/iptables/rules.v4 || { echo "Failed to save rules to file."; exit 1; }
-      
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9      
         
     - name: Configure LXD containers
       run: |
