@@ -68,10 +68,12 @@ jobs:
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update && \
         sudo apt upgrade -y && \
-        sudo apt install -y git python3 python3-pip && \
+        sudo apt install -y git python3 python3-venv && \
         sudo apt autoremove -y && \
         sudo rm -rf /home/ubuntu/evaluation-s07-final && \
         sudo git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
+        sudo python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
+        source /home/ubuntu/evaluation-s07-final/venv/bin/activate && \
         sudo pip install -r /home/ubuntu/evaluation-s07-final/requirements.txt && \
         sudo python /home/ubuntu/evaluation-s07-final/manage.py migrate && \
         sudo python /home/ubuntu/evaluation-s07-final/manage.py collectstatic --noinput && \
@@ -88,6 +90,7 @@ jobs:
         sudo systemctl enable site_tarot_gunicorn && \
         sudo systemctl start site_tarot_gunicorn && \
         sudo systemctl status site_tarot_gunicorn
+    
       
     - name: Creer app-container-2
       run: |
