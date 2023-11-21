@@ -74,7 +74,7 @@ jobs:
 
     - name: Deploy Application to app-container-1
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update && apt upgrade -y
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- sudo apt update && apt upgrade -y
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt install -y git python3 python3.8-venv
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt autoremove -y
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- git clone https://github.com/NunoMars/evaluation-s07-final.git
