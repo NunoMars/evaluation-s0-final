@@ -47,13 +47,13 @@ jobs:
           
           # Stop the container if it is running
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c s | grep ${container_name})" ]]; then
-            echo "Stopping running container ${container_name}..."
+            echo "Stopping running container ${container_name}"
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop "${container_name}" || { echo "Failed to stop ${container_name}"; exit 1; }
           fi
     
           # Check if the container exists
           if [[ -n "$(echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format csv -c n | grep ${container_name})" ]]; then
-            echo "Container ${container_name} already exists. Deleting..."
+            echo "Container ${container_name} already exists. Deleting it."
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete -f "${container_name}" || { echo "Failed to delete ${container_name}"; exit 1; }
           fi
     
