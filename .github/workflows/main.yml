@@ -63,13 +63,16 @@ jobs:
         }
     
         recreate_container "${APP_CONTAINER_1_NAME}"
+        
+        # Wait for a short time to ensure the first container is stopped and deleted
+        sleep 5
+        
         recreate_container "${APP_CONTAINER_2_NAME}"
         recreate_container "${LB_CONTAINER_NAME}"
         recreate_container "${DB_CONTAINER_NAME}"
         recreate_container "${DNS_CONTAINER_NAME}"
-        recreate_container "${FIREWALL_CONTAINER_NAME}"
+        recreate_container "${FIREWALL_CONTAINER_NAME}" 
     
-
     - name: Configure LXD containers
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- apt update
