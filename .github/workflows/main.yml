@@ -59,9 +59,15 @@ jobs:
 
     - name: Creer app-container-1
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update
-
+        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc info ${APP_CONTAINER_1_NAME} &> /dev/null; then
+        echo "Container $APP_CONTAINER_1_NAME already exists. Skipping creation."
+        else
+            # Create the container if it doesn't exist
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
+        
+            # Wait for the container to start (you can adjust the sleep duration based on your needs)
+            sleep 3
+        fi
     - name: Get App Container 1 IP
       id: app1_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_1_NAME}'") | .state.network.eth0.addresses[0].address')"
