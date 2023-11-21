@@ -33,33 +33,32 @@ jobs:
           # Initialize LXD with explicit configuration
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto --storage-backend=dir --storage-pool=default
         fi
-    - name: Supprimer tous les containeurs
-      run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${LB_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${LB_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${APP_CONTAINER_1_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_1_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${APP_CONTAINER_2_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_2_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DB_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DB_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DNS_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DNS_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${FIREWALL_CONTAINER_NAME}
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}
-      continue-on-error: true
+#   - name: Supprimer tous les containeurs
+#      run: |
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${LB_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${LB_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${APP_CONTAINER_1_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_1_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${APP_CONTAINER_2_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${APP_CONTAINER_2_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DB_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DB_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${DNS_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${DNS_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc stop ${FIREWALL_CONTAINER_NAME}
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc delete ${FIREWALL_CONTAINER_NAME}
+#     continue-on-error: true
 
-    - name: Create or Start app-container-1
-      run: |
-        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_1_NAME} &> /dev/null; then
-          echo "app-container-1 already exists. Starting..."
-          sudo lxc start ${APP_CONTAINER_1_NAME}
-        else
-          echo "Creating app-container-1"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
-
-        fi
-      continue-on-error: true
+#    - name: Create or Start app-container-1
+#      run: |
+#        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_1_NAME} &> /dev/null; then
+#          echo "app-container-1 already exists. Starting..."
+#          sudo lxc start ${APP_CONTAINER_1_NAME}
+#        else
+#          echo "Creating app-container-1"
+#          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
+#        fi
+#      continue-on-error: true
 
     - name: Get App Container 1 IP
       id: app1_ip
@@ -67,12 +66,7 @@ jobs:
 
     - name: Deploy Application to app-container-1
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc restart ${APP_CONTAINER_1_NAME}
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
-          apt update && \
-          apt upgrade -y && \
-          apt install -y python3-pip python3.8-venv git && \
-          apt autoremove -y && \
           rm -rf /home/ubuntu/evaluation-s07-final && \
           git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
           python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
@@ -94,16 +88,16 @@ jobs:
         '
       continue-on-error: true 
       
-    - name: Create or Start app-container-2
-      run: |
-        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_2_NAME} &> /dev/null; then
-          echo "app-container-2 already exists. Starting..."
-          sudo lxc start ${APP_CONTAINER_2_NAME}
-        else
-          echo "Creating app-container-2"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
-        fi
-      continue-on-error: true
+#   # - name: Create or Start app-container-2
+#   #  run: |
+#   #    if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_2_NAME} &> /dev/null; then
+#   #      echo "app-container-2 already exists. Starting..."
+#   #      sudo lxc start ${APP_CONTAINER_2_NAME}
+#   #    else
+#   #      echo "Creating app-container-2"
+#   #      echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
+#   #    fi
+#   #  continue-on-error: true
     
     - name: Get App Container 2 IP
       id: app2_ip
@@ -111,7 +105,6 @@ jobs:
 
     - name: Deploy Application to app-container-2
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'apt update && apt upgrade -y && apt install -y git python3 python3-pip python3.8-venv && apt autoremove -y'
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
           rm -rf evaluation-s07-final && \
           git clone https://github.com/NunoMars/evaluation-s07-final.git && \
@@ -133,16 +126,16 @@ jobs:
     
       continue-on-error: true
 
-    - name: Créer et deploy load balancer
-      run: |
-        if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${LB_CONTAINER_NAME} &> /dev/null; then
-          echo "lb-container already exists. Starting..."
-          sudo lxc start ${LB_CONTAINER_NAME}
-        else
-          echo "Creating lb-container"
-          echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
-        fi
-      continue-on-error: true 
+#   - name: Créer et deploy load balancer
+#     run: |
+#       if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${LB_CONTAINER_NAME} &> /dev/null; then
+#         echo "lb-container already exists. Starting..."
+#         sudo lxc start ${LB_CONTAINER_NAME}
+#       else
+#         echo "Creating lb-container"
+#         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
+#       fi
+#     continue-on-error: true 
         
     - name: Get Load Balancer IP
       id: lb_ip
@@ -156,8 +149,6 @@ jobs:
     
         # Install Nginx in the load balancer container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- bash -c '
-          apt update && \
-          apt upgrade -y && \
           apt install -y nginx && \
           apt install -y certbot && \
           apt install -y python3-certbot-nginx
