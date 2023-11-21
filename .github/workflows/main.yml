@@ -86,7 +86,7 @@ jobs:
         sudo bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service' && \
         sudo systemctl enable site_tarot_gunicorn && \
         sudo systemctl start site_tarot_gunicorn && \
-        sudo systemctl status site_tarot_gunicorn    
+        sudo systemctl status site_tarot_gunicorn'    
       
     - name: Creer app-container-2
       run: |
