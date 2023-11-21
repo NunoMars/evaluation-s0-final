@@ -158,9 +158,9 @@ jobs:
         # Install Nginx in the load balancer container
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- bash -c '
           apt update && \
+          apt upgrade -y && \
           apt install -y nginx certbot python3-certbot-nginx
-        '
-    
+        '    
         # Create the Nginx configuration directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /etc/nginx/sites-available
     
