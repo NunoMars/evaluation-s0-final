@@ -24,6 +24,11 @@ jobs:
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S snap install lxd --channel=latest/stable
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxd init --auto
+    
+    - name: Restart LXD (Snap)
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop snap.lxd.daemon
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon
 
     - name: Restart LXD (Snap)
       run: |
