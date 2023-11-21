@@ -40,10 +40,12 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start snap.lxd.daemon
         
       continue-on-error: true
+    - name: supprimer tous les containeurs
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S -n lxc delete {} --force
 
     - name: Créer ou Recréer des conteneurs LXD
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc list --format json | jq -r ".[].name" | xargs -I {} sudo -S -n lxc delete {} --force 
         recreate_or_create_container() {
           local container_name="$1"
           # Create the container
