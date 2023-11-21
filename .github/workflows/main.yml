@@ -155,88 +155,88 @@ jobs:
         # Create and activate a virtual environment
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python3 -m venv SiteVoyance/venv      
 
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- source SiteVoyance/venv/bin/activate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- source SiteVoyance/venv/bin/activate
             
                 # Install project dependencies
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- pip install -r SiteVoyance/requirements.txt
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- pip install -r SiteVoyance/requirements.txt
             
                 # Apply database migrations and collect static files
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- python SiteVoyance/manage.py migrate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- python SiteVoyance/manage.py collectstatic --noinput
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- python SiteVoyance/manage.py loaddata SiteVoyance/database_dumps/MajorArcana.json
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py migrate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py collectstatic --noinput
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- python SiteVoyance/manage.py loaddata SiteVoyance/database_dumps/MajorArcana.json
             
                 # Create Gunicorn service file
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "Group=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "WorkingDirectory=/path/to/your/project/SiteVoyance" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "ExecStart=/path/to/your/project/SiteVoyance/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 SiteVoyance.wsgi:application" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "Group=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "WorkingDirectory=/path/to/your/project/SiteVoyance" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "ExecStart=/path/to/your/project/SiteVoyance/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 SiteVoyance.wsgi:application" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
             
                 # Enable and start Gunicorn service
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- systemctl enable site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S app-container-1 -- systemctl start site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl enable site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-1 -- systemctl start site_tarot_gunicorn
       continue-on-error: true
 
     - name: Deploy Application to app-container-2
       run: |
         # Clone your Django repository
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- apt install -y git python3-venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- apt update
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- apt install -y git python3-venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
             
                 # Create and activate a virtual environment
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- python3 -m venv SiteVoyance/venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- source SiteVoyance/venv/bin/activate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python3 -m venv SiteVoyance/venv
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- source SiteVoyance/venv/bin/activate
             
                 # Install project dependencies
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n  app-container-2 -- pip install -r SiteVoyance/requirements.txt
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- pip install -r SiteVoyance/requirements.txt
     
         # Apply database migrations and collect static files
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- python SiteVoyance/manage.py migrate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- python SiteVoyance/manage.py collectstatic --noinput
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py migrate
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- python SiteVoyance/manage.py collectstatic --noinput
     
         # Create Gunicorn service file
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "Group=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "WorkingDirectory=/path/to/your/project/SiteVoyance" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "ExecStart=/path/to/your/project/SiteVoyance/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 SiteVoyance.wsgi:application" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "Group=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "WorkingDirectory=/path/to/your/project/SiteVoyance" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "ExecStart=/path/to/your/project/SiteVoyance/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 SiteVoyance.wsgi:application" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
     
         # Enable and start Gunicorn service
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- systemctl enable site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec app-container-2 -- systemctl start site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl enable site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec app-container-2 -- systemctl start site_tarot_gunicorn
       continue-on-error: true
-      
+
     - name: Deploy Firewall (iptables)
       run: |
         # Allow incoming traffic on the ports used by your Django application (e.g., 8000)
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
     
         # Allow incoming traffic on the ports used by Gunicorn (e.g., 8000)
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
     
         # Allow incoming traffic on the ports used by Nginx (e.g., 80 for HTTP, 443 for HTTPS)
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
     
         # Allow incoming traffic on other necessary ports (adjust as needed)
     
         # Drop all other incoming traffic
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec firewall-container -- iptables -A INPUT -j DROP
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
     
     - name: Save Firewall Rules
       run: |
         # Save the firewall rules so they persist after reboot
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S -n   lxc exec firewall-container -- iptables-S -nave > /etc/iptables/rules.v4
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables-S -nave > /etc/iptables/rules.v4
