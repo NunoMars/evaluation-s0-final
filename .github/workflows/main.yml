@@ -100,27 +100,32 @@ jobs:
       id: app2_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')"
 
-    - name: Deploy Application to app-container-2
+    - name: Deploy Application to app-container-1
       run: |
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt update
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt install -y git python3 python3.8-venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- git clone https://github.com/NunoMars/evaluation-s07-final.git SiteVoyance
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- python3 -m venv SiteVoyance/venv
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- source SiteVoyance/venv/bin/activate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- pip install -r SiteVoyance/requirements.txt
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- python SiteVoyance/manage.py migrate
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "ExecStart=/bin/bash -c '\''source /home/ubuntu/SiteVoyance/venv/bin/activate && exec /home/ubuntu/SiteVoyance/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c 'echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service'
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- systemctl enable site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- systemctl start site_tarot_gunicorn
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- systemctl status site_tarot_gunicorn
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
+          apt update && \
+          apt upgrade -y && \
+          apt install -y git python3 python3-venv && \
+          apt autoremove -y && \
+          rm -rf /home/ubuntu/evaluation-s07-final && \
+          git clone https://github.com/NunoMars/evaluation-s07-final.git /home/ubuntu/evaluation-s07-final && \
+          python3 -m venv /home/ubuntu/evaluation-s07-final/venv && \
+          source /home/ubuntu/evaluation-s07-final/venv/bin/activate && \
+          pip install -r /home/ubuntu/evaluation-s07-final/requirements.txt && \
+          python /home/ubuntu/evaluation-s07-final/manage.py migrate && \
+          echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "ExecStart=/bin/bash -c '\''/home/ubuntu/evaluation-s07-final/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+          systemctl enable site_tarot_gunicorn && \
+          systemctl start site_tarot_gunicorn && \
+          systemctl status site_tarot_gunicorn
+        '
 
     - name: Créer et deploy load balancer
       run: |
