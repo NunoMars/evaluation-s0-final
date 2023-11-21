@@ -188,9 +188,7 @@ jobs:
     
         # Restart Nginx to apply changes
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- systemctl restart nginx
-      continue-on-error: true
-    
-        
+       
     - name: Create and deploy Database (PostgreSQL)
       run: |
         # Create the database container
