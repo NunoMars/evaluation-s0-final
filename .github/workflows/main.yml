@@ -58,7 +58,8 @@ jobs:
           echo "Creating app-container-1"
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
         fi
-
+      continue-on-error: true
+      
     - name: Get App Container 1 IP
       id: app1_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_1_NAME}'") | .state.network.eth0.addresses[0].address')"
