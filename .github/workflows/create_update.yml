@@ -1,0 +1,261 @@
+name: Create and Update Containers
+
+on:
+  workflow_run:
+    workflows: ["Push to Containers"]
+    types:
+      - completed
+
+jobs:
+  create_update:
+    runs-on: self-hosted
+    env:
+        LB_CONTAINER_NAME: "lb-container"
+        APP_CONTAINER_1_NAME: "app-container-1"
+        APP_CONTAINER_2_NAME: "app-container-2"
+        DB_CONTAINER_NAME: "db-pcontainer"
+        DNS_CONTAINER_NAME: "dns-container"
+        FIREWALL_CONTAINER_NAME: "firewall-container"
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Create or Start app-container-1
+      run: |
+        #Creer le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_1_NAME}
+        #mettre à jours le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt update && apt upgrade -y
+        #installer les paquets
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- apt install -y python3 python3-pip git python3.8-venv
+        #Preparer le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_1_NAME} -- bash -c '
+        echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "ExecStart=/bin/bash -c '\''evaluation-s07-final/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        systemctl enable site_tarot_gunicorn && \
+        systemctl start site_tarot_gunicorn && \
+        systemctl status site_tarot_gunicorn
+        '
+
+    - name: Get App Container 1 IP
+      id: app1_ip
+      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_1_NAME}'") | .state.network.eth0.addresses[0].address')"
+
+    - name: Create or Start app-container-2
+      run: |
+        #Creer le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
+        #mettre à jours le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt update && apt upgrade -y
+        #installer les paquets
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- apt install -y python3 python3-pip git python3.8-venv
+        #Preparer le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${APP_CONTAINER_2_NAME} -- bash -c '
+        echo "[Unit]" > /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "Description=gunicorn daemon for site_tarot" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "[Service]" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "User=root" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "ExecStart=/bin/bash -c '\''evaluation-s07-final/venv/bin/gunicorn --workers=3 --bind 0.0.0.0:8000 site_tarot.wsgi:application'\''" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "[Install]" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        echo "WantedBy=multi-user.target" >> /etc/systemd/system/site_tarot_gunicorn.service && \
+        systemctl enable site_tarot_gunicorn && \
+        systemctl start site_tarot_gunicorn && \
+        systemctl status site_tarot_gunicorn
+        '
+
+    - name: Get App Container 2 IP
+      id: app2_ip
+      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')"
+
+    - name: Create or Start Load Balancer
+      run: |
+        #Creer le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
+        #mettre à jours le conteneur
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S  -S lxc exec ${LB_CONTAINER_NAME} -- apt update && apt upgrade -y
+        #installer les paquets
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} -- apt install -y python3 nginx certbot python3-certbot-nginx
+        APP1_IP="${{ steps.app1_ip.outputs.ip }}"
+        APP2_IP="${{ steps.app2_ip.outputs.ip }}"
+        
+    - name: Get Load Balancer IP
+      id: lb_ip
+      run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${LB_CONTAINER_NAME}'") | .state.network.eth0.addresses[0].address')"
+
+    - name: Deploy Load Balancer (Nginx)
+      run: |
+        # Create the Nginx configuration directory if it doesn't exist
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} --  mkdir -p /etc/nginx/sites-available
+
+        # Create the Nginx configuration file
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} --  bash -c 'touch /etc/nginx/sites-available/default'
+
+        # Configure Nginx
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} --  bash -c '
+          echo "server {" > /etc/nginx/sites-available/default
+          echo "    listen 80;" >> /etc/nginx/sites-available/default
+          echo "    server_name nunomars-server.cloud;" >> /etc/nginx/sites-available/default
+          echo "" >> /etc/nginx/sites-available/default
+          echo "    location / {" >> /etc/nginx/sites-available/default
+          echo "        proxy_pass http://'$APP1_IP':8000 http://'$APP2_IP':8000;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header Host $host;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header X-Real-IP $remote_addr;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;" >> /etc/nginx/sites-available/default
+          echo "        proxy_set_header X-Forwarded-Proto $scheme;" >> /etc/nginx/sites-available/default
+          echo "    }" >> /etc/nginx/sites-available/default
+          echo "}" >> /etc/nginx/sites-available/default
+        '
+
+        # Enable the Nginx configuration
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} -- ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+        # Certbot
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} --  certbot --nginx -d nunomars-server.cloud --non-interactive --agree-tos --email nuno.ricardo.mars@gmail.com
+        
+        # Restart Nginx to apply changes
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${LB_CONTAINER_NAME} -- systemctl restart nginx
+
+#   - name: Configure UFW
+#     run: |
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'echo "[Nginx Full]
+#       title=Web Server (Nginx, HTTP + HTTPS)
+#       description=Allows all incoming HTTP (80) and HTTPS (443) connections
+#       ports=80,443/tcp" > /etc/ufw/applications.d/nginx'
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ufw allow 'Nginx Full'
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ufw allow 'OpenSSH'
+#       echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ufw --force enable
+
+
+    #   - name: Create and deploy Database (MariaDB)
+    #     run: |
+    #       # Update package information
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo apt update && sudo apt upgrade -y
+    #   
+    #       # Install MariaDB server
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo apt install -y mariadb-server
+    #   
+    #       # Secure MariaDB installation (set root password, remove anonymous users, etc.)
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql_secure_installation
+    #   
+    #       # Create a database and user
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS siteVoyance;"
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE USER IF NOT EXISTS 'nuno'@'%' IDENTIFIED BY 'bcxau9p^^123.';"
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "GRANT ALL PRIVILEGES ON siteVoyance.* TO 'nuno'@'%';"
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "FLUSH PRIVILEGES;"
+    #   
+    #       # Allow connections to MariaDB from all IP addresses
+    #       lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "[mysqld]" > /etc/mysql/conf.d/bind-address.cnf'
+    #       lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "bind-address = 0.0.0.0" >> /etc/mysql/conf.d/bind-address.cnf'
+    #   
+    #       # Restart MariaDB to apply changes
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo service mysql restart
+    #     continue-on-error: true 
+
+    - name: Create and Deploy DNS (BIND9)
+      run: |
+        # Create the DNS container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${DNS_CONTAINER_NAME}
+
+        # Update package information
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- apt update && apt upgrade -y
+
+        # Install BIND9
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- apt install -y bind9 bind9utils bind9-doc
+
+        # Configure BIND9 to listen on all IP addresses
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- bash -c 'echo "OPTIONS="-u bind -4"" > /etc/default/named'
+
+        # Configure BIND9 to allow queries from the local network
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- bash -c 'cat <<EOF >> /etc/bind/named.conf.options
+        options {
+            ...
+            allow-query { localhost; 192.168.1.0/24; };
+            ...
+        };
+        EOF'
+
+        # Configure BIND9 for the local zone
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
+        zone "local" {
+            type master;
+            file "/etc/bind/db.local";
+            allow-update { key rndc-key; };
+        };
+        EOF'
+
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- bash -c 'cat <<EOF > /etc/bind/db.local
+        $TTL 86400
+        @       IN      SOA     ns1.local. admin.local. (
+                          2023112001      ; Serial
+                          3600            ; Refresh
+                          1800            ; Retry
+                          604800          ; Expire
+                          86400 )         ; Negative Cache TTL
+            IN      NS      ns1.local.
+            IN      A       192.168.1.10
+        EOF'
+
+        # Restart BIND9 to apply changes
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${DNS_CONTAINER_NAME} -- systemctl restart bind9
+
+    - name: Create and Deploy Firewall (UFW)
+      run: |
+        # Create the firewall container
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${FIREWALL_CONTAINER_NAME}
+    
+        # Update package information
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- apt update && apt upgrade -y
+    
+        # Install UFW
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- apt install -y ufw
+    
+         # Configure UFW
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw default deny incoming
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw default allow outgoing
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw allow ssh
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw allow 53
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw allow 80
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw allow 443
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec ${FIREWALL_CONTAINER_NAME} -- ufw --force enable
+
+
+#    - name: Create and deploy Firewall (iptables)
+#      run: |
+#        # flush iptables rules
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -F
+#  
+#        # Create the directory if it doesn't exist
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
+#  
+#        # Set up iptables rules
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -i lo -j ACCEPT
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
+#      
+#        # Save iptables rules with iptables-persistent
+#        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- systemctl is-enabled netfilter-persistent.service
+
+    - name: Configure LXD containers
+      run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 app-container-1 eth0 || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 app-container-1 eth0
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 app-container-2 eth0 || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 app-container-2 eth0
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 lb-container eth0 || true
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 lb-container eth0
+        LB_CONTAINER_IP=$(lxc list lb-container -c 4 --format csv)
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:${LB_CONTAINER_IP}:80
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy-ssl proxy listen=tcp:
