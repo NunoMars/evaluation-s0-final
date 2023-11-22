@@ -225,6 +225,14 @@ jobs:
         
     - name: Create and Deploy DNS (BIND9)
       run: |
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF >> /etc/bind/named.conf.options
+        options {
+            ...
+            allow-query { localhost; 192.168.1.0/24; };
+            ...
+        };
+        EOF'
+
         # Configure BIND9 for the local zone
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF > /etc/bind/named.conf.local
         zone "local" {
@@ -270,6 +278,7 @@ jobs:
     
         # Set up iptables rules
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -i lo -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 53 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
