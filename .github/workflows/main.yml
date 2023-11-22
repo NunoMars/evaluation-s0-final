@@ -218,24 +218,6 @@ jobs:
 #       # Restart MariaDB to apply changes
 #       lxc exec ${DB_CONTAINER_NAME} -- sudo service mysql restart
 #     continue-on-error: true 
-
-    - name: Create and deploy Firewall (iptables)
-      run: |
-        # fluwh iptables rules
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -F
-
-        # Create the directory if it doesn't exist
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
-    
-        # Set up iptables rules
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -i lo -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
-    
-        # Save iptables rules with iptables-persistent
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- systemctl is-enabled netfilter-persistent.service
         
     - name: Create and Deploy DNS (BIND9)
       run: |
@@ -273,4 +255,21 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network attach lxdbr0 lb-container eth0
         LB_CONTAINER_IP=$(lxc list lb-container -c 4 --format csv)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:${LB_CONTAINER_IP}:80
-      
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy-ssl proxy listen=tcp:
+    - name: Create and deploy Firewall (iptables)
+      run: |
+        # fluwh iptables rules
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -F
+
+        # Create the directory if it doesn't exist
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
+    
+        # Set up iptables rules
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -i lo -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
+    
+        # Save iptables rules with iptables-persistent
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- systemctl is-enabled netfilter-persistent.service
