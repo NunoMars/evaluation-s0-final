@@ -91,7 +91,6 @@ jobs:
           systemctl status site_tarot_gunicorn
         '
       continue-on-error: true 
-      
     - name: Create or Start app-container-2
       run: |
         if echo "${{ secrets.SUDO_PASSWORD }}" | sudo lxc info ${APP_CONTAINER_2_NAME} &> /dev/null; then
@@ -102,7 +101,7 @@ jobs:
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${APP_CONTAINER_2_NAME}
         fi
       continue-on-error: true
-    
+
     - name: Get App Container 2 IP
       id: app2_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${APP_CONTAINER_2_NAME}'") | .state.network.eth0.addresses[0].address')"
@@ -127,7 +126,7 @@ jobs:
           systemctl start site_tarot_gunicorn && \
           systemctl status site_tarot_gunicorn
         '
-    
+
       continue-on-error: true
 
     - name: Créer et deploy load balancer
@@ -140,7 +139,7 @@ jobs:
           echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc launch ubuntu:20.04 ${LB_CONTAINER_NAME}
         fi
       continue-on-error: true 
-        
+
     - name: Get Load Balancer IP
       id: lb_ip
       run: echo "::set-output name=ip::$(sudo lxc list --format json | jq -r '.[] | select(.name=="'${LB_CONTAINER_NAME}'") | .state.network.eth0.addresses[0].address')"
@@ -154,16 +153,16 @@ jobs:
         # install certbot
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec lb-container -- bash -c '
           apt-get update; \
-          apt-get install -y nginx \
+          apt-get install -y nginx; \
           apt-get install -y certbot; \
         '
-    
+
         # Create the Nginx configuration directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /etc/nginx/sites-available
-    
+
         # Create the Nginx configuration file
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c 'touch /etc/nginx/sites-available/default'
-    
+
         # Configure Nginx
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S bash -c '
           echo "server {" > /etc/nginx/sites-available/default
@@ -196,33 +195,33 @@ jobs:
     - name: Obtain SSL certificate with Certbot
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S certbot --nginx -d nunomars-server.cloud --non-interactive --agree-tos --email nuno.ricardo.mars@gmail.com
-    
-       
-#   - name: Create and deploy Database (MariaDB)
-#     run: |
-#       # Update package information
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo apt update && sudo apt upgrade -y
-#   
-#       # Install MariaDB server
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo apt install -y mariadb-server
-#   
-#       # Secure MariaDB installation (set root password, remove anonymous users, etc.)
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql_secure_installation
-#   
-#       # Create a database and user
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS siteVoyance;"
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE USER IF NOT EXISTS 'nuno'@'%' IDENTIFIED BY 'bcxau9p^^123.';"
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "GRANT ALL PRIVILEGES ON siteVoyance.* TO 'nuno'@'%';"
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "FLUSH PRIVILEGES;"
-#   
-#       # Allow connections to MariaDB from all IP addresses
-#       lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "[mysqld]" > /etc/mysql/conf.d/bind-address.cnf'
-#       lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "bind-address = 0.0.0.0" >> /etc/mysql/conf.d/bind-address.cnf'
-#   
-#       # Restart MariaDB to apply changes
-#       lxc exec ${DB_CONTAINER_NAME} -- sudo service mysql restart
-#     continue-on-error: true 
-        
+
+
+    #   - name: Create and deploy Database (MariaDB)
+    #     run: |
+    #       # Update package information
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo apt update && sudo apt upgrade -y
+    #   
+    #       # Install MariaDB server
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo apt install -y mariadb-server
+    #   
+    #       # Secure MariaDB installation (set root password, remove anonymous users, etc.)
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql_secure_installation
+    #   
+    #       # Create a database and user
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS siteVoyance;"
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "CREATE USER IF NOT EXISTS 'nuno'@'%' IDENTIFIED BY 'bcxau9p^^123.';"
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "GRANT ALL PRIVILEGES ON siteVoyance.* TO 'nuno'@'%';"
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo mysql -uroot -p -e "FLUSH PRIVILEGES;"
+    #   
+    #       # Allow connections to MariaDB from all IP addresses
+    #       lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "[mysqld]" > /etc/mysql/conf.d/bind-address.cnf'
+    #       lxc exec ${DB_CONTAINER_NAME} -- bash -c 'echo "bind-address = 0.0.0.0" >> /etc/mysql/conf.d/bind-address.cnf'
+    #   
+    #       # Restart MariaDB to apply changes
+    #       lxc exec ${DB_CONTAINER_NAME} -- sudo service mysql restart
+    #     continue-on-error: true 
+
     - name: Create and Deploy DNS (BIND9)
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- bash -c 'cat <<EOF >> /etc/bind/named.conf.options
@@ -255,8 +254,8 @@ jobs:
         EOF'
 
         # Restart BIND9 to apply changes
-        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9      
-        
+        echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec dns-container -- systemctl restart bind9
+
     - name: Configure LXD containers
       run: |
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc network detach lxdbr0 app-container-1 eth0 || true
@@ -268,14 +267,15 @@ jobs:
         LB_CONTAINER_IP=$(lxc list lb-container -c 4 --format csv)
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:${LB_CONTAINER_IP}:80
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc config device add lb-container lb-proxy-ssl proxy listen=tcp:
+        
     - name: Create and deploy Firewall (iptables)
       run: |
-        # fluwh iptables rules
+        # flush iptables rules
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -F
 
         # Create the directory if it doesn't exist
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- mkdir -p /etc/iptables/
-    
+
         # Set up iptables rules
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -i lo -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 53 -j ACCEPT
@@ -283,6 +283,6 @@ jobs:
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 80 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -p tcp --dport 443 -j ACCEPT
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- iptables -A INPUT -j DROP
-    
+
         # Save iptables rules with iptables-persistent
         echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S lxc exec firewall-container -- systemctl is-enabled netfilter-persistent.service
